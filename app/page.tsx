@@ -6,6 +6,7 @@ const modules = [
     title: "Binary arithmetic",
     description: "Addition, overflow, two's complement",
     progress: 80,
+    href: "/modules/binary-arithmetic",
     icon: <Binary size={22} />,
     iconBg: "#E6F1FB",
     barColor: "#195FA5",
@@ -60,7 +61,7 @@ const modules = [
 function ModuleCard({ mod }: { mod: (typeof modules)[0] }) {
   return (
     <a
-      href={`/modules/${mod.id}`}
+      href={mod.href ?? `/modules/${mod.id}`}
       className="group block bg-white border border-gray-200 rounded-2xl p-6 min-w-74 hover:shadow-md hover:border-gray-300 transition-all duration-200"
     >
       {/* Icon */}
