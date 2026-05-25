@@ -33,15 +33,15 @@ function FixedPointVisual() {
       {/* Bit-field diagram */}
       <div className="mt-4 flex overflow-hidden rounded-2xl border border-gray-200 text-xs font-mono">
         <div className="flex flex-col items-center justify-center px-4 py-3 shrink-0" style={{ backgroundColor: colors.yellow.light }}>
-          <span className="text-gray-400 text-[10px] mb-1 font-sans">sign</span>
+          <span className="font-semibold text-800 text-[10px] mb-1 font-sans" style={{ color: colors.yellow.dark }}>sign</span>
           <span className="font-semibold" style={{ color: colors.yellow.dark }}>0</span>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center border-x border-gray-200 px-4 py-3" style={{ backgroundColor: colors.blue.light }}>
-          <span className="text-gray-400 text-[10px] mb-1 font-sans">integer (2², 2¹, 2⁰)</span>
+          <span className="font-semibold text-400 text-[10px] mb-1 font-sans" style={{ color: colors.blue.dark }}>integer (2², 2¹, 2⁰)</span>
           <span className="font-semibold tracking-widest" style={{ color: colors.blue.dark }}>101</span>
         </div>
         <div className="flex flex-1 flex-col items-center justify-center px-4 py-3" style={{ backgroundColor: colors.purple.light }}>
-          <span className="text-gray-400 text-[10px] mb-1 font-sans">fractional (2⁻¹ … 2⁻⁴)</span>
+          <span className="font-semibold text-400 text-[10px] mb-1 font-sans" style={{ color: colors.purple.dark }}>fractional (2⁻¹ … 2⁻⁴)</span>
           <span className="font-semibold tracking-widest" style={{ color: colors.purple.dark }}>1010</span>
         </div>
       </div>

@@ -97,11 +97,12 @@ function InteractiveAdder() {
         </div>
         {/* Plus + B row */}
         <div className="flex items-center gap-2">
-          <span className="w-20 shrink-0 text-right text-lg text-gray-300">+</span>
+          <span className="w-16 shrink-0 text-right text-lg text-gray-300">+</span>
+          <span className="shrink-0 text-right text-xs text-gray-500">B</span>
           {bB.map((v, i) => <BitCell key={i} value={v} type="input" onClick={() => toggleB(i)} />)}
         </div>
         {/* Divider */}
-        <div className="ml-[88px] h-px bg-gray-200" />
+        <div className=" h-px bg-gray-200" />
         {/* Result row */}
         <div className="flex items-center gap-2">
           <span className="w-20 shrink-0 text-right text-xs text-gray-500">Result</span>

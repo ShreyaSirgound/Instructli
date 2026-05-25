@@ -98,8 +98,8 @@ export function TabNumberSystems() {
           { label: 'D', text: '5EF4' },
         ]}
         correctLabel="C"
-        correctExplanation="Group into nibbles: 0101 = 5, 1110 = E, 1101 = D, 0100 = 4 → 5ED4."
-        wrongExplanation="Re-group carefully into 4-bit nibbles from left to right."
+        correctExplanation="Group into sets: 0101 = 5, 1110 = E, 1101 = D, 0100 = 4 → 5ED4."
+        wrongExplanation="Re-group carefully into 4-bit sets from left to right."
       />
 
       {/* Practice Q2 */}
@@ -120,7 +120,7 @@ export function TabNumberSystems() {
       {/* Practice Q3 */}
       <PracticeQuestion
         title="Question 3 of 3 — octal to hex"
-        prompt="Convert 35 (octal) to hexadecimal. Hint: expand each octal digit into 3 bits, then regroup into nibbles."
+        prompt="Convert 35 (octal) to hexadecimal. Hint: expand each octal digit into 3 bits, then regroup into sets."
         options={[
           { label: 'A', text: '1C' },
           { label: 'B', text: '1D' },
@@ -128,8 +128,8 @@ export function TabNumberSystems() {
           { label: 'D', text: '10' },
         ]}
         correctLabel="B"
-        correctExplanation="35₈ → 011 101 → pad to 8 bits → 0001 1101 → regroup into nibbles → 0001 = 1, 1101 = D → 1D₁₆."
-        wrongExplanation="Expand each octal digit to 3 bits first, then regroup into 4-bit nibbles."
+        correctExplanation="35₈ → 011 101 → pad to 8 bits → 0001 1101 → regroup into sets → 0001 = 1, 1101 = D → 1D₁₆."
+        wrongExplanation="Expand each octal digit to 3 bits first, then regroup into 4-bit sets."
       />
     </div>
   );
