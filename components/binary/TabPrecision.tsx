@@ -96,10 +96,10 @@ export function TabPrecision() {
         title="Question 1 of 2 — classify the error"
         prompt={<>A sensor produces the value <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1.5 × 10⁻⁴⁵</code>. The floating-point format can only represent numbers as small as <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1.2 × 10⁻³⁸</code>. What type of error occurs?</>}
         options={[
-          { label: 'A', text: 'Overflow — the exponent is out of range' },
+          { label: 'A', text: 'Overflow — the exponent is out of range', wrongExplanation: 'Overflow refers to values that are too large to represent, not too small — this example is far below the minimum magnitude.' },
           { label: 'B', text: 'Underflow — the value is too small and rounds to zero' },
-          { label: 'C', text: 'Truncation error — low-order bits are dropped' },
-          { label: 'D', text: 'No error — the value is stored exactly' },
+          { label: 'C', text: 'Truncation error — low-order bits are dropped', wrongExplanation: 'Truncation refers to dropping low-order fraction bits when converting formats; underflow here means the value rounds to zero.' },
+          { label: 'D', text: 'No error — the value is stored exactly', wrongExplanation: 'This value cannot be stored exactly nor represented — it is below the representable range and will round to zero.' },
         ]}
         correctLabel="B"
         correctExplanation="The value 1.5×10⁻⁴⁵ is smaller than the minimum representable magnitude (1.2×10⁻³⁸). It cannot be stored and rounds to zero — this is underflow."
@@ -111,10 +111,10 @@ export function TabPrecision() {
         title="Question 2 of 2 — fixed-point range"
         prompt="A 32-bit fixed-point format uses 1 sign bit, 15 integer bits, and 16 fractional bits. What is the smallest positive number it can represent?"
         options={[
-          { label: 'A', text: '2⁻¹⁵ ≈ 0.0000305' },
-          { label: 'B', text: '2⁻³² (as if all bits were fractional)' },
+          { label: 'A', text: '2⁻¹⁵ ≈ 0.0000305', wrongExplanation: 'This uses 15 fractional bits — but the format has 16 fractional bits, so the smallest positive unit is 2⁻¹⁶.' },
+          { label: 'B', text: '2⁻³² (as if all bits were fractional)', wrongExplanation: 'Not all bits are fractional: there is 1 sign bit and 15 integer bits, so only 16 bits are fractional.' },
           { label: 'C', text: '2⁻¹⁶ ≈ 0.0000153' },
-          { label: 'D', text: '1 (smallest integer)' },
+          { label: 'D', text: '1 (smallest integer)', wrongExplanation: '1 is an integer; the smallest positive fractional unit is 2⁻¹⁶ in this format.' },
         ]}
         correctLabel="C"
         correctExplanation="With 16 fractional bits, the least significant bit has weight 2⁻¹⁶ ≈ 0.0000153. Every other bit is zero, so this single bit is the smallest positive non-zero value."

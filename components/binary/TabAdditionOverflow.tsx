@@ -231,9 +231,9 @@ export function TabAdditionOverflow() {
         prompt="Adding 8-bit signed values +100 and +50: does signed overflow occur?"
         options={[
           { label: 'A', text: 'Yes — the sum exceeds +127 and wraps to a negative value' },
-          { label: 'B', text: 'No — both operands are positive so the result is always valid' },
-          { label: 'C', text: 'Only if there is also a carry out of the MSB' },
-          { label: 'D', text: 'No — this is underflow, not overflow' },
+          { label: 'B', text: 'No — both operands are positive so the result is always valid', wrongExplanation: "Both operands being positive doesn't guarantee no overflow — the numeric sum must still fit within +127." },
+          { label: 'C', text: 'Only if there is also a carry out of the MSB', wrongExplanation: 'Carry out alone is not sufficient for signed overflow — compare carry into and out of the sign bit.' },
+          { label: 'D', text: 'No — this is underflow, not overflow', wrongExplanation: 'Underflow refers to negative wrap; adding two positives can only overflow, not underflow.' },
         ]}
         correctLabel="A"
         correctExplanation="100 + 50 = 150, which exceeds the 8-bit signed maximum of +127. The result wraps to −106 — positive + positive = negative, confirming overflow."
@@ -245,10 +245,10 @@ export function TabAdditionOverflow() {
         title="Question 2 of 3 — saturating arithmetic"
         prompt="With 8-bit signed saturating arithmetic, what is the result of +100 + +50?"
         options={[
-          { label: 'A', text: '−106 (wraps around)' },
-          { label: 'B', text: '+150 (true mathematical result)' },
+          { label: 'A', text: '−106 (wraps around)', wrongExplanation: 'Wrap-around is what happens in two\'s complement arithmetic without saturation; saturating arithmetic clamps instead.' },
+          { label: 'B', text: '+150 (true mathematical result)', wrongExplanation: 'The true mathematical result is +150, but it cannot be represented in 8-bit signed; saturation clamps to +127.' },
           { label: 'C', text: '+127 (saturates to maximum)' },
-          { label: 'D', text: '+128' },
+          { label: 'D', text: '+128', wrongExplanation: '+128 is not representable in signed 8-bit; the maximum representable value is +127.' },
         ]}
         correctLabel="C"
         correctExplanation="The true sum +150 exceeds +127 (the max signed 8-bit value). Saturating arithmetic clamps to the nearest representable value, which is +127."
@@ -260,10 +260,10 @@ export function TabAdditionOverflow() {
         title="Question 3 of 3 — overflow vs unsigned carry"
         prompt={<>Adding <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1111 1111</code> + <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0000 0001</code>. Which statement is correct?</>}
         options={[
-          { label: 'A', text: 'Signed overflow occurs because there is a carry out' },
+          { label: 'A', text: 'Signed overflow occurs because there is a carry out', wrongExplanation: 'Carry out by itself is not sufficient for signed overflow — you must compare the carry into and out of the sign bit.' },
           { label: 'B', text: 'Unsigned carry out occurs, but there is no signed overflow' },
-          { label: 'C', text: 'Neither carry out nor overflow occurs' },
-          { label: 'D', text: 'Both signed overflow and unsigned carry occur' },
+          { label: 'C', text: 'Neither carry out nor overflow occurs', wrongExplanation: 'There is an unsigned carry out here (255 + 1), so "neither" is incorrect — check the unsigned sum.' },
+          { label: 'D', text: 'Both signed overflow and unsigned carry occur', wrongExplanation: 'Both can occur in some cases, but here signed overflow does not occur; inspect the sign-bit carries.' },
         ]}
         correctLabel="B"
         correctExplanation="Unsigned: 255 + 1 = 256, carry out = 1, 8-bit result = 0. Signed: −1 + 1 = 0, which is perfectly correct. Carry-in and carry-out of the sign bit are both 1 — they match, so no signed overflow."

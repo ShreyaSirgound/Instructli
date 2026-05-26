@@ -109,9 +109,9 @@ export function TabSignedIntegers() {
         prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1011 1110</code> interpreted as an 8-bit two's complement number?</>}
         options={[
           { label: 'A', text: '−66' },
-          { label: 'B', text: '190 (unsigned interpretation)' },
-          { label: 'C', text: '−62' },
-          { label: 'D', text: '−74' },
+          { label: 'B', text: '190 (unsigned interpretation)', wrongExplanation: "This is the unsigned interpretation; two's complement uses the MSB as a negative weight — invert the bits and add 1 to read negatives." },
+          { label: 'C', text: '−62', wrongExplanation: 'Close — check your inversion and +1 step; a small mistake in the LSBs changes the magnitude.' },
+          { label: 'D', text: '−74', wrongExplanation: 'Off by a few weights; re-run invert+1 carefully to compute the correct magnitude.' },
         ]}
         correctLabel="A"
         correctExplanation="Invert 1011 1110 → 0100 0001, add 1 → 0100 0010 = 66. So the original value is −66."
@@ -123,10 +123,10 @@ export function TabSignedIntegers() {
         title="Question 2 of 2 — encode a negative value"
         prompt="What is the 8-bit two's complement representation of −17?"
         options={[
-          { label: 'A', text: '1001 0001  (sign-magnitude)' },
-          { label: 'B', text: '1110 1110  (inverted, before +1)' },
+          { label: 'A', text: '1001 0001  (sign-magnitude)', wrongExplanation: "Sign-magnitude is different: it uses a sign bit plus magnitude and doesn't perform invert+1." },
+          { label: 'B', text: '1110 1110  (inverted, before +1)', wrongExplanation: "This is the inverted bits before adding 1 — you must add 1 to complete two's complement." },
           { label: 'C', text: '1110 1111' },
-          { label: 'D', text: '1111 0001' },
+          { label: 'D', text: '1111 0001', wrongExplanation: 'This pattern corresponds to a different magnitude; start from +17, invert every bit, then add 1 to get the correct encoding.' },
         ]}
         correctLabel="C"
         correctExplanation="+17 = 0001 0001. Invert all bits → 1110 1110. Add 1 → 1110 1111. Verify: −128+64+32+8+4+2+1 = −17 ✓"
