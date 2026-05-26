@@ -92,10 +92,10 @@ export function TabNumberSystems() {
         title="Question 1 of 3 — binary to hex"
         prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0101 1110 1101 0100</code> in hexadecimal?</>}
         options={[
-          { label: 'A', text: '5CD4' },
-          { label: 'B', text: '6ED4' },
+          { label: 'A', text: '5CD4', wrongExplanation: 'C in hex is 1100, so check the second group of four bits: 1110 should become E, not C.' },
+          { label: 'B', text: '6ED4', wrongExplanation: '6 is not represented as 0101 — recheck the first 4-bit group and its hex value.' },
           { label: 'C', text: '5ED4' },
-           { label: 'D', text: '5EF4', wrongExplanation: 'F in hex = 1111; check your 4-bit groups and carry.' },
+          { label: 'D', text: '5EF4', wrongExplanation: 'F in hex = 1111; check your 4-bit groups and carry.' },
         ]}
         correctLabel="C"
         correctExplanation="Group into sets: 0101 = 5, 1110 = E, 1101 = D, 0100 = 4 → 5ED4."
@@ -107,10 +107,10 @@ export function TabNumberSystems() {
         title="Question 2 of 3 — binary to decimal"
         prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1011 1110</code> as an unsigned decimal number?</>}
         options={[
-          { label: 'A', text: '176' },
-          { label: 'B', text: '181' },
+          { label: 'A', text: '176', wrongExplanation: '176 in binary is 1011 0000 — compare that with 1011 1110 and re-sum the weights.' },
+          { label: 'B', text: '181', wrongExplanation: '181 in binary is 1011 0101 — your current bits add up differently, especially the least significant bits.' },
           { label: 'C', text: '190' },
-          { label: 'D', text: '191' },
+          { label: 'D', text: '191', wrongExplanation: '191 in binary is 1011 1111 — the rightmost bit is 1 there, but your number ends in 0.' },
         ]}
         correctLabel="C"
         correctExplanation="128 + 32 + 16 + 8 + 4 + 2 = 190. The rightmost bit is 0 so we don't add 1."
@@ -129,7 +129,7 @@ export function TabNumberSystems() {
         ]}
         correctLabel="B"
         correctExplanation="35₈ → 011 101 → pad to 8 bits → 0001 1101 → regroup into sets → 0001 = 1, 1101 = D → 1D₁₆."
-        wrongExplanation="Expand each octal digit to 3 bits first, then regroup into 4-bit sets."
+        wrongExplanation="Convert 3 and 5 from octal into binary, pad to two extra bits so you have 8 bits, regroup into 4-bit hex digits, then convert each group."
       />
     </div>
   );
