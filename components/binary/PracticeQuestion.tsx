@@ -6,6 +6,7 @@ import { colors } from './types';
 interface Option {
   label: string;
   text: string;
+  wrongExplanation?: string;
 }
 
 interface PracticeQuestionProps {
@@ -14,7 +15,7 @@ interface PracticeQuestionProps {
   options: Option[];
   correctLabel: string;
   correctExplanation: string;
-  wrongExplanation: string;
+  wrongExplanation?: string;
 }
 
 export function PracticeQuestion({
@@ -26,17 +27,20 @@ export function PracticeQuestion({
   wrongExplanation,
 }: PracticeQuestionProps) {
   const [chosen, setChosen] = useState<string | null>(null);
-  const answered = chosen !== null;
-  const isCorrect = chosen === correctLabel;
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   function pick(label: string) {
-    if (!answered) setChosen(label);
+    setChosen(label);
+    setIsCorrect(label === correctLabel);
   }
 
   function borderStyle(label: string) {
-    if (!answered) return {};
-    if (label === correctLabel) return { borderColor: colors.green.dark, backgroundColor: colors.green.light, color: colors.green.dark };
-    if (label === chosen)       return { borderColor: colors.red.dark,   backgroundColor: colors.red.light,   color: colors.red.dark };
+    if (isCorrect === null) return {};
+    if (isCorrect === true) {
+      if (label === correctLabel) return { borderColor: colors.green.dark, backgroundColor: colors.green.light, color: colors.green.dark };
+      return {};
+    }
+    if (isCorrect === false && label === chosen) return { borderColor: colors.red.dark, backgroundColor: colors.red.light, color: colors.red.dark };
     return {};
   }
 
@@ -49,14 +53,13 @@ export function PracticeQuestion({
           <button
             key={opt.label}
             onClick={() => pick(opt.label)}
-            disabled={answered}
             style={borderStyle(opt.label)}
-            className="flex items-start gap-3 rounded-2xl border border-gray-200 px-4 py-3 text-sm text-left text-gray-800 transition-all duration-150 hover:border-gray-300 hover:bg-gray-50 disabled:cursor-default"
+            className="flex items-start gap-3 rounded-2xl border border-gray-200 px-4 py-3 text-sm text-left text-gray-800 transition-all duration-150 hover:border-gray-300 hover:bg-gray-50"
           >
             <span
               className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold"
-              style={answered && opt.label === correctLabel ? { backgroundColor: colors.green.dark, color: '#fff' }
-                   : answered && opt.label === chosen       ? { backgroundColor: colors.red.dark,   color: '#fff' }
+              style={isCorrect === true && opt.label === correctLabel ? { backgroundColor: colors.green.dark, color: '#fff' }
+                   : isCorrect === false && opt.label === chosen       ? { backgroundColor: colors.red.dark,   color: '#fff' }
                    : {}}
             >
               {opt.label}
@@ -66,18 +69,20 @@ export function PracticeQuestion({
         ))}
       </div>
 
-      {answered && (
-        <div
-          className="mt-4 rounded-2xl px-5 py-3 text-sm leading-relaxed"
-          style={{
-            backgroundColor: isCorrect ? colors.green.light : colors.yellow.light,
-            color:           isCorrect ? colors.green.dark  : colors.yellow.dark,
-          }}
-        >
-          <span className="font-semibold">{isCorrect ? 'Correct! ' : 'Incorrect. '}</span>
-          {isCorrect ? correctExplanation : wrongExplanation + ' ' + correctExplanation}
-        </div>
-      )}
+          {isCorrect !== null && (
+            <div
+              className="mt-4 rounded-2xl px-5 py-3 text-sm leading-relaxed"
+              style={{
+                backgroundColor: isCorrect ? colors.green.light : colors.yellow.light,
+                color:           isCorrect ? colors.green.dark  : colors.yellow.dark,
+              }}
+            >
+              <span className="font-semibold">{isCorrect ? 'Correct! ' : 'Incorrect. '}</span>
+              {isCorrect
+                ? correctExplanation
+                : (options.find((o) => o.label === chosen)?.wrongExplanation ?? wrongExplanation ?? '')}
+            </div>
+          )}
     </Card>
   );
 }

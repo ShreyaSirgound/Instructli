@@ -1,16 +1,7 @@
 import { Binary, Cpu, MonitorCogIcon, Rows2, AlertTriangle, Database } from "lucide-react"
+import BinaryArithmeticHomeCard from '@/components/binary/BinaryArithmeticHomeCard'
 
 const modules = [
-  {
-    id: 1,
-    title: "Binary arithmetic",
-    description: "Addition, overflow, two's complement",
-    progress: 80,
-    href: "/modules/binary-arithmetic",
-    icon: <Binary size={22} />,
-    iconBg: "#E6F1FB",
-    barColor: "#195FA5",
-  },
   {
     id: 2,
     title: "Single cycle",
@@ -103,6 +94,14 @@ export default function Dashboard() {
 
         {/* Module grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <BinaryArithmeticHomeCard
+            title="Binary arithmetic"
+            description="Addition, overflow, two's complement"
+            href="/modules/binary-arithmetic"
+            icon={<Binary size={22} />}
+            iconBg="#E6F1FB"
+            barColor="#195FA5"
+          />
           {modules.map((mod) => (
             <ModuleCard key={mod.id} mod={mod} />
           ))}

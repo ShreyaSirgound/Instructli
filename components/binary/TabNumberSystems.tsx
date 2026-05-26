@@ -95,7 +95,7 @@ export function TabNumberSystems() {
           { label: 'A', text: '5CD4' },
           { label: 'B', text: '6ED4' },
           { label: 'C', text: '5ED4' },
-          { label: 'D', text: '5EF4' },
+           { label: 'D', text: '5EF4', wrongExplanation: 'F in hex = 1111; check your 4-bit groups and carry.' },
         ]}
         correctLabel="C"
         correctExplanation="Group into sets: 0101 = 5, 1110 = E, 1101 = D, 0100 = 4 → 5ED4."
