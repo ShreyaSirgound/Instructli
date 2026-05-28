@@ -82,7 +82,7 @@ export function TabRepresentationFormats() {
         prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1011 1110</code> in 8-bit two's complement?</>}
         options={[
           { label: 'A', text: '-66' },
-          { label: 'B', text: '190 (unsigned)', wrongExplanation: 'This is the unsigned interpretation; two's complement uses the MSB as negative — invert and add 1 to find the magnitude.' },
+          { label: 'B', text: '190 (unsigned)', wrongExplanation: "This is the unsigned interpretation; two's complement uses the MSB as negative — invert and add 1 to find the magnitude." },
           { label: 'C', text: '-62', wrongExplanation: 'Close: re-invert the bits carefully (1011 1110 becomes 0100 0001) and add 1 to get 0100 0010 = 66, so original is -66.' },
           { label: 'D', text: '-74', wrongExplanation: 'Off by a few weights; double-check your inversion and +1 step.' },
         ]}
@@ -112,7 +112,7 @@ export function TabRepresentationFormats() {
         prompt={<>The bit pattern <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1100 0001</code> means different values in different formats. In 8-bit unsigned, what is it?</>}
         options={[
           { label: 'A', text: '193' },
-          { label: 'B', text: '−63 (two's complement)', wrongExplanation: 'That would be the two's complement interpretation; the question asks for unsigned.' },
+          { label: "B", text: "-63 (two's complement)", wrongExplanation: "That would be the two's complement interpretation; the question asks for unsigned." },
           { label: 'C', text: '−65 (sign-magnitude)', wrongExplanation: 'That would be the sign-magnitude interpretation; the question asks for unsigned.' },
           { label: 'D', text: '128', wrongExplanation: 'Check: 128 + 64 + 1 = 193 for unsigned, not 128.' },
         ]}

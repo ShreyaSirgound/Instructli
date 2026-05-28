@@ -1,7 +1,19 @@
+import type { ReactNode } from 'react'
 import { Binary, Cpu, MonitorCogIcon, Rows2, AlertTriangle, Database } from "lucide-react"
 import BinaryArithmeticHomeCard from '@/components/binary/BinaryArithmeticHomeCard'
 
-const modules = [
+type ModuleItem = {
+  id: number;
+  title: string;
+  description: string;
+  progress: number;
+  icon: ReactNode;
+  iconBg: string;
+  barColor: string;
+  href?: string;
+};
+
+const modules: ModuleItem[] = [
   {
     id: 2,
     title: "Single cycle",
@@ -49,7 +61,7 @@ const modules = [
   },
 ];
 
-function ModuleCard({ mod }: { mod: (typeof modules)[0] }) {
+function ModuleCard({ mod }: { mod: ModuleItem }) {
   return (
     <a
       href={mod.href ?? `/modules/${mod.id}`}

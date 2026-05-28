@@ -1,4 +1,4 @@
-export type TabId = 'number-systems' | 'signed-integers' | 'addition-overflow' | 'precision';
+export type TabId = 'interpreting' | 'representation-formats' | 'addition-subtraction' | 'overflow-saturating';
 
 export interface Tab {
   id: TabId;
@@ -6,10 +6,10 @@ export interface Tab {
 }
 
 export const TABS: Tab[] = [
-  { id: 'number-systems',    label: '1. Number Systems' },
-  { id: 'signed-integers',   label: '2. Signed Integers' },
-  { id: 'addition-overflow', label: '3. Addition & Overflow' },
-  { id: 'precision',         label: '4. Precision & Representation' },
+  { id: 'interpreting',            label: '1. Interpreting Numbers' },
+  { id: 'representation-formats',  label: '2. Representation Formats' },
+  { id: 'addition-subtraction',    label: '3. Addition & Subtraction' },
+  { id: 'overflow-saturating',     label: '4. Overflow & Saturating' },
 ];
 
 export const colors = {

@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
 import { TABS, TabId } from '@/components/binary/types';
-import { TabNumberSystems }    from '@/components/binary/TabNumberSystems';
-import { TabSignedIntegers }   from '@/components/binary/TabSignedIntegers';
-import { TabAdditionOverflow } from '@/components/binary/TabAdditionOverflow';
-import { TabPrecision }        from '@/components/binary/TabPrecision';
+import { TabInterpreting }           from '@/components/binary/TabInterpreting';
+import { TabRepresentationFormats }  from '@/components/binary/TabRepresentationFormats';
+import { TabAdditionSubtraction }    from '@/components/binary/TabAdditionSubtraction';
+import { TabOverflowSaturating }     from '@/components/binary/TabOverflowSaturating';
 import {
   SectionId,
   createEmptyProgress,
@@ -17,7 +17,7 @@ import {
 } from '@/components/binary/binaryArithmeticProgress';
 
 export default function BinaryArithmeticModule() {
-  const [activeTab, setActiveTab] = useState<TabId>('number-systems');
+  const [activeTab, setActiveTab] = useState<TabId>('interpreting');
   const [progress, setProgress] = useState(createEmptyProgress());
 
   useEffect(() => {
@@ -88,10 +88,10 @@ export default function BinaryArithmeticModule() {
         </div>
 
         {/* Tab content */}
-        {activeTab === 'number-systems'    && <TabNumberSystems />}
-        {activeTab === 'signed-integers'   && <TabSignedIntegers />}
-        {activeTab === 'addition-overflow' && <TabAdditionOverflow />}
-        {activeTab === 'precision'         && <TabPrecision />}
+        {activeTab === 'interpreting'            && <TabInterpreting />}
+        {activeTab === 'representation-formats'  && <TabRepresentationFormats />}
+        {activeTab === 'addition-subtraction'    && <TabAdditionSubtraction />}
+        {activeTab === 'overflow-saturating'     && <TabOverflowSaturating />}
 
         <div className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

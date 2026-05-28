@@ -2,7 +2,7 @@
 
 export const STORAGE_KEY = 'binaryArithmeticProgress';
 
-export const SECTION_IDS = ['number-systems', 'signed-integers', 'addition-overflow', 'precision'] as const;
+export const SECTION_IDS = ['interpreting', 'representation-formats', 'addition-subtraction', 'overflow-saturating'] as const;
 
 export type SectionId = (typeof SECTION_IDS)[number];
 
@@ -10,10 +10,10 @@ export type BinaryArithmeticProgress = Record<SectionId, boolean>;
 
 export function createEmptyProgress(): BinaryArithmeticProgress {
   return {
-    'number-systems': false,
-    'signed-integers': false,
-    'addition-overflow': false,
-    precision: false,
+    'interpreting': false,
+    'representation-formats': false,
+    'addition-subtraction': false,
+    'overflow-saturating': false,
   };
 }
 
@@ -28,12 +28,12 @@ export function getSavedProgress(): BinaryArithmeticProgress {
       return createEmptyProgress();
     }
 
-    const parsed = JSON.parse(raw) as Partial<BinaryArithmeticProgress>;
+    const parsed = JSON.parse(raw) as Partial<Record<string, boolean>>;
     return {
-      'number-systems': parsed['number-systems'] ?? false,
-      'signed-integers': parsed['signed-integers'] ?? false,
-      'addition-overflow': parsed['addition-overflow'] ?? false,
-      precision: parsed.precision ?? false,
+      interpreting: parsed['interpreting'] ?? parsed['number-systems'] ?? false,
+      'representation-formats': parsed['representation-formats'] ?? parsed['signed-integers'] ?? false,
+      'addition-subtraction': parsed['addition-subtraction'] ?? parsed['addition-overflow'] ?? false,
+      'overflow-saturating': parsed['overflow-saturating'] ?? parsed['precision'] ?? false,
     };
   } catch {
     return createEmptyProgress();
