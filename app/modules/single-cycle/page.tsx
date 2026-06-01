@@ -9,23 +9,23 @@ import { TabRepresentationFormats }  from '@/components/binary/TabRepresentation
 import { TabAdditionSubtraction }    from '@/components/binary/TabAdditionSubtraction';
 import { TabOverflowSaturating }     from '@/components/binary/TabOverflowSaturating';
 import { getSavedProgress, computeProgress, saveProgress } from '@/app/progressConfig';
-import { binaryArithmeticConfig } from '@/app/page';
+import { singleCycleConfig } from '@/app/page';
 
 export default function BinaryArithmeticModule() {
   const [activeTab, setActiveTab] = useState<TabId>('interpreting');
-  const [progress, setProgress] = useState(() => getSavedProgress(binaryArithmeticConfig));
+  const [progress, setProgress] = useState(() => getSavedProgress(singleCycleConfig));
 
   useEffect(() => {
-    setProgress(getSavedProgress(binaryArithmeticConfig));
+    setProgress(getSavedProgress(singleCycleConfig));
   }, []);
 
-  const progressValue = useMemo(() => computeProgress(binaryArithmeticConfig, progress), [progress]);
+  const progressValue = useMemo(() => computeProgress(singleCycleConfig, progress), [progress]);
   const currentComplete = progress[activeTab] ?? false;
 
   function markSectionComplete() {
     const updated = { ...progress, [activeTab]: !currentComplete };
     setProgress(updated);
-    saveProgress(binaryArithmeticConfig, updated);
+    saveProgress(singleCycleConfig, updated);
   }
 
   return (

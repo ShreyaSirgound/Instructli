@@ -1,6 +1,54 @@
 import type { ReactNode } from 'react'
 import { Binary, Cpu, MonitorCogIcon, Rows2, AlertTriangle, Database } from "lucide-react"
-import BinaryArithmeticHomeCard from '@/components/binary/BinaryArithmeticHomeCard'
+import ModuleCard from '@/components/ModuleCard'
+import { ProgressConfig} from './progressConfig';
+
+export const binaryArithmeticConfig: ProgressConfig = {
+  storageKey: 'binaryArithmeticProgress',
+  sectionIds: ['interpreting', 'representation-formats', 'addition-subtraction', 'overflow-saturating'],
+  eventName: 'binary-arithmetic-progress-updated',
+  legacyKeyMap: {
+    'interpreting': 'number-systems',
+    'representation-formats': 'signed-integers',
+    'addition-subtraction': 'addition-overflow',
+    'overflow-saturating': 'precision',
+  },
+};
+
+export const singleCycleConfig: ProgressConfig = {
+  storageKey: 'singleCycleProgress',
+  sectionIds: [],
+  eventName: 'single-cycle-progress-updated',
+  legacyKeyMap: {},
+};
+
+export const pipelineConfig: ProgressConfig = {
+  storageKey: 'pipelineProgress',
+  sectionIds: [],
+  eventName: 'pipeline-progress-updated',
+  legacyKeyMap: {},
+};
+
+export const machineInstructionsConfig: ProgressConfig = {
+  storageKey: 'machineInstructionsProgress',
+  sectionIds: [],
+  eventName: 'machine-instructions-progress-updated',
+  legacyKeyMap: {},
+};
+
+export const hazardsConfig: ProgressConfig = {
+  storageKey: 'hazardsProgress',
+  sectionIds: [],
+  eventName: 'hazards-progress-updated',
+  legacyKeyMap: {},
+};
+
+export const cachingConfig: ProgressConfig = {
+  storageKey: 'cachingProgress',
+  sectionIds: [],
+  eventName: 'caching-progress-updated',
+  legacyKeyMap: {},
+};
 
 type ModuleItem = {
   id: number;
@@ -12,87 +60,6 @@ type ModuleItem = {
   barColor: string;
   href?: string;
 };
-
-const modules: ModuleItem[] = [
-  {
-    id: 2,
-    title: "Single cycle",
-    description: "Datapath, control signals",
-    progress: 55,
-    icon: <Cpu size={22} />,
-    iconBg: "#E9F2DD",
-    barColor: "#3F681B",
-  },
-  {
-    id: 3,
-    title: "5-stage pipeline",
-    description: "IF, ID, EX, MEM, WB",
-    progress: 40,
-    icon: <Rows2 size={22} />,
-    iconBg: "#EDECFD",
-    barColor: "#4F4898",
-  },
-  {
-    id: 4,
-    title: "Machine Instructions",
-    description: "Instruction types, opcodes",
-    progress: 20,
-    icon: <MonitorCogIcon size={22} />,
-    iconBg: "#fef9e0",
-    barColor: "#f9ab00",
-  },
-  {
-    id: 5,
-    title: "Hazards and Detection",
-    description: "RAW, WAR, WAW, structural",
-    progress: 20,
-    icon: <AlertTriangle size={22} />,
-    iconBg: "#FAEEDC",
-    barColor: "#b6761d",
-  },
-  {
-    id: 6,
-    title: "Caching",
-    description: "Direct-mapped, set associative",
-    progress: 10,
-    icon: <Database size={22} />,
-    iconBg: "#FBECE6",
-    barColor: "#b15636",
-  },
-];
-
-function ModuleCard({ mod }: { mod: ModuleItem }) {
-  return (
-    <a
-      href={mod.href ?? `/modules/${mod.id}`}
-      className="group block bg-white border border-gray-200 rounded-2xl p-6 min-w-74 hover:shadow-md hover:border-gray-300 transition-all duration-200"
-    >
-      {/* Icon */}
-      <div
-        style={{ backgroundColor: mod.iconBg, color: mod.barColor }}
-        className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4"
-      >
-        {mod.icon}
-      </div>
-
-      {/* Title & description */}
-      <h3 className="text-lg font-semibold text-gray-900">
-        {mod.title}
-      </h3>
-      <p className="text-sm text-gray-500 mt-1">{mod.description}</p>
-
-      {/* Progress bar */}
-      <div className="w-full bg-gray-100 rounded-full h-1.5 mt-4">
-        <div
-          style={{ width: `${mod.progress}%`, backgroundColor: mod.barColor }}
-          className="h-1.5 rounded-full transition-all duration-500"
-        />
-      </div>
-
-      <p className="text-sm text-gray-400 mt-2">{mod.progress}% complete</p>
-    </a>
-  );
-}
 
 export default function Dashboard() {
   return (
@@ -106,17 +73,65 @@ export default function Dashboard() {
 
         {/* Module grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <BinaryArithmeticHomeCard
+          <ModuleCard
             title="Binary arithmetic"
             description="Addition, overflow, two's complement"
             href="/modules/binary-arithmetic"
             icon={<Binary size={22} />}
             iconBg="#E6F1FB"
             barColor="#195FA5"
+            progressConfig={binaryArithmeticConfig}
           />
-          {modules.map((mod) => (
-            <ModuleCard key={mod.id} mod={mod} />
-          ))}
+
+          <ModuleCard
+            title="Single cycle"
+            description="Datapath, control signals"
+            href="/modules/single-cycle"
+            icon={<Cpu size={22} />}
+            iconBg="#E9F2DD"
+            barColor="#3F681B"
+            progressConfig={singleCycleConfig}
+          />
+
+          <ModuleCard
+            title="5-stage pipeline"
+            description="IF, ID, EX, MEM, WB"
+            href="/modules/pipeline"
+            icon=<Rows2 size={22} />
+            iconBg="#EDECFD"
+            barColor="#4F4898"
+            progressConfig={pipelineConfig}
+          />
+
+          <ModuleCard
+            title="Machine Instructions"
+            description="Instruction types, opcodes"
+            href="/modules/machine-instructions"
+            icon=<MonitorCogIcon size={22} />
+            iconBg="#FEf9E0"
+            barColor="#F9AB00"
+            progressConfig={machineInstructionsConfig}
+          />
+
+          <ModuleCard
+            title="Hazards and Detection"
+            description="RAW, WAR, WAW, structural"
+            href="/modules/hazards"
+            icon=<AlertTriangle size={22} />
+            iconBg="#FAEEDC"
+            barColor="#b6761d"
+            progressConfig={hazardsConfig}
+          />
+
+          <ModuleCard
+            title="Caching"
+            description="Direct-mapped, set associative"
+            href="/modules/caching"
+            icon=<Database size={22} />
+            iconBg="#FBECE6"
+            barColor="#b15636"
+            progressConfig={cachingConfig}
+          />
         </div>
       </div>
     </main>
