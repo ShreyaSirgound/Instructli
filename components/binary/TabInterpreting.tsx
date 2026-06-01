@@ -69,13 +69,13 @@ export function TabInterpreting() {
           Binary is a number system with base 2. Only two digits are used: 0 and 1. Each digit is called a <strong>bit</strong>.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          Binary numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0b</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0B</code>, or by the subscript 2. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0b11001</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">11001₂</code>.
+          Binary numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0b</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0B</code>, or by the subscript 2. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0b11001</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">11001₂</code>.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
           To understand a binary number, associate each bit with a power of 2, starting from the rightmost bit (least significant). The rightmost bit is 2⁰ = 1, the next is 2¹ = 2, then 2² = 4, and so on.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">11001₂</code> = (1 × 2⁴) + (1 × 2³) + (0 × 2²) + (0 × 2¹) + (1 × 2⁰) = 16 + 8 + 1 = 25₁₀
+          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">11001₂</code> = (1 × 2⁴) + (1 × 2³) + (0 × 2²) + (0 × 2¹) + (1 × 2⁰) = 16 + 8 + 1 = 25₁₀
         </p>
       </Card>
 
@@ -85,29 +85,29 @@ export function TabInterpreting() {
           Octal is a base-8 number system. Eight digits are used: 0, 1, 2, 3, 4, 5, 6, 7.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          Octal numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0o</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0O</code>, or by the subscript 8. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0o7526</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">7526₈</code>.
+          Octal numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0o</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0O</code>, or by the subscript 8. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0o7526</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">7526₈</code>.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
           To interpret an octal number, associate each digit with a power of 8, starting from the rightmost digit.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">7526₈</code> = (7 × 8³) + (5 × 8²) + (2 × 8¹) + (6 × 8⁰) = 3584 + 320 + 16 + 6 = 3926₁₀
+          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">7526₈</code> = (7 × 8³) + (5 × 8²) + (2 × 8¹) + (6 × 8⁰) = 3584 + 320 + 16 + 6 = 3926₁₀
         </p>
       </Card>
 
       {/* Hexadecimal */}
       <Card variant="concept" title="Hexadecimal — Base 16">
         <p className="text-sm text-gray-700 leading-relaxed">
-          Hexadecimal is a base-16 number system. Sixteen digits are used: 0–9, A, B, C, D, E, F, where A=10, B=11, C=12, D=13, E=14, F=15.
+          Hexadecimal is a base-16 number system. Sixteen digits are used: 0, 1, ..., 9, A, B, ... F, where A=10, B=11, C=12, D=13, E=14, F=15.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          Hexadecimal numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0x</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0X</code>, or by the subscript 16. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0xA21F</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">A21F₁₆</code>.
+          Hexadecimal numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0x</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0X</code>, or by the subscript 16. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0xA21F</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">A21F₁₆</code>.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
           To interpret a hexadecimal number, associate each digit with a power of 16, starting from the rightmost digit.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">A21F₁₆</code> = (10 × 16³) + (2 × 16²) + (1 × 16¹) + (15 × 16⁰) = 40960 + 512 + 16 + 15 = 41503₁₀
+          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">A21F₁₆</code> = (10 × 16³) + (2 × 16²) + (1 × 16¹) + (15 × 16⁰) = 40960 + 512 + 16 + 15 = 41503₁₀
         </p>
         <InfoNote>
           Octal groups bits into threes (8 = 2³); hexadecimal groups bits into fours (16 = 2⁴). Both are compact shorthand for binary — no conversion arithmetic needed, only grouping.
@@ -125,7 +125,7 @@ export function TabInterpreting() {
       {/* Practice Q1 */}
       <PracticeQuestion
         title="Question 1 of 3 — binary to hex"
-        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0101 1110 1101 0100</code> in hexadecimal?</>}
+        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0101 1110 1101 0100</code> in hexadecimal?</>}
         options={[
           { label: 'A', text: '5CD4', wrongExplanation: 'C in hex is 1100, so check the second group of four bits: 1110 should become E, not C.' },
           { label: 'B', text: '6ED4', wrongExplanation: '6 is not represented as 0101 — recheck the first 4-bit group and its hex value.' },
@@ -140,7 +140,7 @@ export function TabInterpreting() {
       {/* Practice Q2 */}
       <PracticeQuestion
         title="Question 2 of 3 — octal to decimal"
-        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">352₈</code> in decimal?</>}
+        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">352₈</code> in decimal?</>}
         options={[
           { label: 'A', text: '226', wrongExplanation: '226 in octal is 3 × 64 + 5 × 8 + 2, but octal 352 has different digit positions.' },
           { label: 'B', text: '234' },
@@ -155,7 +155,7 @@ export function TabInterpreting() {
       {/* Practice Q3 */}
       <PracticeQuestion
         title="Question 3 of 3 — hex to decimal"
-        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">2C₁₆</code> in decimal?</>}
+        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">2C₁₆</code> in decimal?</>}
         options={[
           { label: 'A', text: '32' },
           { label: 'B', text: '44', wrongExplanation: '(2 × 16) + C is not 44; remember C = 12 in decimal.' },

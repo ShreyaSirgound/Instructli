@@ -181,7 +181,7 @@ export function TabAdditionSubtraction() {
       {/* Practice Q1 */}
       <PracticeQuestion
         title="Question 1 of 3 — binary addition"
-        prompt={<>Add <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0011 1010</code> + <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0001 0110</code>. What is the result?</>}
+        prompt={<>Add <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0011 1010</code> + <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0001 0110</code>. What is the result?</>}
         options={[
           { label: 'A', text: '0101 0000', wrongExplanation: 'Check your carry propagation; 1010 + 0110 in the rightmost nibble produces a carry.' },
           { label: 'B', text: '0101 0001' },
@@ -196,7 +196,7 @@ export function TabAdditionSubtraction() {
       {/* Practice Q2 */}
       <PracticeQuestion
         title="Question 2 of 3 — subtraction via negation"
-        prompt={<>Compute <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0010 0101</code> − <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0000 1010</code> using two's complement negation and addition.</>}
+        prompt={<>Compute <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0010 0101</code> − <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0000 1010</code> using two's complement negation and addition.</>}
         options={[
           { label: 'A', text: '0001 1011' },
           { label: 'B', text: '0010 1111', wrongExplanation: 'Check your negation of 0000 1010 and re-add; 37 − 10 = 27, not 47.' },

@@ -16,7 +16,7 @@ export function TabRepresentationFormats() {
           With n bits, an unsigned integer can represent values from 0 to 2ⁿ − 1. For 8 bits: 0 to 255.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1011 1110</code> in unsigned 8-bit = 128 + 32 + 16 + 8 + 4 + 2 = 190 (base 10)
+          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">1011 1110</code> in unsigned 8-bit = 128 + 32 + 16 + 8 + 4 + 2 = 190 (base 10)
         </p>
         <div className="mt-4 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4">
           <p className="text-sm font-semibold text-gray-900 mb-2">8-bit unsigned range:</p>
@@ -34,7 +34,7 @@ export function TabRepresentationFormats() {
           <strong>Problem:</strong> Sign-magnitude breaks for hardware. There are two zeros (+0 and −0), and addition doesn't work correctly. For example, 0001 + 1001 should equal 0, but it gives 1010 = −2.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1011 1110</code> in sign-magnitude 8-bit = -(32 + 16 + 8 + 4 + 2) = -62 (base 10)
+          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">1011 1110</code> in sign-magnitude 8-bit = -(32 + 16 + 8 + 4 + 2) = -62 (base 10)
         </p>
         <div className="mt-4 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4">
           <p className="text-sm font-semibold text-gray-900 mb-2">8-bit sign-magnitude range:</p>
@@ -79,7 +79,7 @@ export function TabRepresentationFormats() {
       {/* Practice Q1 */}
       <PracticeQuestion
         title="Question 1 of 3 — read a negative two's complement"
-        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1011 1110</code> in 8-bit two's complement?</>}
+        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">1011 1110</code> in 8-bit two's complement?</>}
         options={[
           { label: 'A', text: '-66' },
           { label: 'B', text: '190 (unsigned)', wrongExplanation: "This is the unsigned interpretation; two's complement uses the MSB as negative — invert and add 1 to find the magnitude." },
@@ -109,7 +109,7 @@ export function TabRepresentationFormats() {
       {/* Practice Q3 */}
       <PracticeQuestion
         title="Question 3 of 3 — distinguish formats"
-        prompt={<>The bit pattern <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1100 0001</code> means different values in different formats. In 8-bit unsigned, what is it?</>}
+        prompt={<>The bit pattern <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">1100 0001</code> means different values in different formats. In 8-bit unsigned, what is it?</>}
         options={[
           { label: 'A', text: '193' },
           { label: "B", text: "-63 (two's complement)", wrongExplanation: "That would be the two's complement interpretation; the question asks for unsigned." },

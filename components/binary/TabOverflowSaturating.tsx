@@ -148,7 +148,7 @@ export function TabOverflowSaturating() {
       {/* Practice Q3 */}
       <PracticeQuestion
         title="Question 3 of 3 — overflow vs carry"
-        prompt={<>Adding <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">1111 1111</code> + <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">0000 0001</code> in 8-bit two's complement. Which is true?</>}
+        prompt={<>Adding <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">1111 1111</code> + <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0000 0001</code> in 8-bit two's complement. Which is true?</>}
         options={[
           { label: 'A', text: 'Signed overflow occurs because there is a carry out', wrongExplanation: 'Carry out alone does not cause signed overflow — −1 + 1 = 0 is perfectly valid.' },
           { label: 'B', text: 'Unsigned carry out occurs, but no signed overflow' },
