@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Card } from '../Card';
+import { Card } from './Card';
 import { colors } from './types';
 
 interface Option {

@@ -20,7 +20,7 @@ export default function RootLayout({
         {/* Navbar */}
         <nav className="sticky top-0 bg-white z-100 border-b border-gray-100 px-6 py-4">
           <a href="/" className="flex items-center gap-2 w-fit">
-            <img src="favicon.ico" className="w-5 h-5" />
+            <img src="/favicon.ico" className="w-5 h-5" />
             <span className="font-semibold text-gray-900">Instructli</span>
           </a>
         </nav>

@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
 import { Card } from '../Card';
-import { InfoNote } from './InfoNote';
-import { PracticeQuestion } from './PracticeQuestion';
+import { InfoNote } from '../InfoNote';
+import { PracticeQuestion } from '../PracticeQuestion';
 
 export function TabRepresentationFormats() {
   return (

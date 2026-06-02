@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
 import { Card } from '../Card';
-import { InfoNote } from './InfoNote';
-import { PracticeQuestion } from './PracticeQuestion';
-import { colors } from './types';
+import { InfoNote } from '../InfoNote';
+import { PracticeQuestion } from '../PracticeQuestion';
+import { colors } from '../types';
 
 function OverflowCases() {
   const cases = [

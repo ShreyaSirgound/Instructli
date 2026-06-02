@@ -3,13 +3,27 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
-import { TABS, TabId } from '@/components/binary/types';
+//import { TABS, TabId } from '@/components/binary/types';
 import { TabInterpreting }           from '@/components/binary/TabInterpreting';
 import { TabRepresentationFormats }  from '@/components/binary/TabRepresentationFormats';
 import { TabAdditionSubtraction }    from '@/components/binary/TabAdditionSubtraction';
 import { TabOverflowSaturating }     from '@/components/binary/TabOverflowSaturating';
 import { getSavedProgress, computeProgress, saveProgress } from '@/app/progressConfig';
 import { binaryArithmeticConfig } from '@/app/page';
+
+export type TabId = 'interpreting' | 'representation-formats' | 'addition-subtraction' | 'overflow-saturating';
+
+export interface Tab {
+  id: TabId;
+  label: string;
+}
+
+export const TABS: Tab[] = [
+  { id: 'interpreting',            label: '1. Interpreting Numbers' },
+  { id: 'representation-formats',  label: '2. Representation Formats' },
+  { id: 'addition-subtraction',    label: '3. Addition & Subtraction' },
+  { id: 'overflow-saturating',     label: '4. Overflow & Saturating' },
+];
 
 export default function BinaryArithmeticModule() {
   const [activeTab, setActiveTab] = useState<TabId>('interpreting');
