@@ -6,50 +6,66 @@ import { ChevronLeft } from 'lucide-react';
 import { Card } from '@/components/Card';
 import dynamic from "next/dynamic";
 import { getSavedProgress, computeProgress, saveProgress, createEmptyProgress } from '@/app/progressConfig';
-import { returnPath,  JsonResponse} from '../../../src/utils/single-processor';
-import { SingleProcessor } from '@/components/single-cycle/SingleCycle';
+import PipelineProcessor from '@/components/pipeline/PipelineProcessor';
 import { ProgressConfig } from '@/app/progressConfig';
+import { PipelineState } from "'../../../src/utils/pipeline-types"
+import { handlePipeLinePreset } from '../../../src/utils/pipeline-processor';
 
-// dynamically import so it only runs client-side
-const Terminal = dynamic(
-  () => import('@/components/single-cycle/Terminal'),
+// dynamically import so it only runs client-side -> ssr is server-side render
+const PipelineTerminal = dynamic(
+  () => import("@/components/pipeline/PipelineTerminal"),
   { ssr: false }
 );
 
-const singleCycleConfig: ProgressConfig = {
-  storageKey: 'singleCycleProgress',
+
+const pipelineConfig: ProgressConfig = {
+  storageKey: 'pipelineProgress',
   sectionIds: [],
-  eventName: 'single-cycle-progress-updated',
+  eventName: 'pipeline-progress-updated',
 };
 
-export default function SingleCycleModule() {
-  const [progress, setProgress] = useState(() => createEmptyProgress(singleCycleConfig));
+export default function PipelineModule() {
+  const [progress, setProgress] = useState(() => createEmptyProgress(pipelineConfig));
 
   useEffect(() => {
-    setProgress(getSavedProgress(singleCycleConfig));
+    setProgress(getSavedProgress(pipelineConfig));
   }, []);
 
-  const progressValue = useMemo(() => computeProgress(singleCycleConfig, progress), [progress]);
+  const progressValue = useMemo(() => computeProgress(pipelineConfig, progress), [progress]);
 
-  const [code, setCode] = useState<string>("add x28, x6, x7\n");
-  const [results, setResults] = useState<JsonResponse | null | undefined>();
+  const [code, setCode] = useState<string>("add x1, x1, x2\n");
+  const [results, setResults] = useState<PipelineState[]>([]);
+  const [currCycle, setCurrCycle] = useState(-1);
+  const [currentPreset, setCurrentPreset] = useState<{index: number, note: string} | null>(null);
 
-  const handleExecute = (command: string, instructionType: string) => {
-    const newResults = returnPath(command, instructionType)
+  
 
-    const diagramString = {
-      data_path: newResults.data_path,
-      block_data: newResults.block_data,
-      command_type: newResults.command_type,
-      command: command,
-    };
-    localStorage.setItem("singleDiagram", JSON.stringify(diagramString));
-    setResults(newResults);
-  }
+  const handleBackward = (currCycle: number) => {
+    if (currCycle > 0) {
+      setCurrCycle(currCycle - 1);
+    }
+  };
 
+  // sends terminal code to multiCycle using fetch
+  const handleExecute = async (preset: number) => {
+    const newCycle = currCycle + 1;
+    setCurrCycle(newCycle)
+    const data = handlePipeLinePreset(preset)
+    setResults(data)
+    if (currCycle >= data[data.length - 1].cycle){
+      setCurrCycle(0)
+    }
+
+    localStorage.setItem("pipelineDiagram", JSON.stringify(data));
+    localStorage.setItem("currCycle", JSON.stringify(newCycle%(data[data.length - 1].cycle +1)));
+    
+  };
+  
+
+  // resets and clears everything
   const handleReset = () => {
-    setResults(null);
-    localStorage.removeItem("singleDiagram");
+    setResults([]);
+    setCurrCycle(-1);
   };
 
   return (
@@ -66,7 +82,7 @@ export default function SingleCycleModule() {
 
         {/* Header */}
         <h1 className="text-3xl font-bold text-gray-900 mb-6">
-          Module 2: Single Cycle Processor
+          Module 3: 5-Stage Pipeline Processor
         </h1>
 
         {/* Progress bar */}
@@ -91,16 +107,19 @@ export default function SingleCycleModule() {
         {/* Processor diagram card */}
             <Card variant="simulation" title="Instruction visualizer">
                 <div className="flex-none relative bottom-[10px]">
-                <Terminal
+                <PipelineTerminal
                     code={code}
                     onCodeChange={setCode}
                     onExecute={handleExecute}
+                    onBackward={handleBackward}
                     onReset={handleReset}
+                    currCycle={currCycle}
+                    onPresetChange={setCurrentPreset}
                 />
                 </div>
 
                 <div className="flex-1 overflow-auto bg-white pb-[50px] p-5">
-                    <SingleProcessor results={results}/>
+                    <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset}/>
                 </div>
             </Card>
         </div>

@@ -63,7 +63,7 @@ export default function Dashboard() {
         {/* Module grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <ModuleCard
-            title="Binary arithmetic"
+            title="Binary Arithmetic"
             description="Addition, overflow, two's complement"
             href="/modules/binary-arithmetic"
             icon={<Binary size={22} />}
@@ -73,7 +73,7 @@ export default function Dashboard() {
           />
 
           <ModuleCard
-            title="Single cycle"
+            title="Single Cycle"
             description="Datapath, control signals"
             href="/modules/single-cycle"
             icon={<Cpu size={22} />}
@@ -83,7 +83,7 @@ export default function Dashboard() {
           />
 
           <ModuleCard
-            title="5-stage pipeline"
+            title="5-Stage Pipeline"
             description="IF, ID, EX, MEM, WB"
             href="/modules/pipeline"
             icon=<Rows2 size={22} />
