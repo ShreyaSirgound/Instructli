@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge } from './Badge';
+import { Badge } from './binary/Badge';
 
 type Variant = 'concept' | 'worked' | 'practice' | 'simulation';
 

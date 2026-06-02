@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Card } from './Card';
+import { Card } from '../Card';
 import { InfoNote } from './InfoNote';
 import { PracticeQuestion } from './PracticeQuestion';
 

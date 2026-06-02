@@ -50,17 +50,6 @@ export const cachingConfig: ProgressConfig = {
   legacyKeyMap: {},
 };
 
-type ModuleItem = {
-  id: number;
-  title: string;
-  description: string;
-  progress: number;
-  icon: ReactNode;
-  iconBg: string;
-  barColor: string;
-  href?: string;
-};
-
 export default function Dashboard() {
   return (
     <main className="min-h-screen bg-white">

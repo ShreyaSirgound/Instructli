@@ -232,7 +232,7 @@ export function SingleProcessor({ results }: SingleProcessorProps) {
             stroke={ currDataPath.imm_gen_mux || currDataPath.imm_gen_shift ? arrowColour: "#000000"}
         />
         <path id="imm_gen_shift_line" d="M464.5 226V420" 
-            stroke={ currDataPath.imm_gen_shift ? arrowColour: "#14129e"}
+            stroke={ currDataPath.imm_gen_shift ? arrowColour: "#000000"}
         />
 
         {/* MUX 3 BOX */}
