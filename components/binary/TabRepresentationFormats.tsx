@@ -15,9 +15,17 @@ export function TabRepresentationFormats() {
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
           With n bits, an unsigned integer can represent values from 0 to 2ⁿ − 1. For 8 bits: 0 to 255.
         </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">1011 1110</code> in unsigned 8-bit = 128 + 32 + 16 + 8 + 4 + 2 = 190 (base 10)
-        </p>
+        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
+          <div>1011 1110 (unsigned 8-bit)</div>
+          <div>= 1 × 128 = 128</div>
+          <div>+ 0 × 64 = 0</div>
+          <div>+ 1 × 32 = 32</div>
+          <div>+ 1 × 16 = 16</div>
+          <div>+ 1 × 8 = 8</div>
+          <div>+ 1 × 4 = 4</div>
+          <div>+ 1 × 2 = 2</div>
+          <div className="border-t border-gray-200 mt-2 pt-2">+ 0 × 1 = 0<br/>= 128 + 32 + 16 + 8 + 4 + 2 = 190₁₀</div>
+        </div>
         <div className="mt-4 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4">
           <p className="text-sm font-semibold text-gray-900 mb-2">8-bit unsigned range:</p>
           <p className="text-sm text-gray-700"><strong>Minimum:</strong> 0000 0000 = 0</p>
@@ -31,7 +39,15 @@ export function TabRepresentationFormats() {
           Sign-magnitude uses the most significant bit (leftmost) as a sign bit: 0 for positive, 1 for negative. The remaining bits represent the magnitude.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Problem:</strong> Sign-magnitude breaks for hardware. There are two zeros (+0 and −0), and addition doesn't work correctly. For example, 0001 + 1001 should equal 0, but it gives 1010 = −2.
+          <strong>Problem:</strong> Sign-magnitude breaks for hardware. There are two zeros (+0 and −0), and addition doesn't work correctly.
+        </p>
+        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
+          <div>  0001</div>
+          <div>+ 1001</div>
+          <div className="border-t border-gray-200 mt-2 pt-2">  1010 = −2</div>
+        </div>
+        <p className="text-sm text-gray-700 leading-relaxed mt-3">
+          That result is wrong for sign-magnitude addition: +1 plus −1 should be 0.
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
           <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono">1011 1110</code> in sign-magnitude 8-bit = -(32 + 16 + 8 + 4 + 2) = -62 (base 10)
@@ -74,6 +90,24 @@ export function TabRepresentationFormats() {
         <InfoNote>
           Two's complement is used by virtually all modern computers. There is exactly one zero, and the same adder circuit works for both positive and negative numbers.
         </InfoNote>
+      </Card>
+
+      {/* Binary subtraction (row-by-row example) */}
+      <Card variant="concept" title="Binary subtraction — row-by-row">
+        <p className="text-sm text-gray-700 leading-relaxed">
+          Subtraction can be performed by adding the two's complement of the subtrahend. Example shown row-by-row.
+        </p>
+        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
+          <div>  01011  (11₂)</div>
+          <div>- 00101  (5₂)</div>
+          <div className="mt-2">Find two's complement of 00101:</div>
+          <div>Invert =&gt; 11010</div>
+          <div>Add 1 =&gt; 11011</div>
+          <div className="mt-2">Now add: 01011 + 11011</div>
+          <div>  01011</div>
+          <div>+ 11011</div>
+          <div className="border-t border-gray-200 mt-2 pt-2">= 100110 (discard carry for fixed width) = 00110₂ = 6₁₀</div>
+        </div>
       </Card>
 
       {/* Practice Q1 */}
