@@ -54,6 +54,7 @@ export default function Terminal({
               onChange={(e) => {
                 setSelectedCategory(e.target.value);
                 setSelectedInstruction(PRESET_INSTRUCTIONS[e.target.value][0]);
+                // console.log("[Terminal Debug] Category changed:", e.target.value);
               }}
             >
               {Object.keys(PRESET_INSTRUCTIONS).map((category) => (
@@ -68,6 +69,7 @@ export default function Terminal({
               value={selectedInstruction}
               onChange={(e) => {
                 setSelectedInstruction(e.target.value);
+                // console.log("[Terminal Debug] Instruction changed:", e.target.value);
               }}
             >
               {PRESET_INSTRUCTIONS[selectedCategory].map((instruction) => (
@@ -92,6 +94,7 @@ export default function Terminal({
             <span>|</span>
             <button
               onClick={() => {
+                // console.log("[Terminal Debug] Execute clicked");
                 onExecute(selectedInstruction, selectedCategory);
                 sethighlight(true);
               }}
@@ -106,7 +109,7 @@ export default function Terminal({
         <div className="flex-1 bg-white px-6 overflow-auto relative">
           <div className="border border-gray-300 rounded bg-gray-50">
             <div
-              className="my-2 mx-2 mb-2 text-sm font-mono text-opacity-80 overflow-auto whitespace-pre"
+              className="mx-2 mb-2 text-sm font-mono text-opacity-80 overflow-auto whitespace-pre"
               style={{
                 lineHeight: "1.5",
                 tabSize: 2,
@@ -114,7 +117,12 @@ export default function Terminal({
             >
               {lines.map((line, index) => {
                 let bgClass = "";
-                let textClass = "text-grat-900";
+                let textClass = "text-gray-900";
+
+                if (index === 0 && highlight) {
+                  bgClass = "bg-gray-200";
+                  textClass = "text-gray-900 font-semibold";
+                }
 
                 return (
                   <span

@@ -3,20 +3,22 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { Card } from '@/components/Card';
+import { Card } from '../../../components/Card'
 import dynamic from "next/dynamic";
 import { getSavedProgress, computeProgress, saveProgress, createEmptyProgress } from '@/app/progressConfig';
-import PipelineProcessor from '@/components/pipeline/PipelineProcessor';
+import { returnPath,  JsonResponse} from '../../../src/utils/single-processor';
 import { ProgressConfig } from '@/app/progressConfig';
-import { PipelineState } from "'../../../src/utils/pipeline-types"
-import { handlePipeLinePreset } from '../../../src/utils/pipeline-processor';
+import { InfoNote } from "@/components/InfoNote";
+import { PracticeQuestion } from "../../../components/PracticeQuestion";
+import PipelineProcessor from "@/components/pipeline/PipelineProcessor";
+import { PipelineState } from "../../../src/utils/pipeline-types"
+import { handlePipeLinePreset } from "@/src/utils/pipeline-processor";
 
 // dynamically import so it only runs client-side -> ssr is server-side render
 const PipelineTerminal = dynamic(
-  () => import("@/components/pipeline/PipelineTerminal"),
+  () => import("../../../components/pipeline/PipelineTerminal"),
   { ssr: false }
 );
-
 
 const pipelineConfig: ProgressConfig = {
   storageKey: 'pipelineProgress',
@@ -38,8 +40,6 @@ export default function PipelineModule() {
   const [currCycle, setCurrCycle] = useState(-1);
   const [currentPreset, setCurrentPreset] = useState<{index: number, note: string} | null>(null);
 
-  
-
   const handleBackward = (currCycle: number) => {
     if (currCycle > 0) {
       setCurrCycle(currCycle - 1);
@@ -58,9 +58,8 @@ export default function PipelineModule() {
 
     localStorage.setItem("pipelineDiagram", JSON.stringify(data));
     localStorage.setItem("currCycle", JSON.stringify(newCycle%(data[data.length - 1].cycle +1)));
-    
+
   };
-  
 
   // resets and clears everything
   const handleReset = () => {
@@ -70,7 +69,7 @@ export default function PipelineModule() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-6 py-0 my-0">
         {/* Back link */}
         <Link
           href="/"
@@ -86,7 +85,7 @@ export default function PipelineModule() {
         </h1>
 
         {/* Progress bar */}
-        <div className="rounded-3xl border border-gray-200 bg-slate-50 p-6">
+        <div className="mb-8 rounded-3xl border border-gray-200 bg-slate-50 p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
             <div>
               <p className="text-sm font-semibold text-gray-900">Module progress</p>
@@ -101,27 +100,27 @@ export default function PipelineModule() {
             />
           </div>
         </div>
-      </div>
 
-      <div className="max-w-5xl mx-auto pt-0 px-6 py-12">
-        {/* Processor diagram card */}
-            <Card variant="simulation" title="Instruction visualizer">
-                <div className="flex-none relative bottom-[10px]">
-                <PipelineTerminal
-                    code={code}
-                    onCodeChange={setCode}
-                    onExecute={handleExecute}
-                    onBackward={handleBackward}
-                    onReset={handleReset}
-                    currCycle={currCycle}
-                    onPresetChange={setCurrentPreset}
-                />
-                </div>
+        <div className="max-w-5xl mx-auto my-0 py-0 px-0">
+            {/* Processor diagram card */}
+                <Card variant="simulation" title="Instruction visualizer">
+                    <div className="flex-none relative bottom-[10px]">
+                    <PipelineTerminal
+                        code={code}
+                        onCodeChange={setCode}
+                        onExecute={handleExecute}
+                        onBackward={handleBackward}
+                        onReset={handleReset}
+                        currCycle={currCycle}
+                        onPresetChange={setCurrentPreset}
+                    />
+                    </div>
 
-                <div className="flex-1 overflow-auto bg-white pb-[50px] p-5">
-                    <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset}/>
-                </div>
-            </Card>
+                    <div className="flex-1 overflow-auto bg-white pb-[50px] p-5">
+                        <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset}/>
+                    </div>
+                </Card>
+            </div>
         </div>
     </main>
   );

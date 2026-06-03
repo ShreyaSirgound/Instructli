@@ -3,18 +3,18 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { Card } from '@/components/Card';
+import { Card } from '../../../components/Card'
 import dynamic from "next/dynamic";
 import { getSavedProgress, computeProgress, saveProgress, createEmptyProgress } from '@/app/progressConfig';
 import { returnPath,  JsonResponse} from '../../../src/utils/single-processor';
-import { SingleProcessor } from '@/components/single-cycle/SingleCycle';
+import  SingleProcessor from '@/components/single-cycle/SingleCycle';
 import { ProgressConfig } from '@/app/progressConfig';
 import { InfoNote } from "@/components/InfoNote";
-import { PracticeQuestion } from "@/components/PracticeQuestion";
+import { PracticeQuestion } from "../../../components/PracticeQuestion";
 
 // dynamically import so it only runs client-side
 const Terminal = dynamic(
-  () => import('@/components/single-cycle/Terminal'),
+  () => import('../../../components/single-cycle/Terminal'),
   { ssr: false }
 );
 

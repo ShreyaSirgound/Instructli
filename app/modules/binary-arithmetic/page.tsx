@@ -2,8 +2,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-
-//import { TABS, TabId } from '@/components/binary/types';
 import { TabInterpreting }           from '@/components/binary/TabInterpreting';
 import { TabRepresentationFormats }  from '@/components/binary/TabRepresentationFormats';
 import { TabAdditionSubtraction }    from '@/components/binary/TabAdditionSubtraction';

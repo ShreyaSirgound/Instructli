@@ -1,5 +1,5 @@
+import { useState } from "react";
 import React from 'react';
-import { useState } from 'react';
 import type { DataPath, Block_Data } from '../../src/utils/return-types';
 import { JsonResponse } from "../../src/utils/single-processor";
 
@@ -7,7 +7,7 @@ type SingleProcessorProps = {
   results: JsonResponse | null | undefined;
 };
 
-export function SingleProcessor({ results }: SingleProcessorProps) {
+export default function SingleProcessor({ results }: SingleProcessorProps) {
     const [hovered, setHovered] = useState<string | null>(null);    
     const arrowColour = "#ff0000";
 
@@ -94,6 +94,8 @@ export function SingleProcessor({ results }: SingleProcessorProps) {
     results != null
       ? results.block_data
       : defaultBlockData;
+
+//   console.log("[Hellloo11] Current Data Path:", hoverBlockData);
 
   return (
     <>
