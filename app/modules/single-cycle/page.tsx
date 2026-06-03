@@ -56,7 +56,7 @@ export default function SingleCycleModule() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-0 my-0">
+      <div className="max-w-4xl mx-auto px-6 py-0 my-0 pt-12">
         {/* Back link */}
         <Link
           href="/"

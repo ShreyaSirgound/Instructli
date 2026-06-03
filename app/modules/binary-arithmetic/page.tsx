@@ -31,7 +31,17 @@ export default function BinaryArithmeticModule() {
     setProgress(getSavedProgress(binaryArithmeticConfig));
   }, []);
 
-  const progressValue = useMemo(() => computeProgress(binaryArithmeticConfig, progress), [progress]);
+  //const progressValue = useMemo(() => computeProgress(binaryArithmeticConfig, progress), [progress]);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    setProgress(getSavedProgress(binaryArithmeticConfig));
+  }, []);
+  
+  const progressValue = useMemo(() => 
+    mounted ? computeProgress(binaryArithmeticConfig, progress) : 0, 
+    [progress, mounted]
+  );
   const currentComplete = progress[activeTab] ?? false;
 
   function markSectionComplete() {

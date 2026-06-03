@@ -69,7 +69,7 @@ export default function PipelineModule() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-0 my-0">
+      <div className="max-w-4xl mx-auto px-6 py-0 my-0 pt-12">
         {/* Back link */}
         <Link
           href="/"
@@ -100,6 +100,7 @@ export default function PipelineModule() {
             />
           </div>
         </div>
+        </div>
 
         <div className="max-w-5xl mx-auto my-0 py-0 px-0">
             {/* Processor diagram card */}
@@ -120,7 +121,6 @@ export default function PipelineModule() {
                         <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset}/>
                     </div>
                 </Card>
-            </div>
         </div>
     </main>
   );
