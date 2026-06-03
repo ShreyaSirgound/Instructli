@@ -13,7 +13,18 @@ function SignMagnitudeProblems() {
     },
     {
       title: 'Problem 2 — addition breaks',
-      body: 'Try +1 + (−1): 0001 + 1001 = 1010 = −2. Wrong — the hardware cannot reuse the integer adder.',
+      body: (
+        <div className="space-y-2">
+          <div className="text-sm text-gray-600">Try adding +1 and −1 using sign-magnitude:</div>
+          <pre className="rounded-2xl bg-gray-50 border border-gray-100 p-3 font-mono text-sm text-gray-900 whitespace-pre">
+  0001
++ 1001
+-------
+  1010 = −2
+          </pre>
+          <div className="text-sm text-gray-600">Wrong — the hardware cannot reuse the integer adder.</div>
+        </div>
+      ),
       note: 'Needs separate subtraction circuitry.',
     },
   ];
@@ -22,7 +33,7 @@ function SignMagnitudeProblems() {
       {issues.map((item) => (
         <div key={item.title} className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
           <p className="text-sm font-semibold text-gray-900 mb-1">{item.title}</p>
-          <p className="text-sm text-gray-600 leading-relaxed">{item.body}</p>
+          <div className="text-sm text-gray-600 leading-relaxed">{item.body}</div>
           <p className="mt-2 text-xs font-medium" style={{ color: colors.red.dark }}>{item.note}</p>
         </div>
       ))}

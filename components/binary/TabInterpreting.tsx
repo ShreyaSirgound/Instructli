@@ -74,9 +74,14 @@ export function TabInterpreting() {
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
           To understand a binary number, associate each bit with a power of 2, starting from the rightmost bit (least significant). The rightmost bit is 2⁰ = 1, the next is 2¹ = 2, then 2² = 4, and so on.
         </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">11001₂</code> = (1 × 2⁴) + (1 × 2³) + (0 × 2²) + (0 × 2¹) + (1 × 2⁰) = 16 + 8 + 1 = 25₁₀
-        </p>
+        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
+          <div>11001₂</div>
+          <div>= 1 × 2⁴ = 16</div>
+          <div>+ 1 × 2³ = 8</div>
+          <div>+ 0 × 2² = 0</div>
+          <div>+ 0 × 2¹ = 0</div>
+          <div className="border-t border-gray-200 mt-2 pt-2">= 16 + 8 + 0 + 0 + 1 = 25₁₀</div>
+        </div>
       </Card>
 
       {/* Octal */}
@@ -90,9 +95,13 @@ export function TabInterpreting() {
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
           To interpret an octal number, associate each digit with a power of 8, starting from the rightmost digit.
         </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">7526₈</code> = (7 × 8³) + (5 × 8²) + (2 × 8¹) + (6 × 8⁰) = 3584 + 320 + 16 + 6 = 3926₁₀
-        </p>
+        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
+          <div>7526₈</div>
+          <div>= 7 × 8³ = 7 × 512 = 3584</div>
+          <div>+ 5 × 8² = 5 × 64 = 320</div>
+          <div>+ 2 × 8¹ = 2 × 8 = 16</div>
+          <div className="border-t border-gray-200 mt-2 pt-2">+ 6 × 8⁰ = 6 × 1 = 6<br/>= 3584 + 320 + 16 + 6 = 3926₁₀</div>
+        </div>
       </Card>
 
       {/* Hexadecimal */}
@@ -106,9 +115,13 @@ export function TabInterpreting() {
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
           To interpret a hexadecimal number, associate each digit with a power of 16, starting from the rightmost digit.
         </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">A21F₁₆</code> = (10 × 16³) + (2 × 16²) + (1 × 16¹) + (15 × 16⁰) = 40960 + 512 + 16 + 15 = 41503₁₀
-        </p>
+        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
+          <div>A21F₁₆</div>
+          <div>= A × 16³ = 10 × 4096 = 40960</div>
+          <div>+ 2 × 16² = 2 × 256 = 512</div>
+          <div>+ 1 × 16¹ = 1 × 16 = 16</div>
+          <div className="border-t border-gray-200 mt-2 pt-2">+ F × 16⁰ = 15 × 1 = 15<br/>= 40960 + 512 + 16 + 15 = 41503₁₀</div>
+        </div>
         <InfoNote>
           Octal groups bits into threes (8 = 2³); hexadecimal groups bits into fours (16 = 2⁴). Both are compact shorthand for binary — no conversion arithmetic needed, only grouping.
         </InfoNote>

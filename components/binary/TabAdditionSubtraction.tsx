@@ -166,8 +166,23 @@ export function TabAdditionSubtraction() {
           <strong>Example:</strong> To compute 11001 − 10, convert to 11001 + (−10).
         </p>
         <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          First, find −10 in two's complement: 10 = 01010, invert → 10101, add 1 → 10110. Then add: 11001 + 10110 = 101111 (drop the overflow bit) = 01111.
+          First, find −10 in two's complement:
         </p>
+        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
+          <div>10 = 01010</div>
+          <div>invert → 10101</div>
+          <div>add 1 → 10110</div>
+        </div>
+        <p className="text-sm text-gray-700 leading-relaxed mt-3">
+          Then add the values row by row:
+        </p>
+        <pre className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900 whitespace-pre-wrap">
+  11001
++ 10110
+-------
+ 101111
+(drop carry) 01111
+        </pre>
         <InfoNote>
           Two's complement makes subtraction as simple as addition, which is why it is the standard in modern computers.
         </InfoNote>
