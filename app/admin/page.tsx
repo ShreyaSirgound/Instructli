@@ -3,7 +3,6 @@
 import { useState, type ReactNode } from 'react'
 import { Binary, Cpu, MonitorCog, Rows2, AlertTriangle, Database, Eye, EyeOff, Lock, Unlock, MonitorCogIcon } from "lucide-react"
 import ModuleCard from '@/components/ModuleCard'
-import { ProgressConfig} from './progressConfig';
 import { binaryArithmeticConfig, cachingConfig, hazardsConfig, machineInstructionsConfig, pipelineConfig, singleCycleConfig } from '@/app/moduleConfigs';
 
 const initialModules = [
