@@ -2,53 +2,7 @@ import type { ReactNode } from 'react'
 import { Binary, Cpu, MonitorCogIcon, Rows2, AlertTriangle, Database } from "lucide-react"
 import ModuleCard from '@/components/ModuleCard'
 import { ProgressConfig} from './progressConfig';
-
-export const binaryArithmeticConfig: ProgressConfig = {
-  storageKey: 'binaryArithmeticProgress',
-  sectionIds: ['interpreting', 'representation-formats', 'addition-subtraction', 'overflow-saturating'],
-  eventName: 'binary-arithmetic-progress-updated',
-  legacyKeyMap: {
-    'interpreting': 'number-systems',
-    'representation-formats': 'signed-integers',
-    'addition-subtraction': 'addition-overflow',
-    'overflow-saturating': 'precision',
-  },
-};
-
-export const singleCycleConfig: ProgressConfig = {
-  storageKey: 'singleCycleProgress',
-  sectionIds: [],
-  eventName: 'single-cycle-progress-updated',
-  legacyKeyMap: {},
-};
-
-export const pipelineConfig: ProgressConfig = {
-  storageKey: 'pipelineProgress',
-  sectionIds: [],
-  eventName: 'pipeline-progress-updated',
-  legacyKeyMap: {},
-};
-
-export const machineInstructionsConfig: ProgressConfig = {
-  storageKey: 'machineInstructionsProgress',
-  sectionIds: [],
-  eventName: 'machine-instructions-progress-updated',
-  legacyKeyMap: {},
-};
-
-export const hazardsConfig: ProgressConfig = {
-  storageKey: 'hazardsProgress',
-  sectionIds: [],
-  eventName: 'hazards-progress-updated',
-  legacyKeyMap: {},
-};
-
-export const cachingConfig: ProgressConfig = {
-  storageKey: 'cachingProgress',
-  sectionIds: [],
-  eventName: 'caching-progress-updated',
-  legacyKeyMap: {},
-};
+import { binaryArithmeticConfig, cachingConfig, hazardsConfig, machineInstructionsConfig, pipelineConfig, singleCycleConfig } from './moduleConfigs';
 
 export default function Dashboard() {
   return (
@@ -80,6 +34,7 @@ export default function Dashboard() {
             iconBg="#E9F2DD"
             barColor="#3F681B"
             progressConfig={singleCycleConfig}
+            scrollKey="singleCycleScrollProgress"
           />
 
           <ModuleCard

@@ -1,37 +1,43 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect} from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Card } from '../../../components/Card'
 import dynamic from "next/dynamic";
-import { getSavedProgress, computeProgress, saveProgress, createEmptyProgress } from '@/app/progressConfig';
 import { returnPath,  JsonResponse} from '../../../src/utils/single-processor';
 import  SingleProcessor from '@/components/single-cycle/SingleCycle';
-import { ProgressConfig } from '@/app/progressConfig';
 import { InfoNote } from "@/components/InfoNote";
 import { PracticeQuestion } from "../../../components/PracticeQuestion";
+import { singleCycleConfig } from '@/app/moduleConfigs';
 
-// dynamically import so it only runs client-side
 const Terminal = dynamic(
   () => import('../../../components/single-cycle/Terminal'),
   { ssr: false }
 );
 
-const singleCycleConfig: ProgressConfig = {
-  storageKey: 'singleCycleProgress',
-  sectionIds: [],
-  eventName: 'single-cycle-progress-updated',
-};
-
 export default function SingleCycleModule() {
-  const [progress, setProgress] = useState(() => createEmptyProgress(singleCycleConfig));
+  const SCROLL_KEY = 'singleCycleScrollProgress';
+
+  const [scrollProgress, setScrollProgress] = useState<number>(() => {
+    if (typeof window === 'undefined') return 0;
+    return Number(localStorage.getItem(SCROLL_KEY) ?? 0);
+  });
 
   useEffect(() => {
-    setProgress(getSavedProgress(singleCycleConfig));
-  }, []);
+    function handleScroll() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
 
-  const progressValue = useMemo(() => computeProgress(singleCycleConfig, progress), [progress]);
+      setScrollProgress(pct);
+      localStorage.setItem(SCROLL_KEY, String(pct));
+      window.dispatchEvent(new Event(singleCycleConfig.eventName));
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const [code, setCode] = useState<string>("add x28, x6, x7\n");
   const [results, setResults] = useState<JsonResponse | null | undefined>();
@@ -70,23 +76,6 @@ export default function SingleCycleModule() {
         <h1 className="text-3xl font-bold text-gray-900 mb-6">
           Module 2: Single Cycle Processor
         </h1>
-
-        {/* Progress bar */}
-        <div className="mb-8 rounded-3xl border border-gray-200 bg-slate-50 p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
-            <div>
-              <p className="text-sm font-semibold text-gray-900">Module progress</p>
-              <p className="text-sm text-gray-500">Complete all sections to reach 100%.</p>
-            </div>
-            <p className="text-sm font-semibold text-gray-900">{progressValue}% complete</p>
-          </div>
-          <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-300"
-              style={{ width: `${progressValue}%`, backgroundColor: progressValue === 100 ? '#16a34a' : '#4f46e5' }}
-            />
-          </div>
-        </div>
 
         {/* ── Concept: What is a single-cycle processor? ── */}
         <Card variant="concept" title="What is a single-cycle processor?">

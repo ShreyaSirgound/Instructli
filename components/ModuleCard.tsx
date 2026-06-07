@@ -13,15 +13,20 @@ type ModuleCardProps = {
   iconBg: string;
   barColor: string;
   progressConfig: ProgressConfig<string>;
+  scrollKey?: string;
 };
 
 export default function ModuleCard({
-  title, description, href, icon, iconBg, barColor, progressConfig,
+  title, description, href, icon, iconBg, barColor, progressConfig, scrollKey
 }: ModuleCardProps) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const update = () => {
+      if (scrollKey) {
+        setProgress(Number(localStorage.getItem(scrollKey) ?? 0));
+        return;
+      }
       const saved = getSavedProgress(progressConfig);
       setProgress(computeProgress(progressConfig, saved));
     };
@@ -33,7 +38,7 @@ export default function ModuleCard({
       window.removeEventListener('storage', update);
       window.removeEventListener(progressConfig.eventName, update as EventListener);
     };
-  }, [progressConfig]);
+  }, [progressConfig, scrollKey]);
 
   return (
     <Link href={href} className="group block bg-white border border-gray-200 rounded-2xl p-6 min-w-74 hover:shadow-md hover:border-gray-300 transition-all duration-200">

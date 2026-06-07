@@ -7,7 +7,7 @@ import { TabRepresentationFormats }  from '@/components/binary/TabRepresentation
 import { TabAdditionSubtraction }    from '@/components/binary/TabAdditionSubtraction';
 import { TabOverflowSaturating }     from '@/components/binary/TabOverflowSaturating';
 import { getSavedProgress, computeProgress, saveProgress } from '@/app/progressConfig';
-import { binaryArithmeticConfig } from '@/app/page';
+import { binaryArithmeticConfig } from '@/app/moduleConfigs';
 
 export type TabId = 'interpreting' | 'representation-formats' | 'addition-subtraction' | 'overflow-saturating';
 
