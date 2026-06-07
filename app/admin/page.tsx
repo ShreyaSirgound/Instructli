@@ -1,7 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import { Binary, Cpu, MonitorCog, Rows2, AlertTriangle, Database, Eye, EyeOff, Lock, Unlock } from "lucide-react"
+import { useState, type ReactNode } from 'react'
+import { Binary, Cpu, MonitorCog, Rows2, AlertTriangle, Database, Eye, EyeOff, Lock, Unlock, MonitorCogIcon } from "lucide-react"
+import ModuleCard from '@/components/ModuleCard'
+import { ProgressConfig} from './progressConfig';
+import { binaryArithmeticConfig, cachingConfig, hazardsConfig, machineInstructionsConfig, pipelineConfig, singleCycleConfig } from '@/app/moduleConfigs';
 
 const initialModules = [
   {
@@ -91,136 +94,114 @@ function Toggle({
   )
 }
 
-function ModuleRow({
-  mod,
-  onToggleHidden,
-  onToggleLocked,
-}: {
-  mod: Module
-  onToggleHidden: () => void
-  onToggleLocked: () => void
-}) {
-  return (
-    <div className={`flex items-center justify-between p-4 rounded-2xl border ${mod.hidden ? "bg-gray-50 border-gray-100" : "bg-white border-gray-200"} transition-all duration-200`}>
-      {/* Left: icon + info */}
-      <div className="flex items-center gap-4">
-        <div
-          style={{ backgroundColor: mod.iconBg, color: mod.iconColor }}
-          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${mod.hidden ? "opacity-40" : ""}`}
-        >
-          {mod.icon}
-        </div>
-        <div>
-          <p className={`font-semibold text-sm ${mod.hidden ? "text-gray-400" : "text-gray-900"}`}>
-            {mod.title}
-          </p>
-          <p className="text-xs text-gray-400">{mod.description}</p>
-        </div>
-      </div>
+export default function Dashboard() {
+    const [modules, setModules] = useState(initialModules)
 
-      {/* Hide/Lock toggles */}
-      <div className="flex items-center gap-6">
-        {/* Visible toggle */}
-        <div className="flex items-center gap-2">
-          {mod.hidden ? (
-            <EyeOff size={15} className="text-gray-300" />
-          ) : (
-            <Eye size={15} className="text-gray-400" />
-          )}
-          <Toggle
-            enabled={!mod.hidden}
-            onChange={onToggleHidden}
-            colorOn="#1E9C07"
-          />
-          <span className="text-xs text-gray-400 w-14">
-            {mod.hidden ? "Hidden" : "Visible"}
-          </span>
-        </div>
-
-        {/* Locked toggle */}
-        <div className="flex items-center gap-2">
-          {mod.locked ? (
-            <Lock size={15} className="text-gray-300" />
-          ) : (
-            <Unlock size={15} className="text-gray-400" />
-          )}
-          <Toggle
-            enabled={!mod.locked}
-            onChange={onToggleLocked}
-            colorOn="#2684FC"
-          />
-          <span className="text-xs text-gray-400 w-16">
-            {mod.locked ? "Locked" : "Unlocked"}
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default function AdminDashboard() {
-  const [modules, setModules] = useState(initialModules)
-
-  const toggleHidden = (id: number) => {
+    const toggleHidden = (id: number) => {
     setModules((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, hidden: !m.hidden } : m))
+        prev.map((m) => (m.id === id ? { ...m, hidden: !m.hidden } : m))
     )
-  }
+    }
 
-  const toggleLocked = (id: number) => {
+    const toggleLocked = (id: number) => {
     setModules((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, locked: !m.locked } : m))
+        prev.map((m) => (m.id === id ? { ...m, locked: !m.locked } : m))
     )
-  }
-
+    }
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-2xl mx-auto px-6 py-16">
+      <div className="max-w-5xl mx-auto px-6 py-16">
         {/* Header */}
-        <div className="mb-2">
-          <h1 className="text-3xl font-bold text-gray-900 mt-0.5">Manage Modules</h1>
+        <div className="text-center mb-2">
+          <h1 className="text-4xl font-bold text-gray-900">Manage Modules</h1>
         </div>
 
         {/* Quick actions */}
-        <div className="flex gap-2 mt-6 mb-8">
+        <div className="flex justify-center gap-8 mt-6 mb-8">
           <button
             onClick={() => setModules((prev) => prev.map((m) => ({ ...m, hidden: false })))}
-            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
+            className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
           >
             Show all
           </button>
           <button
             onClick={() => setModules((prev) => prev.map((m) => ({ ...m, hidden: true })))}
-            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
+            className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
           >
             Hide all
           </button>
           <button
             onClick={() => setModules((prev) => prev.map((m) => ({ ...m, locked: false })))}
-            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
+            className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
           >
             Unlock all
           </button>
           <button
             onClick={() => setModules((prev) => prev.map((m) => ({ ...m, locked: true })))}
-            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
+            className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
           >
             Lock all
           </button>
         </div>
 
-        {/* Module list */}
-        <div className="flex flex-col gap-3">
-          {modules.map((mod) => (
-            <ModuleRow
-              key={mod.id}
-              mod={mod}
-              onToggleHidden={() => toggleHidden(mod.id)}
-              onToggleLocked={() => toggleLocked(mod.id)}
-            />
-          ))}
+        {/* Module grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {modules.map((mod) => {
+            const configs = [
+            { config: binaryArithmeticConfig, scrollKey: undefined, href: "/modules/binary-arithmetic" },
+            { config: singleCycleConfig, scrollKey: "singleCycleScrollProgress", href: "/modules/single-cycle" },
+            { config: pipelineConfig, scrollKey: undefined, href: "/modules/pipeline" },
+            { config: machineInstructionsConfig, scrollKey: undefined, href: "/modules/machine-instructions" },
+            { config: hazardsConfig, scrollKey: undefined, href: "/modules/hazards" },
+            { config: cachingConfig, scrollKey: undefined, href: "/modules/caching" },
+            ];
+            const { config, scrollKey, href } = configs[mod.id - 1];
+
+            return (
+            <div key={mod.id} className={`relative group block bg-white border rounded-2xl p-6 transition-all duration-200 ${mod.hidden ? 'opacity-50 border-gray-100' : 'border-gray-200 hover:shadow-md hover:border-gray-300'}`}>
+                {/* Icon */}
+                <div
+                style={{ backgroundColor: mod.iconBg, color: mod.iconColor }}
+                className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4"
+                >
+                {mod.icon}
+                </div>
+
+                {/* Title + description */}
+                <h3 className="text-lg font-semibold text-gray-900">{mod.title}</h3>
+                <p className="text-sm text-gray-500 mt-1">{mod.description}</p>
+
+                {/* Hide + Lock toggles */}
+                <div className="flex items-center gap-4 mt-4">
+                <button
+                onClick={() => toggleHidden(mod.id)}
+                className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition ${
+                    mod.hidden
+                    ? 'border-gray-200 text-gray-400 bg-gray-50 hover:bg-gray-100'
+                    : 'border-green-200 text-green-700 bg-green-50 hover:bg-green-100'
+                }`}
+                >
+                {mod.hidden ? <EyeOff size={13} /> : <Eye size={13} />}
+                {mod.hidden ? 'Hidden' : 'Visible'}
+                </button>
+
+                <button
+                onClick={() => toggleLocked(mod.id)}
+                className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border transition ${
+                    mod.locked
+                    ? 'border-gray-200 text-gray-400 bg-gray-50 hover:bg-gray-100'
+                    : 'border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100'
+                }`}
+                >
+                {mod.locked ? <Lock size={13} /> : <Unlock size={13} />}
+                {mod.locked ? 'Locked' : 'Unlocked'}
+                </button>
+                </div>
+            </div>
+            );
+        })}
         </div>
       </div>
     </main>
-  )
+  );
 }
