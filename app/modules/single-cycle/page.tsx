@@ -7,6 +7,7 @@ import { Card } from '../../../components/Card'
 import dynamic from "next/dynamic";
 import { returnPath,  JsonResponse} from '../../../src/utils/single-processor';
 import  SingleProcessor from '@/components/single-cycle/SingleCycle';
+import  OldSingleProcessor from '@/components/single-cycle/SingleCycleOld';
 import SingleCycleQuiz from '@/components/single-cycle/SingleCycleQuiz';
 import { InfoNote } from "@/components/InfoNote";
 import { PracticeQuestion } from "../../../components/PracticeQuestion";
@@ -250,7 +251,7 @@ export default function SingleCycleModule() {
                 />
                 </div>
 
-                <div className="flex-1 overflow-auto bg-white pb-[50px] p-5">
+                <div className="flex-1 overflow-auto bg-white pb-[50px]">
                     <SingleProcessor results={results}/>
                 </div>
             </Card>
@@ -302,7 +303,7 @@ export default function SingleCycleModule() {
         <div className="max-w-5xl mx-auto my-0 py-0 px-0">
         {/* Processor step-through quiz card */}
             <Card variant="simulation" title="Trace the datapath">
-              <div className="px-6 py-4">
+              <div className="p-0">
                 <p className="text-sm text-gray-600 mb-4">
                   For each instruction below, click every path segment on the diagram
                   that carries a signal during execution — one step at a time.
