@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { getSavedProgress, computeProgress, saveProgress } from '@/app/progressConfig';
 import { InfoNote } from "@/components/InfoNote";
 import PipelineProcessor from "@/components/pipeline/PipelineProcessor";
+import PipelineQuiz from "@/components/pipeline/PipelineQuiz";
 import { PipelineState } from "../../../src/utils/pipeline-types"
 import { handlePipeLinePreset } from "@/src/utils/pipeline-processor";
 import { pipelineConfig } from '@/app/moduleConfigs';
@@ -255,13 +256,21 @@ export default function PipelineModule() {
               />
             </div>
 
-            <div className="flex-1 overflow-auto bg-white pb-[50px] p-5">
+            <div className="flex-1 overflow-auto bg-white pb-[50px]">
               <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset} />
             </div>
           </Card>
         )}
 
-        <div className="mt-6 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        {activeTab === 'simulation' && (
+          <Card variant="simulation" title="Trace the datapath">
+            <div className="flex-1 overflow-auto bg-white pb-[50px]">
+              <PipelineQuiz/>
+            </div>
+          </Card>
+        )}
+
+        <div className="mt-6 mb-10 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-lg font-semibold text-gray-900">Finished this section?</p>
