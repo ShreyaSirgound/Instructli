@@ -128,6 +128,18 @@ function buildHoverText(
           }`
         : null;
 
+    case "IF/ID":
+      return `IF/ID\n\nHolds the fetched instruction and program counter while the decode stage reads the fields.\nThis lets the next cycle begin ID without waiting for IF to finish.`;
+
+    case "ID/EX":
+      return `ID/EX\n\nCarries decoded register values, control signals, and immediate values into the execute stage.\nIt separates instruction decode from execution.`;
+
+    case "EX/MEM":
+      return `EX/MEM\n\nStores the ALU result, branch decision signals, and register data for the memory stage.\nIt separates execution from memory access.`;
+
+    case "MEM/WB":
+      return `MEM/WB\n\nHolds the value from data memory or the ALU result until the write-back stage writes it into the register file.`;
+
     case "HAZARDS":
       return `HAZARDS:\n${hazards.length ? hazards.join("\n") : "None"}`;
 

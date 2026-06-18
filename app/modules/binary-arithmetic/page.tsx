@@ -6,7 +6,7 @@ import { TabInterpreting }           from '@/components/binary/TabInterpreting';
 import { TabRepresentationFormats }  from '@/components/binary/TabRepresentationFormats';
 import { TabAdditionSubtraction }    from '@/components/binary/TabAdditionSubtraction';
 import { TabOverflowSaturating }     from '@/components/binary/TabOverflowSaturating';
-import { getSavedProgress, computeProgress, saveProgress } from '@/app/progressConfig';
+import { getSavedProgress, computeProgress, saveProgress, createEmptyProgress } from '@/app/progressConfig';
 import { binaryArithmeticConfig } from '@/app/moduleConfigs';
 
 export type TabId = 'interpreting' | 'representation-formats' | 'addition-subtraction' | 'overflow-saturating';
@@ -25,11 +25,7 @@ export const TABS: Tab[] = [
 
 export default function BinaryArithmeticModule() {
   const [activeTab, setActiveTab] = useState<TabId>('interpreting');
-  const [progress, setProgress] = useState(() => getSavedProgress(binaryArithmeticConfig));
-
-  useEffect(() => {
-    setProgress(getSavedProgress(binaryArithmeticConfig));
-  }, []);
+  const [progress, setProgress] = useState(() => createEmptyProgress(binaryArithmeticConfig));
 
   //const progressValue = useMemo(() => computeProgress(binaryArithmeticConfig, progress), [progress]);
   const [mounted, setMounted] = useState(false);

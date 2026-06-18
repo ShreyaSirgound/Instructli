@@ -20,7 +20,7 @@ export const singleCycleConfig: ProgressConfig = {
 
 export const pipelineConfig: ProgressConfig = {
   storageKey: 'pipelineProgress',
-  sectionIds: ['overview', 'stages', 'timing', 'simulation'],
+  sectionIds: ['overview', 'simulation'],
   eventName: 'pipeline-progress-updated',
   legacyKeyMap: {},
 };

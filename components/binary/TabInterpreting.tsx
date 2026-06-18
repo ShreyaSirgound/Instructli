@@ -2,9 +2,23 @@
 import React, { useState } from 'react';
 import { Card } from '../Card';
 import { InfoNote } from '../InfoNote';
-import { PracticeQuestion } from '../PracticeQuestion';
 
 const N = 8;
+
+type QuizOption = {
+  label: string;
+  text: string;
+  wrongExplanation?: string;
+};
+
+type QuizQuestion = {
+  title: string;
+  prompt: React.ReactNode;
+  options: QuizOption[];
+  correctLabel: string;
+  correctExplanation: React.ReactNode;
+  wrongExplanation: React.ReactNode;
+};
 
 function BaseConverter() {
   const [bits, setBits] = useState<number[]>([0, 1, 0, 1, 1, 0, 1, 0]);
@@ -60,71 +74,161 @@ function BaseConverter() {
   );
 }
 
+const QUIZ_QUESTIONS: QuizQuestion[] = [
+  {
+    title: 'Question 1 of 3 — Binary (Base 2)',
+    prompt: <>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">11001₂</code> in decimal?</>,
+    options: [
+      { label: 'A', text: '25' },
+      { label: 'B', text: '19', wrongExplanation: 'Recount: 16 + 8 + 0 + 0 + 1 = 25, not 19.' },
+      { label: 'C', text: '17', wrongExplanation: 'Check your powers of 2: 2⁴=16, 2³=8, 2²=4, 2¹=2, 2⁰=1.' },
+      { label: 'D', text: '33', wrongExplanation: 'That is too high; double-check the bit-to-power mapping.' },
+    ],
+    correctLabel: 'A',
+    correctExplanation: (
+      <div className="space-y-2">
+        <p><strong>Binary</strong> is base 2, using only digits 0 and 1.</p>
+        <p>Each digit (bit) represents a power of 2:</p>
+        <div className="rounded bg-gray-100 px-3 py-2 font-mono text-sm">
+          <div>11001₂</div>
+          <div className="text-gray-600">= 1×2⁴ + 1×2³ + 0×2² + 0×2¹ + 1×2⁰</div>
+          <div className="text-gray-600">= 1×16 + 1×8 + 0×4 + 0×2 + 1×1</div>
+          <div className="border-t border-gray-300 mt-1 pt-1">= 16 + 8 + 0 + 0 + 1 = 25₁₀</div>
+        </div>
+      </div>
+    ),
+    wrongExplanation: 'Multiply each bit by its power of 2 (starting from the right at 2⁰ = 1), then sum them.',
+  },
+  {
+    title: 'Question 2 of 3 — Octal (Base 8)',
+    prompt: <>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">352₈</code> in decimal?</>,
+    options: [
+      { label: 'A', text: '226' },
+      { label: 'B', text: '234' },
+      { label: 'C', text: '298', wrongExplanation: 'Check: (3 × 8²) + (5 × 8¹) + (2 × 8⁰) = 192 + 40 + 2 = 234, not 298.' },
+      { label: 'D', text: '352', wrongExplanation: 'That is the octal representation; convert using powers of 8.' },
+    ],
+    correctLabel: 'B',
+    correctExplanation: (
+      <div className="space-y-2">
+        <p><strong>Octal</strong> is base 8, using digits 0–7.</p>
+        <p>Each digit represents a power of 8:</p>
+        <div className="rounded bg-gray-100 px-3 py-2 font-mono text-sm">
+          <div>352₈</div>
+          <div className="text-gray-600">= 3×8² + 5×8¹ + 2×8⁰</div>
+          <div className="text-gray-600">= 3×64 + 5×8 + 2×1</div>
+          <div className="border-t border-gray-300 mt-1 pt-1">= 192 + 40 + 2 = 234₁₀</div>
+        </div>
+      </div>
+    ),
+    wrongExplanation: 'Use powers of 8: multiply each digit by 8 raised to its position (from right, starting at 0).',
+  },
+  {
+    title: 'Question 3 of 3 — Hexadecimal (Base 16)',
+    prompt: <>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">2C₁₆</code> in decimal?</>,
+    options: [
+      { label: 'A', text: '44' },
+      { label: 'B', text: '32', wrongExplanation: 'Remember C = 12 in decimal; add 12 to 32 to get 44.' },
+      { label: 'C', text: '212', wrongExplanation: 'Do not treat 2C as decimal digits; use hex-to-decimal conversion.' },
+      { label: 'D', text: '28', wrongExplanation: '(2 × 16) + 12 = 32 + 12 = 44, not 28.' },
+    ],
+    correctLabel: 'A',
+    correctExplanation: (
+      <div className="space-y-2">
+        <p><strong>Hexadecimal</strong> is base 16, using digits 0–9 and letters A–F (where A=10, B=11, C=12, D=13, E=14, F=15).</p>
+        <p>Each digit represents a power of 16:</p>
+        <div className="rounded bg-gray-100 px-3 py-2 font-mono text-sm">
+          <div>2C₁₆</div>
+          <div className="text-gray-600">= 2×16¹ + C×16⁰</div>
+          <div className="text-gray-600">= 2×16 + 12×1</div>
+          <div className="border-t border-gray-300 mt-1 pt-1">= 32 + 12 = 44₁₀</div>
+        </div>
+      </div>
+    ),
+    wrongExplanation: 'Remember: A=10, B=11, C=12, D=13, E=14, F=15. Use powers of 16 to convert.',
+  },
+];
+
 export function TabInterpreting() {
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const currentQuestion = QUIZ_QUESTIONS[questionIndex];
+  const isCorrect = selectedOption === currentQuestion.correctLabel;
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+  };
+
+  const handleNext = () => {
+    setQuestionIndex((prev) => (prev + 1) % QUIZ_QUESTIONS.length);
+    setSelectedOption(null);
+    setSubmitted(false);
+  };
+
   return (
     <div>
-      {/* Binary */}
-      <Card variant="concept" title="Binary — Base 2">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          Binary is a number system with base 2. Only two digits are used: 0 and 1. Each digit is called a <strong>bit</strong>.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          Binary numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0b</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0B</code>, or by the subscript 2. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0b11001</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">11001₂</code>.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          To understand a binary number, associate each bit with a power of 2, starting from the rightmost bit (least significant). The rightmost bit is 2⁰ = 1, the next is 2¹ = 2, then 2² = 4, and so on.
-        </p>
-        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
-          <div>11001₂</div>
-          <div>= 1 × 2⁴ = 16</div>
-          <div>+ 1 × 2³ = 8</div>
-          <div>+ 0 × 2² = 0</div>
-          <div>+ 0 × 2¹ = 0</div>
-          <div className="border-t border-gray-200 mt-2 pt-2">= 16 + 8 + 0 + 0 + 1 = 25₁₀</div>
-        </div>
-      </Card>
+      {/* Quiz block */}
+      <Card variant="worked" title="Practice: Number system interpretation">
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <p className="text-sm text-gray-700">
+              Convert the given number to decimal. Each question explores a different number base.
+            </p>
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-gray-900">{currentQuestion.title}</p>
+              <p className="text-sm text-gray-700">{currentQuestion.prompt}</p>
+            </div>
+          </div>
 
-      {/* Octal */}
-      <Card variant="concept" title="Octal — Base 8">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          Octal is a base-8 number system. Eight digits are used: 0, 1, 2, 3, 4, 5, 6, 7.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          Octal numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0o</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0O</code>, or by the subscript 8. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0o7526</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">7526₈</code>.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          To interpret an octal number, associate each digit with a power of 8, starting from the rightmost digit.
-        </p>
-        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
-          <div>7526₈</div>
-          <div>= 7 × 8³ = 7 × 512 = 3584</div>
-          <div>+ 5 × 8² = 5 × 64 = 320</div>
-          <div>+ 2 × 8¹ = 2 × 8 = 16</div>
-          <div className="border-t border-gray-200 mt-2 pt-2">+ 6 × 8⁰ = 6 × 1 = 6<br/>= 3584 + 320 + 16 + 6 = 3926₁₀</div>
-        </div>
-      </Card>
+          <div className="space-y-3">
+            {currentQuestion.options.map((option) => (
+              <label key={option.label} className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 hover:border-indigo-500 transition">
+                <input
+                  type="radio"
+                  name="base-conversion-quiz"
+                  checked={selectedOption === option.label}
+                  onChange={() => setSelectedOption(option.label)}
+                  disabled={submitted}
+                  className="h-4 w-4 text-indigo-600"
+                />
+                <span className="text-sm text-gray-700">
+                  <strong className="font-semibold">{option.label}.</strong> {option.text}
+                </span>
+              </label>
+            ))}
+          </div>
 
-      {/* Hexadecimal */}
-      <Card variant="concept" title="Hexadecimal — Base 16">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          Hexadecimal is a base-16 number system. Sixteen digits are used: 0, 1, ..., 9, A, B, ... F, where A=10, B=11, C=12, D=13, E=14, F=15.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          Hexadecimal numbers are denoted with the prefix <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0x</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0X</code>, or by the subscript 16. For example, <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0xA21F</code> or <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">A21F₁₆</code>.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          To interpret a hexadecimal number, associate each digit with a power of 16, starting from the rightmost digit.
-        </p>
-        <div className="mt-3 rounded-2xl bg-gray-50 border border-gray-100 px-5 py-4 font-mono text-sm text-gray-900">
-          <div>A21F₁₆</div>
-          <div>= A × 16³ = 10 × 4096 = 40960</div>
-          <div>+ 2 × 16² = 2 × 256 = 512</div>
-          <div>+ 1 × 16¹ = 1 × 16 = 16</div>
-          <div className="border-t border-gray-200 mt-2 pt-2">+ F × 16⁰ = 15 × 1 = 15<br/>= 40960 + 512 + 16 + 15 = 41503₁₀</div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={selectedOption === null || submitted}
+              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+            >
+              Submit answer
+            </button>
+            {submitted && (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="inline-flex items-center justify-center rounded-full bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-300 transition"
+              >
+                {questionIndex === QUIZ_QUESTIONS.length - 1 ? 'Start over' : 'Next question'}
+              </button>
+            )}
+          </div>
+
+          {submitted && (
+            <div className={`rounded-2xl border px-4 py-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-rose-300 bg-rose-50 text-rose-800'}`}>
+              <p className="text-sm font-semibold">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
+              <div className="mt-2 text-sm leading-relaxed">
+                {isCorrect ? currentQuestion.correctExplanation : currentQuestion.wrongExplanation}
+              </div>
+            </div>
+          )}
         </div>
-        <InfoNote>
-          Octal groups bits into threes (8 = 2³); hexadecimal groups bits into fours (16 = 2⁴). Both are compact shorthand for binary — no conversion arithmetic needed, only grouping.
-        </InfoNote>
       </Card>
 
       {/* Simulation */}
@@ -135,50 +239,9 @@ export function TabInterpreting() {
         <BaseConverter />
       </Card>
 
-      {/* Practice Q1 */}
-      <PracticeQuestion
-        title="Question 1 of 3 — binary to hex"
-        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0101 1110 1101 0100</code> in hexadecimal?</>}
-        options={[
-          { label: 'A', text: '5CD4', wrongExplanation: 'C in hex is 1100, so check the second group of four bits: 1110 should become E, not C.' },
-          { label: 'B', text: '6ED4', wrongExplanation: '6 is not represented as 0101 — recheck the first 4-bit group and its hex value.' },
-          { label: 'C', text: '5ED4' },
-          { label: 'D', text: '5EF4', wrongExplanation: 'F in hex = 1111; check your 4-bit groups.' },
-        ]}
-        correctLabel="C"
-        correctExplanation="Group into sets: 0101 = 5, 1110 = E, 1101 = D, 0100 = 4 → 5ED4."
-        wrongExplanation="Group binary into 4-bit sets from left to right, then convert each group to its hex digit."
-      />
-
-      {/* Practice Q2 */}
-      <PracticeQuestion
-        title="Question 2 of 3 — octal to decimal"
-        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">352₈</code> in decimal?</>}
-        options={[
-          { label: 'A', text: '226', wrongExplanation: '226 in octal is 3 × 64 + 5 × 8 + 2, but octal 352 has different digit positions.' },
-          { label: 'B', text: '234' },
-          { label: 'C', text: '298', wrongExplanation: 'Check: (3 × 8²) + (5 × 8¹) + (2 × 8⁰) = 192 + 40 + 2 = 234, not 298.' },
-          { label: 'D', text: '352', wrongExplanation: 'That is the octal representation; convert using powers of 8 to find the decimal value.' },
-        ]}
-        correctLabel="B"
-        correctExplanation="(3 × 8²) + (5 × 8¹) + (2 × 8⁰) = (3 × 64) + (5 × 8) + 2 = 192 + 40 + 2 = 234₁₀"
-        wrongExplanation="Use powers of 8: multiply each digit by 8 raised to its position, starting from the right."
-      />
-
-      {/* Practice Q3 */}
-      <PracticeQuestion
-        title="Question 3 of 3 — hex to decimal"
-        prompt={<>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">2C₁₆</code> in decimal?</>}
-        options={[
-          { label: 'A', text: '32' },
-          { label: 'B', text: '44', wrongExplanation: '(2 × 16) + C is not 44; remember C = 12 in decimal.' },
-          { label: 'C', text: '212', wrongExplanation: 'That would be if you treated 2C as if it were decimal; convert using hex values.' },
-          { label: 'D', text: '28', wrongExplanation: '(2 × 16) + 12 = 32 + 12 = 44, not 28.' },
-        ]}
-        correctLabel="A"
-        correctExplanation="(2 × 16¹) + (C × 16⁰) = (2 × 16) + (12 × 1) = 32 + 12 = 44₁₀"
-        wrongExplanation="Multiply each digit by its power of 16. Remember: A=10, B=11, C=12, D=13, E=14, F=15."
-      />
+      <InfoNote>
+        Octal groups bits into threes (8 = 2³); hexadecimal groups bits into fours (16 = 2⁴). Both are compact shorthand for binary — no conversion arithmetic needed, only grouping.
+      </InfoNote>
     </div>
   );
 }

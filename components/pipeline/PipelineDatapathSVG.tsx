@@ -67,6 +67,8 @@ export default function PipelineDatapathSVG({
     analysisText ?? "Select a preset to see analysis"
   );
 
+  const shouldShowHover = Boolean(hoverContent);
+
   return (
     <>
       <svg width="100%" height="100%" viewBox="0 0 965 570" fill="transparent" preserveAspectRatio="xMidYMid meet">
@@ -399,14 +401,22 @@ export default function PipelineDatapathSVG({
         </g>
 
         {/* STAGE SEPARATORS */}
-        <rect id="IF/ED Wall" x="259.758" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
-        <rect id="ID/EX Wall" x="465.67" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
-        <rect id="EX/MEM Wall" x="653.444" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
-        <rect id="MEM/WB Wall" x="828.415" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
-        <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="261.658" y="42.7938">IF/ID</tspan></text>
-        <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="463.839" y="42.7938">ID/EX</tspan></text>
-        <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="647.819" y="42.7938">EX/MEM</tspan></text>
-        <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="819.129" y="42.7938">MEM/WB</tspan></text>
+        <g onMouseEnter={() => hover("IF/ID")} onMouseLeave={unhover}>
+          <rect id="IF/ID Wall" x="259.758" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
+          <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="261.658" y="42.7938">IF/ID</tspan></text>
+        </g>
+        <g onMouseEnter={() => hover("ID/EX")} onMouseLeave={unhover}>
+          <rect id="ID/EX Wall" x="465.67" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
+          <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="463.839" y="42.7938">ID/EX</tspan></text>
+        </g>
+        <g onMouseEnter={() => hover("EX/MEM")} onMouseLeave={unhover}>
+          <rect id="EX/MEM Wall" x="653.444" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
+          <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="647.819" y="42.7938">EX/MEM</tspan></text>
+        </g>
+        <g onMouseEnter={() => hover("MEM/WB")} onMouseLeave={unhover}>
+          <rect id="MEM/WB Wall" x="828.415" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
+          <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="819.129" y="42.7938">MEM/WB</tspan></text>
+        </g>
 
         {/* PIPELINE STAGE LABEL BOXES */}
         <g>
@@ -441,7 +451,7 @@ export default function PipelineDatapathSVG({
         </g>
 
         {/* HOVER DISPLAY */}
-        {active && (
+        {shouldShowHover && (
           <>
             <rect x="1" y="400" width="240" height="160" stroke="black"/>
             <foreignObject x={10} y={400} width={230} height={160}>

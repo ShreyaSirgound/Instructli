@@ -7,7 +7,6 @@ import { Card } from '../../../components/Card'
 import dynamic from "next/dynamic";
 import { returnPath,  JsonResponse} from '../../../src/utils/single-processor';
 import  SingleProcessor from '@/components/single-cycle/SingleCycle';
-import  OldSingleProcessor from '@/components/single-cycle/SingleCycleOld';
 import SingleCycleQuiz from '@/components/single-cycle/SingleCycleQuiz';
 import { InfoNote } from "@/components/InfoNote";
 import { PracticeQuestion } from "../../../components/PracticeQuestion";
@@ -21,12 +20,11 @@ const Terminal = dynamic(
 export default function SingleCycleModule() {
   const SCROLL_KEY = 'singleCycleScrollProgress';
 
-  const [scrollProgress, setScrollProgress] = useState<number>(() => {
-    if (typeof window === 'undefined') return 0;
-    return Number(localStorage.getItem(SCROLL_KEY) ?? 0);
-  });
+  const [scrollProgress, setScrollProgress] = useState<number>(0);
 
   useEffect(() => {
+    setScrollProgress(Number(localStorage.getItem(SCROLL_KEY) ?? 0));
+
     function handleScroll() {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;

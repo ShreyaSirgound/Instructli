@@ -19,13 +19,65 @@ const PipelineTerminal = dynamic(
   { ssr: false }
 );
 
-export type TabId = 'overview' | 'stages' | 'timing' | 'simulation';
+export type TabId = 'overview' | 'simulation';
+
+type QuizOption = {
+  label: string;
+  feedback: string;
+  correct: boolean;
+};
+
+type QuizQuestion = {
+  prompt: string;
+  options: QuizOption[];
+};
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'overview', label: '1. Pipeline overview' },
-  { id: 'stages', label: '2. Five stages' },
-  { id: 'timing', label: '3. Timing and registers' },
-  { id: 'simulation', label: '4. Interactive simulation' },
+  { id: 'simulation', label: '2. Interactive simulation' },
+];
+
+const QUIZ_QUESTIONS: QuizQuestion[] = [
+  {
+    prompt: 'Why does a pipelined processor often complete one instruction per clock cycle once it is full?',
+    options: [
+      {
+        label: 'Each instruction uses only one stage, so the processor is always finished after one cycle.',
+        feedback: 'Not quite. Each instruction still passes through all five stages, but different instructions overlap across stages.',
+        correct: false,
+      },
+      {
+        label: 'Different instructions occupy different pipeline stages at the same time, so one instruction can complete every cycle.',
+        feedback: 'Correct. The pipeline overlaps work across instructions so a new instruction finishes each cycle after startup.',
+        correct: true,
+      },
+      {
+        label: 'The clock speed doubles whenever the pipeline is full, so instructions complete faster.',
+        feedback: 'No. The clock speed is determined by the slowest stage, not by how full the pipeline is.',
+        correct: false,
+      },
+    ],
+  },
+  {
+    prompt: 'What does the IF/ID register do in a 5-stage pipeline?',
+    options: [
+      {
+        label: 'It stores the current instruction and PC so the decode stage can use them in the next cycle.',
+        feedback: 'Correct. IF/ID passes the fetched instruction and PC information to ID.',
+        correct: true,
+      },
+      {
+        label: 'It holds the ALU result until the write-back stage writes it to the register file.',
+        feedback: 'That is the role of a later pipeline register, not IF/ID.',
+        correct: false,
+      },
+      {
+        label: 'It stores data memory values for the next instruction.',
+        feedback: 'No. IF/ID does not handle data memory values; it carries instruction and control data from IF to ID.',
+        correct: false,
+      },
+    ],
+  },
 ];
 
 export default function PipelineModule() {
@@ -55,6 +107,12 @@ export default function PipelineModule() {
   const [results, setResults] = useState<PipelineState[]>([]);
   const [currCycle, setCurrCycle] = useState(-1);
   const [currentPreset, setCurrentPreset] = useState<{ index: number; note: string } | null>(null);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [selectedQuizOption, setSelectedQuizOption] = useState<number | null>(null);
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+
+  const currentQuiz = QUIZ_QUESTIONS[quizIndex];
+  const selectedQuiz = selectedQuizOption !== null ? currentQuiz.options[selectedQuizOption] : null;
 
   const handleBackward = (currCycle: number) => {
     if (currCycle > 0) {
@@ -131,20 +189,6 @@ export default function PipelineModule() {
 
         {activeTab === 'overview' && (
           <>
-            <Card variant="concept" title="Why pipelining matters">
-              <p className="text-sm text-gray-700 leading-relaxed">
-                Pipelining lets a processor work on several instructions at once by overlapping the hardware stages for different instructions.
-                Instead of waiting for one instruction to finish before starting the next, the CPU keeps the pipeline full so each stage is busy every cycle.
-              </p>
-              <p className="text-sm text-gray-700 leading-relaxed mt-3">
-                The ideal benefit is higher instruction throughput: after the pipeline fills, one instruction can complete on every clock cycle.
-                This increases completed instructions per second without making any individual instruction itself execute in fewer stages.
-              </p>
-              <InfoNote>
-                In a perfect pipeline, five different instructions can occupy the five stages simultaneously. Practical pipelines still need to handle control and data interactions.
-              </InfoNote>
-            </Card>
-
             <Card variant="worked" title="Washing-machine analogy">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                 <div>
@@ -168,106 +212,116 @@ export default function PipelineModule() {
                 </div>
               </div>
             </Card>
+
+            <Card variant="worked" title="Quick check: pipeline thinking">
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <p className="text-sm text-gray-700">
+                    Answer the question, then check the feedback.
+                  </p>
+                  <div className="space-y-3">
+                    <p className="text-sm font-semibold text-gray-900">{currentQuiz.prompt}</p>
+                    {currentQuiz.options.map((option, index) => (
+                      <label key={option.label} className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 hover:border-indigo-500 transition">
+                        <input
+                          type="radio"
+                          name="pipeline-quiz"
+                          checked={selectedQuizOption === index}
+                          onChange={() => setSelectedQuizOption(index)}
+                          disabled={quizSubmitted}
+                          className="h-4 w-4 text-indigo-600"
+                        />
+                        <span className="text-sm text-gray-700">{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setQuizSubmitted(true)}
+                    disabled={selectedQuizOption === null || quizSubmitted}
+                    className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+                  >
+                    Submit answer
+                  </button>
+                  {quizSubmitted && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setQuizIndex((index) => (index + 1) % QUIZ_QUESTIONS.length);
+                        setSelectedQuizOption(null);
+                        setQuizSubmitted(false);
+                      }}
+                      className="inline-flex items-center justify-center rounded-full bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-300 transition"
+                    >
+                      Next question
+                    </button>
+                  )}
+                </div>
+
+                {quizSubmitted && selectedQuiz && (
+                  <div className={`rounded-2xl border px-4 py-4 ${selectedQuiz.correct ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-rose-300 bg-rose-50 text-rose-800'}`}>
+                    <p className="text-sm font-semibold">{selectedQuiz.correct ? 'Good job!' : 'Not quite.'}</p>
+                    <p className="mt-2 text-sm leading-relaxed">{selectedQuiz.feedback}</p>
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            <Card variant="worked" title="Timing and register handoff">
+              <p className="text-sm text-gray-700 leading-relaxed">
+                In a pipelined processor, each stage completes part of an instruction in one cycle and passes intermediate values to the next stage through pipeline registers.
+                That means the instruction in ID can be decoded while the previous instruction is in EX and the one before it is in MEM.
+              </p>
+              <div className="mt-4 space-y-3">
+                <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
+                  <p className="text-sm font-semibold text-gray-900">Pipeline registers keep stages independent</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    The IF/ID, ID/EX, EX/MEM, and MEM/WB registers hold values so each stage can start the next cycle without waiting for the previous stage to finish its own work.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
+                  <p className="text-sm font-semibold text-gray-900">Steady-state throughput comes from overlap</p>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    After the pipeline fills, one instruction enters the pipeline each cycle and one completes each cycle. The slowest stage still sets the clock period, but more work is in flight at once.
+                  </p>
+                </div>
+              </div>
+              <InfoNote>
+                Hover the grey IF/ID, ID/EX, EX/MEM, and MEM/WB registers in the simulator to see short definitions for each stage boundary.
+              </InfoNote>
+            </Card>
           </>
         )}
 
-        {activeTab === 'stages' && (
-          <Card variant="concept" title="The five pipeline stages">
-            <p className="text-sm text-gray-700 leading-relaxed">
-              A standard 5-stage processor divides execution into sequential pieces: instruction fetch, decode, execute, memory access, and write-back.
-              Each stage completes a focused task in one cycle and passes state to the next stage through a pipeline register.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-              {[
-                {
-                  title: 'IF: Instruction Fetch',
-                  body: 'Read the next instruction from instruction memory using the program counter (PC).',
-                },
-                {
-                  title: 'ID: Instruction Decode',
-                  body: 'Decode opcode and operand fields, read register data, and generate control signals.',
-                },
-                {
-                  title: 'EX: Execute',
-                  body: 'Perform ALU operations, compute branch targets, or calculate memory addresses.',
-                },
-                {
-                  title: 'MEM: Memory Access',
-                  body: 'Read from or write to data memory for load/store instructions.',
-                },
-                {
-                  title: 'WB: Write Back',
-                  body: 'Write the ALU result or loaded data back into the register file.',
-                },
-              ].map((item) => (
-                <div key={item.title} className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-                  <p className="text-sm font-semibold text-gray-900 mb-1">{item.title}</p>
-                  <p className="text-sm text-gray-600 leading-relaxed">{item.body}</p>
-                </div>
-              ))}
-            </div>
-          </Card>
-        )}
-
-        {activeTab === 'timing' && (
-          <Card variant="worked" title="Timing, registers, and throughput">
-            <p className="text-sm text-gray-700 leading-relaxed">
-              Each stage in the pipeline must finish its work in a single clock cycle. The clock period is set by the slowest stage plus the latency added by pipeline registers.
-              Splitting the datapath into stages usually lets the processor run at a higher clock frequency than a single-cycle design.
-            </p>
-            <div className="mt-4 space-y-3">
-              {[
-                {
-                  label: 'Pipeline registers',
-                  detail: 'Hold intermediate values between stages so each stage can operate independently every cycle.',
-                },
-                {
-                  label: 'Overlap and throughput',
-                  detail: 'While one instruction is in MEM, the next can be in EX, the following in ID, and a new instruction in IF.',
-                },
-                {
-                  label: 'Clock period versus latency',
-                  detail: 'A pipelined processor generally has lower latency per stage but each instruction still passes through all five stages.',
-                },
-              ].map((item) => (
-                <div key={item.label} className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-                  <p className="text-sm font-semibold text-gray-900 mb-1">{item.label}</p>
-                  <p className="text-sm text-gray-600 leading-relaxed">{item.detail}</p>
-                </div>
-              ))}
-            </div>
-            <InfoNote>
-              A fully ideal pipeline is disrupted by hazards. We only mention hazards briefly here; the next module dives into hazard detection and resolution.
-            </InfoNote>
-          </Card>
-        )}
-
         {activeTab === 'simulation' && (
-          <Card variant="simulation" title="Pipeline visualizer">
-            <div className="flex-none relative bottom-[10px]">
-              <PipelineTerminal
-                code={code}
-                onCodeChange={setCode}
-                onExecute={handleExecute}
-                onBackward={handleBackward}
-                onReset={handleReset}
-                currCycle={currCycle}
-                onPresetChange={setCurrentPreset}
-              />
-            </div>
+          <>
+            <Card variant="simulation" title="Pipeline visualizer">
+              <div className="flex-none relative bottom-[10px]">
+                <PipelineTerminal
+                  code={code}
+                  onCodeChange={setCode}
+                  onExecute={handleExecute}
+                  onBackward={handleBackward}
+                  onReset={handleReset}
+                  currCycle={currCycle}
+                  onPresetChange={setCurrentPreset}
+                />
+              </div>
 
-            <div className="flex-1 overflow-auto bg-white pb-[50px]">
-              <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset} />
-            </div>
-          </Card>
-        )}
+              <div className="flex-1 overflow-auto bg-white pb-[50px]">
+                <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset} />
+              </div>
+            </Card>
 
-        {activeTab === 'simulation' && (
-          <Card variant="simulation" title="Trace the datapath">
-            <div className="flex-1 overflow-auto bg-white pb-[50px]">
-              <PipelineQuiz/>
-            </div>
-          </Card>
+            <Card variant="simulation" title="Trace the datapath">
+              <div className="flex-1 overflow-auto bg-white pb-[50px]">
+                <PipelineQuiz />
+              </div>
+            </Card>
+          </>
         )}
 
         <div className="mt-6 mb-10 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">

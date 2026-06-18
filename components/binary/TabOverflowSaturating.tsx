@@ -1,8 +1,6 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '../Card';
-import { InfoNote } from '../InfoNote';
-import { PracticeQuestion } from '../PracticeQuestion';
 import { colors } from '../types';
 
 function OverflowCases() {
@@ -22,8 +20,8 @@ function OverflowCases() {
     {
       ok: true,
       title: 'Negative + Negative = Negative (no overflow)',
-      lines: ['  1000 0001  (−127)', '+ 1000 0001  (−127)', '──────────────────', '  0000 0010  (+2) ← WRONG'],
-      note: 'In two\'s complement, this result wraps but remains consistent (both operands negative, result conceptually stays "in range").',
+      lines: ['  1100 0000   (−64)', '+ 1111 0000   (−16)', '──────────────────', '  1011 0000   (−80)'],
+      note: 'Both operands are negative and the result remains negative and in range. No overflow.',
     },
     {
       ok: false,
@@ -55,37 +53,179 @@ function OverflowCases() {
   );
 }
 
+type QuizOption = {
+  label: string;
+  text: string;
+  wrongExplanation?: string;
+};
+
+type QuizQuestion = {
+  title: string;
+  prompt: React.ReactNode;
+  options: QuizOption[];
+  correctLabel: string;
+  correctExplanation: React.ReactNode;
+  wrongExplanation: React.ReactNode;
+};
+
+const QUIZ_QUESTIONS: QuizQuestion[] = [
+  {
+    title: 'Question 1 of 3 — Detect signed overflow',
+    prompt: 'Adding 8-bit signed values +100 and +50: does signed overflow occur?',
+    options: [
+      { label: 'A', text: 'Yes — the sum exceeds +127 and wraps to a negative value' },
+      { label: 'B', text: 'No — both operands are positive so the result is always valid', wrongExplanation: 'Both positive operands can still overflow if the sum exceeds +127.' },
+      { label: 'C', text: 'Only if there is also a carry out of the MSB', wrongExplanation: 'Carry-out does not define signed overflow by itself.' },
+      { label: 'D', text: 'No — this is underflow, not overflow', wrongExplanation: 'Adding positives cannot be underflow in integer arithmetic.' },
+    ],
+    correctLabel: 'A',
+    correctExplanation: (
+      <div className="space-y-2">
+        <p>Correct. 100 + 50 = 150, which is outside 8-bit signed range <code className="rounded bg-emerald-100 px-1 py-0.5 text-xs font-mono">-128..+127</code>, so the stored value wraps and appears negative.</p>
+      </div>
+    ),
+    wrongExplanation: (
+      <div className="space-y-2">
+        <p><strong>Overflow concept:</strong> overflow means the true result cannot fit in available bits.</p>
+        <p>For signed two's complement addition, overflow occurs only when:</p>
+        <ul className="list-disc list-inside text-sm space-y-1">
+          <li>positive + positive gives a negative result</li>
+          <li>negative + negative gives a positive result</li>
+        </ul>
+        <p><strong>Positive + negative</strong> cannot overflow. Also, do not equate carry-out with signed overflow.</p>
+      </div>
+    ),
+  },
+  {
+    title: 'Question 2 of 3 — Underflow vs integer overflow',
+    prompt: 'In this module, which statement about underflow is accurate?',
+    options: [
+      { label: 'A', text: 'Underflow is the same as carry-out in unsigned addition', wrongExplanation: 'Carry-out is an integer-bit event, not floating-point underflow.' },
+      { label: 'B', text: 'Underflow is mostly a floating-point tiny-near-zero issue; integer lessons here use overflow for out-of-range results' },
+      { label: 'C', text: 'Underflow is when two positives produce a negative in two\'s complement', wrongExplanation: 'That case is signed overflow, not underflow.' },
+      { label: 'D', text: 'Underflow is the standard term for any negative integer result', wrongExplanation: 'Negative results are often valid; only out-of-range values are errors.' },
+    ],
+    correctLabel: 'B',
+    correctExplanation: (
+      <div className="space-y-2">
+        <p>Correct. In many contexts, underflow refers to floating-point results too close to zero to represent. In this integer-focused module, we classify out-of-range results as overflow (too positive or too negative).</p>
+      </div>
+    ),
+    wrongExplanation: (
+      <div className="space-y-2">
+        <p><strong>Underflow clarification:</strong> underflow is commonly a floating-point concept for tiny magnitudes near zero.</p>
+        <p>In fixed-width integer arithmetic here, the practical concern is overflow: result exceeds representable range on either side.</p>
+        <p>So when a signed sum becomes impossible for the bit width, we discuss it as overflow, not a separate underflow unit.</p>
+      </div>
+    ),
+  },
+  {
+    title: 'Question 3 of 3 — Saturating arithmetic',
+    prompt: 'With 8-bit signed saturating arithmetic, what is the result of +100 + +50?',
+    options: [
+      { label: 'A', text: '−106 (wrap-around)', wrongExplanation: 'Wrap-around is regular two\'s complement behavior, not saturation.' },
+      { label: 'B', text: '+150', wrongExplanation: '+150 cannot be represented in signed 8-bit format.' },
+      { label: 'C', text: '+127 (clamped to maximum)' },
+      { label: 'D', text: '+128', wrongExplanation: '+128 is outside the representable signed 8-bit range.' },
+    ],
+    correctLabel: 'C',
+    correctExplanation: (
+      <div className="space-y-2">
+        <p>Correct. Saturating arithmetic clamps overflow to boundary values, so +150 clamps to +127.</p>
+      </div>
+    ),
+    wrongExplanation: (
+      <div className="space-y-2">
+        <p><strong>Saturating arithmetic rule:</strong> when result exceeds range, clamp to nearest endpoint instead of wrapping.</p>
+        <div className="rounded bg-rose-100 px-3 py-2 text-sm space-y-1">
+          <p><strong>Positive overflow:</strong> clamp to +127 (8-bit signed max)</p>
+          <p><strong>Negative overflow:</strong> clamp to -128 (8-bit signed min)</p>
+        </div>
+        <p>This is useful in audio and image processing where wrap-around introduces severe artifacts.</p>
+      </div>
+    ),
+  },
+];
+
 export function TabOverflowSaturating() {
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const currentQuestion = QUIZ_QUESTIONS[questionIndex];
+  const isCorrect = selectedOption === currentQuestion.correctLabel;
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+  };
+
+  const handleNext = () => {
+    setQuestionIndex((prev) => (prev + 1) % QUIZ_QUESTIONS.length);
+    setSelectedOption(null);
+    setSubmitted(false);
+  };
+
   return (
     <div>
-      {/* Overflow concept */}
-      <Card variant="concept" title="Overflow — Result exceeds bit width">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          Overflow occurs when the result of an operation is too large or too small to fit in the available bits, producing an incorrect result.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          For <strong>signed addition in two's complement</strong>, overflow happens when:
-        </p>
-        <ul className="mt-2 space-y-1 text-sm text-gray-700 list-disc list-inside">
-          <li>Positive + Positive → Negative (sign bit incorrectly flips)</li>
-          <li>Negative + Negative → Positive (sign bit incorrectly flips)</li>
-        </ul>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Positive + Negative can never overflow</strong> because opposite signs prevent the result from exceeding the range.
-        </p>
-        <InfoNote tone="warn">
-          Do not confuse carry-out with overflow. A carry out of the MSB is expected in unsigned arithmetic. Overflow specifically means the sign changed incorrectly in signed arithmetic.
-        </InfoNote>
-      </Card>
+      <Card variant="worked" title="Practice: Overflow and saturating arithmetic">
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <p className="text-sm text-gray-700">
+              Work through overflow, underflow terminology, and saturation behavior. If you miss a question, the feedback reteaches the concept.
+            </p>
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-gray-900">{currentQuestion.title}</p>
+              <p className="text-sm text-gray-700">{currentQuestion.prompt}</p>
+            </div>
+          </div>
 
-      {/* Underflow concept */}
-      <Card variant="concept" title="Underflow — Result too small in magnitude">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          Underflow occurs in floating-point arithmetic when a number is too close to zero to be represented. For example, 0.0001 might be too small to store precisely.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>In this course</strong>, we focus on integer arithmetic, so underflow is not a major concern. The term "underflow" sometimes refers to negative overflow (result too small, i.e., too negative), but we use "overflow" for both directions.
-        </p>
+          <div className="space-y-3">
+            {currentQuestion.options.map((option) => (
+              <label key={option.label} className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 hover:border-indigo-500 transition">
+                <input
+                  type="radio"
+                  name="overflow-saturating-quiz"
+                  checked={selectedOption === option.label}
+                  onChange={() => setSelectedOption(option.label)}
+                  disabled={submitted}
+                  className="h-4 w-4 text-indigo-600"
+                />
+                <span className="text-sm text-gray-700">
+                  <strong className="font-semibold">{option.label}.</strong> {option.text}
+                </span>
+              </label>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={selectedOption === null || submitted}
+              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+            >
+              Submit answer
+            </button>
+            {submitted && (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="inline-flex items-center justify-center rounded-full bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-300 transition"
+              >
+                {questionIndex === QUIZ_QUESTIONS.length - 1 ? 'Start over' : 'Next question'}
+              </button>
+            )}
+          </div>
+
+          {submitted && (
+            <div className={`rounded-2xl border px-4 py-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-rose-300 bg-rose-50 text-rose-800'}`}>
+              <p className="text-sm font-semibold">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
+              <div className="mt-2 text-sm leading-relaxed">
+                {isCorrect ? currentQuestion.correctExplanation : currentQuestion.wrongExplanation}
+              </div>
+            </div>
+          )}
+        </div>
       </Card>
 
       {/* The Four Overflow Cases */}
@@ -95,70 +235,6 @@ export function TabOverflowSaturating() {
         </p>
         <OverflowCases />
       </Card>
-
-      {/* Saturating Arithmetic */}
-      <Card variant="concept" title="Saturating arithmetic — Clamping on overflow">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          Saturating arithmetic prevents overflow by clamping the result to the nearest representable value when an operation would overflow.
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>If positive + positive would overflow:</strong> clamp to maximum (+127 for 8-bit signed)
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed">
-          <strong>If negative + negative would overflow:</strong> clamp to minimum (−128 for 8-bit signed)
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed mt-3">
-          <strong>Example:</strong> Normal: 127 + 1 = 128 → wraps to −128. Saturating: 127 + 1 = 127 (stays at max).
-        </p>
-        <InfoNote>
-          Saturating arithmetic is used in audio processing, image processing, and other domains where wrapping is undesirable. It preserves the direction of the result (positive or negative).
-        </InfoNote>
-      </Card>
-
-      {/* Practice Q1 */}
-      <PracticeQuestion
-        title="Question 1 of 3 — detect overflow"
-        prompt="Adding 8-bit signed values +100 and +50: does signed overflow occur?"
-        options={[
-          { label: 'A', text: 'Yes — the sum exceeds +127 and wraps to a negative value' },
-          { label: 'B', text: 'No — both operands are positive so the result is always valid', wrongExplanation: 'Both operands being positive does not guarantee no overflow — the numeric sum must also fit within +127.' },
-          { label: 'C', text: 'Only if there is also a carry out of the MSB', wrongExplanation: 'Carry out alone is not sufficient for signed overflow — compare carry into and out of the sign bit.' },
-          { label: 'D', text: 'No — this is underflow, not overflow', wrongExplanation: 'Adding two positives can only cause positive overflow, not underflow.' },
-        ]}
-        correctLabel="A"
-        correctExplanation="100 + 50 = 150, which exceeds the 8-bit signed maximum of +127. The result wraps to −106 — positive + positive = negative, confirming overflow."
-        wrongExplanation="Both operands being positive doesn't guarantee no overflow — the sum must also fit within +127."
-      />
-
-      {/* Practice Q2 */}
-      <PracticeQuestion
-        title="Question 2 of 3 — saturating arithmetic"
-        prompt="With 8-bit signed saturating arithmetic, what is the result of +100 + +50?"
-        options={[
-          { label: 'A', text: '−106 (wraps around)', wrongExplanation: 'Wrap-around is what happens in normal two\'s complement; saturating arithmetic clamps instead.' },
-          { label: 'B', text: '+150 (true mathematical result)', wrongExplanation: 'The true mathematical result is +150, but it cannot be represented in 8-bit signed; saturation clamps to +127.' },
-          { label: 'C', text: '+127 (saturates to maximum)' },
-          { label: 'D', text: '+128', wrongExplanation: '+128 is not representable in signed 8-bit; the maximum is +127.' },
-        ]}
-        correctLabel="C"
-        correctExplanation="The true sum +150 exceeds +127. Saturating arithmetic clamps to the nearest representable value, which is +127."
-        wrongExplanation="Saturating arithmetic does not wrap — it clamps to the closest representable value at the boundary."
-      />
-
-      {/* Practice Q3 */}
-      <PracticeQuestion
-        title="Question 3 of 3 — overflow vs carry"
-        prompt={<>Adding <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">1111 1111</code> + <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">0000 0001</code> in 8-bit two's complement. Which is true?</>}
-        options={[
-          { label: 'A', text: 'Signed overflow occurs because there is a carry out', wrongExplanation: 'Carry out alone does not cause signed overflow — −1 + 1 = 0 is perfectly valid.' },
-          { label: 'B', text: 'Unsigned carry out occurs, but no signed overflow' },
-          { label: 'C', text: 'Neither carry out nor overflow occurs', wrongExplanation: 'There is an unsigned carry out here (255 + 1); check the unsigned sum.' },
-          { label: 'D', text: 'Both signed overflow and unsigned carry occur', wrongExplanation: 'Unsigned carry occurs, but signed overflow does not; −1 + 1 = 0 is a valid signed result.' },
-        ]}
-        correctLabel="B"
-        correctExplanation="Unsigned: 255 + 1 = 256 → result = 0, carry = 1. Signed: −1 + 1 = 0 (correct). Carry in and carry out of the sign bit both = 1, so they match → no overflow."
-        wrongExplanation="Check the sign-bit carries: if carry-in and carry-out of the MSB differ, overflow occurs. Here they both equal 1 — no overflow."
-      />
     </div>
   );
 }
