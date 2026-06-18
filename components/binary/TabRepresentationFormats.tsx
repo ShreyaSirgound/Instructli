@@ -148,7 +148,7 @@ export function TabRepresentationFormats() {
   return (
     <div>
       {/* Quiz block */}
-      <Card variant="worked" title="Practice: Signed and unsigned representations">
+      <Card variant="practice" title="Practice: Signed and unsigned representations">
         <div className="space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-gray-700">

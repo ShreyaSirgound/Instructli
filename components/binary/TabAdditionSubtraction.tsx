@@ -228,7 +228,7 @@ export function TabAdditionSubtraction() {
 
   return (
     <div>
-      <Card variant="worked" title="Practice: Binary addition and subtraction">
+      <Card variant="practice" title="Practice: Binary addition and subtraction">
         <div className="space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-gray-700">

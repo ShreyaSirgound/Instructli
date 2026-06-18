@@ -213,7 +213,7 @@ export default function PipelineModule() {
               </div>
             </Card>
 
-            <Card variant="worked" title="Quick check: pipeline thinking">
+            <Card variant="practice" title="Quick check: pipeline thinking">
               <div className="space-y-6">
                 <div className="space-y-3">
                   <p className="text-sm text-gray-700">

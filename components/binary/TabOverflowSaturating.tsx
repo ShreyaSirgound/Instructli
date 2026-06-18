@@ -167,7 +167,7 @@ export function TabOverflowSaturating() {
 
   return (
     <div>
-      <Card variant="worked" title="Practice: Overflow and saturating arithmetic">
+      <Card variant="practice" title="Practice: Overflow and saturating arithmetic">
         <div className="space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-gray-700">

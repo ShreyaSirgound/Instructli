@@ -170,7 +170,7 @@ export function TabInterpreting() {
   return (
     <div>
       {/* Quiz block */}
-      <Card variant="worked" title="Practice: Number system interpretation">
+      <Card variant="practice" title="Practice: Number system interpretation">
         <div className="space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-gray-700">
