@@ -41,7 +41,7 @@ export default function Dashboard() {
             title="5-Stage Pipeline"
             description="IF, ID, EX, MEM, WB"
             href="/modules/pipeline"
-            icon=<Rows2 size={22} />
+            icon={<Rows2 size={22} />}
             iconBg="#EDECFD"
             barColor="#4F4898"
             progressConfig={pipelineConfig}
@@ -51,7 +51,7 @@ export default function Dashboard() {
             title="Machine Instructions"
             description="Instruction types, opcodes"
             href="/modules/machine-instructions"
-            icon=<MonitorCogIcon size={22} />
+            icon={<MonitorCogIcon size={22} />}
             iconBg="#FEf9E0"
             barColor="#F9AB00"
             progressConfig={machineInstructionsConfig}
@@ -59,9 +59,9 @@ export default function Dashboard() {
 
           <ModuleCard
             title="Hazards and Detection"
-            description="RAW, WAR, WAW, structural"
+            description="Data, control, structural"
             href="/modules/hazards"
-            icon=<AlertTriangle size={22} />
+            icon={<AlertTriangle size={22} />}
             iconBg="#FAEEDC"
             barColor="#b6761d"
             progressConfig={hazardsConfig}
@@ -71,7 +71,7 @@ export default function Dashboard() {
             title="Caching"
             description="Direct-mapped, set associative"
             href="/modules/caching"
-            icon=<Database size={22} />
+            icon={<Database size={22} />}
             iconBg="#FBECE6"
             barColor="#b15636"
             progressConfig={cachingConfig}

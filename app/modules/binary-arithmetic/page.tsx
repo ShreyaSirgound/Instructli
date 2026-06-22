@@ -2,10 +2,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { TabInterpreting }           from '@/components/binary/TabInterpreting';
-import { TabRepresentationFormats }  from '@/components/binary/TabRepresentationFormats';
-import { TabAdditionSubtraction }    from '@/components/binary/TabAdditionSubtraction';
-import { TabOverflowSaturating }     from '@/components/binary/TabOverflowSaturating';
+import { TabInterpreting } from '@/components/binary/TabInterpreting';
+import { TabRepresentationFormats } from '@/components/binary/TabRepresentationFormats';
+import { TabAdditionSubtraction } from '@/components/binary/TabAdditionSubtraction';
+import { TabOverflowSaturating } from '@/components/binary/TabOverflowSaturating';
 import { getSavedProgress, computeProgress, saveProgress, createEmptyProgress } from '@/app/progressConfig';
 import { binaryArithmeticConfig } from '@/app/moduleConfigs';
 

@@ -34,7 +34,7 @@ export const machineInstructionsConfig: ProgressConfig = {
 
 export const hazardsConfig: ProgressConfig = {
   storageKey: 'hazardsProgress',
-  sectionIds: [],
+  sectionIds: ['overview', 'simulation'],
   eventName: 'hazards-progress-updated',
   legacyKeyMap: {},
 };
