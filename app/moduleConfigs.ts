@@ -27,7 +27,7 @@ export const pipelineConfig: ProgressConfig = {
 
 export const machineInstructionsConfig: ProgressConfig = {
   storageKey: 'machineInstructionsProgress',
-  sectionIds: ['r-format', 'i-format', 's-format'],
+  sectionIds: ['r-format', 'i-format', 's-format', 'simulation'],
   eventName: 'machine-instructions-progress-updated',
   legacyKeyMap: {},
 };

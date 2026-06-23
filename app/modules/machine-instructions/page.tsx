@@ -5,10 +5,11 @@ import { ChevronLeft } from 'lucide-react';
 import { RFormatSection } from '@/components/machine-instructions/RFormatSection';
 import { IFormatSection } from '@/components/machine-instructions/IFormatSection';
 import { SFormatSection } from '@/components/machine-instructions/SFormatSection';
+import { MachineInstructionsSimulation } from '@/components/machine-instructions/MachineInstructionsSimulation';
 import { getSavedProgress, computeProgress, saveProgress, createEmptyProgress } from '@/app/progressConfig';
 import { machineInstructionsConfig } from '@/app/moduleConfigs';
 
-export type TabId = 'r-format' | 'i-format' | 's-format';
+export type TabId = 'r-format' | 'i-format' | 's-format' | 'simulation';
 
 interface Tab {
   id: TabId;
@@ -19,6 +20,7 @@ const TABS: Tab[] = [
   { id: 'r-format', label: '1. R-Format' },
   { id: 'i-format', label: '2. I-Format' },
   { id: 's-format', label: '3. S-Format' },
+  { id: 'simulation', label: '4. Interactive simulation' },
 ];
 
 export default function MachineInstructionsModule() {
@@ -60,7 +62,7 @@ export default function MachineInstructionsModule() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
             <div>
               <p className="text-sm font-semibold text-gray-900">Module progress</p>
-              <p className="text-sm text-gray-500">Complete all three sections to reach 100%.</p>
+              <p className="text-sm text-gray-500">Complete all four sections to reach 100%.</p>
             </div>
             <p className="text-sm font-semibold text-gray-900">{progressValue}% complete</p>
           </div>
@@ -92,6 +94,7 @@ export default function MachineInstructionsModule() {
         {activeTab === 'r-format' && <RFormatSection />}
         {activeTab === 'i-format' && <IFormatSection />}
         {activeTab === 's-format' && <SFormatSection />}
+        {activeTab === 'simulation' && <MachineInstructionsSimulation />}
 
         <div className="mt-8 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
