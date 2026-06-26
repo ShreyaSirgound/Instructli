@@ -49,11 +49,11 @@ export default function MachineInstructionsModule() {
     <main className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-6 py-12">
         <Link
-          href="/modules"
+          href="/"
           className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition mb-6"
         >
           <ChevronLeft size={16} />
-          Back to modules
+          All modules
         </Link>
 
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Machine Instructions</h1>

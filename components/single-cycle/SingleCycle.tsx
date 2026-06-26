@@ -36,38 +36,32 @@ function buildHoverText(label: string | null, dp: DataPath, bd: Block_Data): str
   if (!label) return null;
   switch (label) {
     case "INSTRUCTION MEMORY":
-      return `INSTRUCTION MEMORY:\n${bd.instruction_mem.comment}\n\n${bd.instruction_mem.value}`;
+      return `INSTRUCTION MEMORY\nStores all program instructions and outputs the instruction at the given address.\n\n${bd.instruction_mem.comment}\n\n${bd.instruction_mem.value}`;
     case "PC":
-      return `${bd.pc.comment}\n\n${bd.pc.value}`;
+      return `PROGRAM COUNTER (PC)\nHolds the address of the current instruction being executed.\n\n${bd.pc.comment}\n\n${bd.pc.value}`;
     case "DATA MEMORY":
-      return `DATA MEMORY:\n${bd.data_memory.read_data}\n\n${bd.data_memory.write_data}`;
+      return `DATA MEMORY\nStores program data (loaded by lw, stored by sw). Allows reading and writing in a single cycle.\n\n${bd.data_memory.read_data}\n\n${bd.data_memory.write_data}`;
     case "REGISTER FILE":
       return (
-        `REGISTER FILES:\n` +
+        `REGISTER FILE\nStores CPU registers (x0–x31). Allows simultaneous reading of two registers and writing one register per cycle.\n\n` +
         `${bd.registers.read_register_1.comment}:  ${bd.registers.read_register_1.value}\n\n` +
         `${bd.registers.read_register_2.comment}:  ${bd.registers.read_register_2.value}\n\n` +
         `${bd.registers.write_register.comment}:  ${bd.registers.write_register.value}\n\n`
       );
     case "IMMEDIATE GENERATOR":
-      return `IMMEDIATE GENERATOR:\n ${bd.immediate_generator?.value ?? ""}`;
+      return `IMMEDIATE GENERATOR\nExtracts the 12-bit immediate field from the instruction and sign-extends it to 32 bits.\n\n${bd.immediate_generator?.value ?? ""}`;
     case "ALU":
-      return `ALU:\n${bd.alu.alu_result}\n`;
+      return `ARITHMETIC LOGIC UNIT (ALU)\nPerforms arithmetic (add, subtract) and logical (and, or) operations on two 32-bit operands.\n\n${bd.alu.alu_result}\n`;
     case "ADD (Branch Target)":
-      return `ADD (Branch Target Calculation):\n${bd.branch_adder?.value ?? ""}`;
+      return `ADDER (Branch Target)\nComputes the branch target address by adding the sign-extended immediate to the PC.\n\n${bd.branch_adder?.value ?? ""}`;
     case "ADD (PC + 4)":
-      return `ADD(PC + 4):\n${bd.default_adder?.value ?? ""}`;
+      return `ADDER (PC + 4)\nComputes the next sequential program counter value by adding 4 to the current PC.\n\n${bd.default_adder?.value ?? ""}`;
     case "MUX (Next PC)":
-      return dp.pc_increment
-        ? `MUX (Next PC):\n${dp.pc_increment ? "The Mux uses signal from the controller to determine the next PC. In this case, the Mux takes value 0 making the PC + 4" : ""}.`
-        : "";
-        case "MUX (ALU Input)":
-      return dp.mux_alu
-        ? `MUX (ALU Input):\n${dp.imm_gen_mux ? "The Mux gets the value of 1 indicating that it takes value from the Immediate Generator" : "The Mux gets the value of 0 indicating that it takes value from the register file"}.`
-        : "";
+      return `MULTIPLEXER (Next PC)\nSelects between the sequential PC (PC+4) or branch target address based on the branch condition.`;
+    case "MUX (ALU Input)":
+      return `MULTIPLEXER (ALU Input)\nSelects the second operand for the ALU: either a register value or the immediate value.`;
     case "MUX (Write Back)":
-      return dp.reg_write
-        ? `MUX (Write Data):\n${dp.dm_mux ? "The Mux gets the value of 1 indicating that it writes from Data Memory" : "The Mux gets the value of 0 indicating that it writes from the ALU"}.`
-        : "";
+      return `MULTIPLEXER (Write Back)\nSelects which value to write back to the register file: ALU result or data from memory.`;
     default:
       return label;
   }

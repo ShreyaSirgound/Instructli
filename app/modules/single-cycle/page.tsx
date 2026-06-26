@@ -443,7 +443,7 @@ export default function SingleCycleModule() {
         {activeTab === 'hardware' && (
           <PracticeBlock
             title="Practice: Core hardware blocks"
-            description="Answer questions about the PC, instruction memory, register file, ALU, data memory, and immediate generator. Wrong-answer feedback reteaches each block definition."
+            description="Answer questions about the PC, instruction memory, register file, ALU, data memory, and immediate generator."
             questions={HARDWARE_QUESTIONS}
             name="single-cycle-hardware-quiz"
           />
@@ -462,7 +462,7 @@ export default function SingleCycleModule() {
           <>
             <PracticeBlock
               title="Practice: How instructions use the datapath"
-              description="Work through R-type, load, store, and branch path behavior. Feedback explains exactly which units are active for each instruction family."
+              description="Work through R-type, load, store, and branch path behavior."
               questions={INSTRUCTION_PATH_QUESTIONS}
               name="single-cycle-instruction-paths-quiz"
             />

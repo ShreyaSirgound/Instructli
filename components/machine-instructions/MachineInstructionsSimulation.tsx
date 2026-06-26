@@ -65,6 +65,23 @@ function groupNibbleBits(value: number) {
     .trim();
 }
 
+function sanitizeRegisterInput(raw: string) {
+  const digitsOnly = raw.replace(/\D/g, '');
+  if (digitsOnly === '') {
+    return '';
+  }
+
+  return String(Math.min(31, Number(digitsOnly)));
+}
+
+function parseRegisterValue(value: string) {
+  if (value === '') {
+    return 0;
+  }
+
+  return Math.min(31, Math.max(0, Number(value)));
+}
+
 function FieldRow({ fields }: { fields: BitField[] }) {
   return (
     <div className="space-y-3">
@@ -86,18 +103,18 @@ export function MachineInstructionsSimulation() {
   const [format, setFormat] = useState<FormatKind>('R');
 
   const [rInstruction, setRInstruction] = useState<RInstruction>('add');
-  const [rRd, setRRd] = useState(9);
-  const [rRs1, setRRs1] = useState(20);
-  const [rRs2, setRRs2] = useState(21);
+  const [rRd, setRRd] = useState('9');
+  const [rRs1, setRRs1] = useState('20');
+  const [rRs2, setRRs2] = useState('21');
 
   const [iInstruction, setIInstruction] = useState<IInstruction>('lw');
-  const [iRd, setIRd] = useState(7);
-  const [iRs1, setIRs1] = useState(18);
+  const [iRd, setIRd] = useState('7');
+  const [iRs1, setIRs1] = useState('18');
   const [iImmediate, setIImmediate] = useState(120);
 
   const [sInstruction, setSInstruction] = useState<SInstruction>('sw');
-  const [sRs2, setSRs2] = useState(7);
-  const [sRs1, setSRs1] = useState(18);
+  const [sRs2, setSRs2] = useState('7');
+  const [sRs1, setSRs1] = useState('18');
   const [sImmediate, setSImmediate] = useState(120);
 
   const decodeCases: DecodeCase[] = [
@@ -162,9 +179,9 @@ export function MachineInstructionsSimulation() {
   const encoderResult = useMemo(() => {
     if (format === 'R') {
       const meta = R_META[rInstruction];
-      const rd = maskBits(rRd, 5);
-      const rs1 = maskBits(rRs1, 5);
-      const rs2 = maskBits(rRs2, 5);
+      const rd = maskBits(parseRegisterValue(rRd), 5);
+      const rs1 = maskBits(parseRegisterValue(rRs1), 5);
+      const rs2 = maskBits(parseRegisterValue(rRs2), 5);
       const word =
         (meta.funct7 << 25) |
         (rs2 << 20) |
@@ -191,8 +208,8 @@ export function MachineInstructionsSimulation() {
 
     if (format === 'I') {
       const meta = I_META[iInstruction];
-      const rd = maskBits(iRd, 5);
-      const rs1 = maskBits(iRs1, 5);
+      const rd = maskBits(parseRegisterValue(iRd), 5);
+      const rs1 = maskBits(parseRegisterValue(iRs1), 5);
       const immediate = maskBits(iImmediate, 12);
       const word =
         (immediate << 20) |
@@ -218,8 +235,8 @@ export function MachineInstructionsSimulation() {
     }
 
     const meta = S_META[sInstruction];
-    const rs1 = maskBits(sRs1, 5);
-    const rs2 = maskBits(sRs2, 5);
+  const rs1 = maskBits(parseRegisterValue(sRs1), 5);
+  const rs2 = maskBits(parseRegisterValue(sRs2), 5);
     const imm12 = maskBits(sImmediate, 12);
     const immUpper = (imm12 >> 5) & 0x7F;
     const immLower = imm12 & 0x1F;
@@ -317,15 +334,33 @@ export function MachineInstructionsSimulation() {
               </label>
               <label className="text-sm text-gray-700">
                 rd
-                <input type="number" min={0} max={31} value={rRd} onChange={(e) => setRRd(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={rRd}
+                  onChange={(e) => setRRd(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
               </label>
               <label className="text-sm text-gray-700">
                 rs1
-                <input type="number" min={0} max={31} value={rRs1} onChange={(e) => setRRs1(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={rRs1}
+                  onChange={(e) => setRRs1(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
               </label>
               <label className="text-sm text-gray-700">
                 rs2
-                <input type="number" min={0} max={31} value={rRs2} onChange={(e) => setRRs2(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={rRs2}
+                  onChange={(e) => setRRs2(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
               </label>
             </div>
           )}
@@ -352,11 +387,23 @@ export function MachineInstructionsSimulation() {
               </label>
               <label className="text-sm text-gray-700">
                 rd
-                <input type="number" min={0} max={31} value={iRd} onChange={(e) => setIRd(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={iRd}
+                  onChange={(e) => setIRd(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
               </label>
               <label className="text-sm text-gray-700">
                 rs1
-                <input type="number" min={0} max={31} value={iRs1} onChange={(e) => setIRs1(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={iRs1}
+                  onChange={(e) => setIRs1(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
               </label>
               <label className="text-sm text-gray-700">
                 {I_META[iInstruction].immediateLabel}
@@ -384,11 +431,23 @@ export function MachineInstructionsSimulation() {
               </label>
               <label className="text-sm text-gray-700">
                 rs2 (data)
-                <input type="number" min={0} max={31} value={sRs2} onChange={(e) => setSRs2(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={sRs2}
+                  onChange={(e) => setSRs2(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
               </label>
               <label className="text-sm text-gray-700">
                 rs1 (base)
-                <input type="number" min={0} max={31} value={sRs1} onChange={(e) => setSRs1(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={sRs1}
+                  onChange={(e) => setSRs1(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
               </label>
               <label className="text-sm text-gray-700">
                 offset

@@ -226,6 +226,12 @@ export function TabAdditionSubtraction() {
     setSubmitted(false);
   };
 
+  const handlePrevious = () => {
+    setQuestionIndex((prev) => (prev - 1 + QUIZ_QUESTIONS.length) % QUIZ_QUESTIONS.length);
+    setSelectedOption(null);
+    setSubmitted(false);
+  };
+
   return (
     <div>
       <Card variant="practice" title="Practice: Binary addition and subtraction">
@@ -258,24 +264,34 @@ export function TabAdditionSubtraction() {
             ))}
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={selectedOption === null || submitted}
-              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
-            >
-              Submit answer
-            </button>
-            {submitted && (
+          <div className="space-y-2">
+            <div>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={selectedOption === null || submitted}
+                className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+              >
+                Submit answer
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-gray-400"
+              >
+                Previous question
+              </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="inline-flex items-center justify-center rounded-full bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-300 transition"
+                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-gray-400"
               >
-                {questionIndex === QUIZ_QUESTIONS.length - 1 ? 'Start over' : 'Next question'}
+                Next question
               </button>
-            )}
+            </div>
           </div>
 
           {submitted && (

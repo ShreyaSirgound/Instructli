@@ -102,47 +102,29 @@ function makeGetColour(
 function buildHoverText(label: string | null, question: QuizQuestion): string | null {
   if (!label) return null;
 
-  // Map each block label to a segment that must be active for it to appear
-  const requiredSegment: Partial<Record<string, keyof DataPath>> = {
-    "PC":                   "pc_default",
-    "INSTRUCTION MEMORY":   "pc_default",
-    "REGISTER FILES":        "im_reg1",
-    "IMMEDIATE GENERATOR":  "im_imm_gen",
-    "ALU":                  "mux_alu",
-    "DATA MEMORY":          "alu_res_mem",
-    "ADD (PC + 4)":         "pc_increment",
-    "ADD (Branch Target)":  "pc_add",
-    "MUX (Next PC)":        "mux_pc",
-    "MUX (ALU Input)":      "mux_alu",
-    "MUX (Write Back)":     "reg_write",
-  };
-
-  const required = requiredSegment[label];
-  if (required && !question.activeSegments.includes(required)) return null;
-
   switch (label) {
     case "PC":
-      return `PC\n\nHolds the address of the current instruction. After execution, it updates to PC+4 (or a branch target if a branch is taken).`;
+      return `PROGRAM COUNTER (PC)\nHolds the address of the current instruction being executed.`;
     case "INSTRUCTION MEMORY":
-      return `INSTRUCTION MEMORY\n\nFetches the instruction at the current PC address. The instruction bits are then routed to the register file, immediate generator, and control unit.`;
-    case "REGISTER FILES":
-      return `REGISTER FILES\n\nReads up to two source registers and writes a result to the destination register (when RegWrite=1). For "${question.label}", the active read/write ports reflect the instruction's rs1, rs2, and rd fields.`;
+      return `INSTRUCTION MEMORY\nStores all program instructions and outputs the instruction at the given address.`;
+    case "REGISTER FILE":
+      return `REGISTER FILE\nStores CPU registers (x0–x31). Allows simultaneous reading of two registers and writing one register per cycle.`;
     case "IMMEDIATE GENERATOR":
-      return `IMMEDIATE GENERATOR\n\nSign-extends the immediate field from the instruction. Active for I-type, S-type, and B-type instructions.`;
+      return `IMMEDIATE GENERATOR\nExtracts the 12-bit immediate field from the instruction and sign-extends it to 32 bits.`;
     case "ALU":
-      return `ALU\n\nPerforms the arithmetic or logic operation. Also produces a Zero signal used by branch instructions to decide whether to take the branch.`;
+      return `ARITHMETIC LOGIC UNIT (ALU)\nPerforms arithmetic (add, subtract) and logical (and, or) operations on two 32-bit operands.`;
     case "DATA MEMORY":
-      return `DATA MEMORY\n\nRead on load (lw) and written on store (sw). The ALU result is used as the memory address.`;
+      return `DATA MEMORY\nStores program data (loaded by lw, stored by sw). Allows reading and writing in a single cycle.`;
     case "ADD (PC + 4)":
-      return `ADD (PC + 4)\n\nIncrements the PC by 4 to point to the next sequential instruction.`;
+      return `ADDER (PC + 4)\nComputes the next sequential program counter value by adding 4 to the current PC.`;
     case "ADD (Branch Target)":
-      return `ADD (Branch Target)\n\nComputes the branch target address: PC + (immediate << 1). Used when a branch is taken.`;
+      return `ADDER (Branch Target)\nComputes the branch target address by adding the sign-extended immediate to the PC.`;
     case "MUX (Next PC)":
-      return `MUX (Next PC)\n\nSelects between PC+4 (no branch) and the branch target (branch taken). Controlled by the AND of Branch and ALU Zero signals.`;
+      return `MULTIPLEXER (Next PC)\nSelects between the sequential PC (PC+4) or branch target address based on the branch condition.`;
     case "MUX (ALU Input)":
-      return `MUX (ALU Input)\n\nSelects between register data 2 (R-type) and the sign-extended immediate (I/S/B-type) as the second ALU operand. Controlled by ALUSrc.`;
+      return `MULTIPLEXER (ALU Input)\nSelects the second operand for the ALU: either a register value or the immediate value.`;
     case "MUX (Write Back)":
-      return `MUX (Write Back)\n\nSelects whether to write back the ALU result (R/I-type) or data from memory (lw) to the register file. Controlled by MemToReg.`;
+      return `MULTIPLEXER (Write Back)\nSelects which value to write back to the register file: ALU result or data from memory.`;
     default:
       return label;
   }
@@ -226,8 +208,8 @@ export default function SingleCycleQuiz() {
       <DatapathSVG
         getColour={getColour}
         onSegmentClick={submitted ? undefined : handleToggle}
-        onBlockHover={submitted ? setActiveBlock : undefined}
-        hoverContent={submitted && activeBlock ? (() => {
+        onBlockHover={setActiveBlock}
+        hoverContent={activeBlock ? (() => {
             const text = buildHoverText(activeBlock, question);
             return text ? React.createElement(
             "div",
