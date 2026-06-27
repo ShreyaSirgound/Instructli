@@ -41,7 +41,7 @@ export const hazardsConfig: ProgressConfig = {
 
 export const cachingConfig: ProgressConfig = {
   storageKey: 'cachingProgress',
-  sectionIds: ['simulation'],
+  sectionIds: ['simulation', 'caching-basics', 'associative-caching'],
   eventName: 'caching-progress-updated',
   legacyKeyMap: {},
 };

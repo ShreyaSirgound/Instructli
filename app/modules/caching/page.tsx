@@ -8,12 +8,16 @@ import dynamic from "next/dynamic";
 import { getSavedProgress, computeProgress, saveProgress } from '@/app/progressConfig';
 import { InfoNote } from "@/components/InfoNote";
 import CacheTracer from "@/components/caching/CacheTracer";
+import TabCachingBasics from "@/components/caching/TabCachingBasics";
+import TabAssociativeCaching from "@/components/caching/TabAssociativeCaching";
 import { cachingConfig } from '@/app/moduleConfigs';
 
-export type TabId = 'simulation';
+export type TabId = 'simulation' | 'caching-basics' | 'associative-caching';
 
 const TABS: { id: TabId; label: string }[] = [
-  { id: 'simulation', label: '1. Interactive simulation' },
+  { id: 'caching-basics', label: '1. Caching fundamentals' },
+  { id: 'associative-caching', label: '2. Associative caching' },
+  { id: 'simulation', label: '3. Interactive simulation' },
 ];
 
 export default function CachingModule() {
@@ -58,7 +62,7 @@ export default function CachingModule() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
             <div>
               <p className="text-sm font-semibold text-gray-900">Module progress</p>
-              <p className="text-sm text-gray-500">Complete each section to track your pipeline understanding.</p>
+              <p className="text-sm text-gray-500">Complete each section to track your caching understanding.</p>
             </div>
             <p className="text-sm font-semibold text-gray-900">{progressValue}% complete</p>
           </div>
@@ -95,6 +99,14 @@ export default function CachingModule() {
               </div>
             </Card>
           </>
+        )}
+
+        {activeTab === 'caching-basics' && (
+          <TabCachingBasics />
+        )}
+
+        {activeTab === 'associative-caching' && (
+          <TabAssociativeCaching />
         )}
 
         <div className="mt-6 mb-10 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
