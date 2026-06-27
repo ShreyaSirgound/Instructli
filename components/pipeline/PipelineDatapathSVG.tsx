@@ -12,6 +12,9 @@ type PipelineDatapathSVGProps = {
   stageLabels?: { IF?: string; ID?: string; EX?: string; MEM?: string; WB?: string };
   hazards?: string[];
   active: boolean;
+  hideStageLabels?: boolean;
+  activeStages?: Set<"IF" | "ID" | "EX" | "MEM" | "WB">;
+  activeStageColor: string;
   analysisText?: string;
   // click handlers for quiz mode
   onSegmentClickIF?:  (key: keyof IFPath)  => void;
@@ -32,6 +35,9 @@ export default function PipelineDatapathSVG({
   stageLabels,
   hazards,
   active,
+  hideStageLabels,
+  activeStages,
+  activeStageColor,
   analysisText,
   onSegmentClickIF,
   onSegmentClickID,
@@ -402,43 +408,47 @@ export default function PipelineDatapathSVG({
 
         {/* STAGE SEPARATORS */}
         <g onMouseEnter={() => hover("IF/ID")} onMouseLeave={unhover}>
-          <rect id="IF/ID Wall" x="259.758" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
+          <rect id="IF/ID Wall" x="259.758" y="55.2817" width="23.5387" height="484.828" fill={activeStages?.has("IF") ? "#2563eb" : "#D9D9D9"} stroke="black"/>
           <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="261.658" y="42.7938">IF/ID</tspan></text>
         </g>
         <g onMouseEnter={() => hover("ID/EX")} onMouseLeave={unhover}>
-          <rect id="ID/EX Wall" x="465.67" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
+          <rect id="ID/EX Wall" x="465.67" y="55.2817" width="23.5387" height="484.828" fill={activeStages?.has("ID") ? "#2563eb" : "#D9D9D9"} stroke="black"/>
           <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="463.839" y="42.7938">ID/EX</tspan></text>
         </g>
         <g onMouseEnter={() => hover("EX/MEM")} onMouseLeave={unhover}>
-          <rect id="EX/MEM Wall" x="653.444" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
+          <rect id="EX/MEM Wall" x="653.444" y="55.2817" width="23.5387" height="484.828" fill={activeStages?.has("EX") ? "#2563eb" : "#D9D9D9"} stroke="black"/>
           <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="647.819" y="42.7938">EX/MEM</tspan></text>
         </g>
         <g onMouseEnter={() => hover("MEM/WB")} onMouseLeave={unhover}>
-          <rect id="MEM/WB Wall" x="828.415" y="55.2817" width="23.5387" height="484.828" fill="#D9D9D9" stroke="black"/>
+          <rect id="MEM/WB Wall" x="828.415" y="55.2817" width="23.5387" height="484.828" fill={activeStages?.has("MEM") ? "#2563eb" : "#D9D9D9"} stroke="black"/>
           <text fill="black" xmlSpace="preserve" style={{ whiteSpace: "pre" }} fontSize="10" fontWeight="500" letterSpacing="0em"><tspan x="819.129" y="42.7938">MEM/WB</tspan></text>
         </g>
 
         {/* PIPELINE STAGE LABEL BOXES */}
-        <g>
-          <rect x="60" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-          <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="70" y="45">{stageLabels?.IF ?? ""}</text>
-        </g>
-        <g>
-          <rect x="320" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-          <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="325" y="45">{stageLabels?.ID ?? ""}</text>
-        </g>
-        <g>
-          <rect x="515" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-          <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="520" y="45">{stageLabels?.EX ?? ""}</text>
-        </g>
-        <g>
-          <rect x="690" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-          <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="695" y="45">{stageLabels?.MEM ?? ""}</text>
-        </g>
-        <g>
-          <rect x="865" y="32" width="120" height="18" fill="#f2f4f6" rx="6" />
-          <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="865" y="45">{stageLabels?.WB ?? ""}</text>
-        </g>
+        {!hideStageLabels && (
+          <>
+          <g>
+            <rect x="60" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
+            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="70" y="45">{stageLabels?.IF ?? ""}</text>
+          </g>
+          <g>
+            <rect x="320" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
+            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="325" y="45">{stageLabels?.ID ?? ""}</text>
+          </g>
+          <g>
+            <rect x="515" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
+            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="520" y="45">{stageLabels?.EX ?? ""}</text>
+          </g>
+          <g>
+            <rect x="690" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
+            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="695" y="45">{stageLabels?.MEM ?? ""}</text>
+          </g>
+          <g>
+            <rect x="865" y="32" width="120" height="18" fill="#f2f4f6" rx="6" />
+            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="865" y="45">{stageLabels?.WB ?? ""}</text>
+          </g>
+          </>
+        )}
 
         {/* HAZARDS BOX */}
         <g onMouseEnter={() => hover("HAZARDS")} onMouseLeave={unhover}>

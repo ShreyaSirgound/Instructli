@@ -201,6 +201,7 @@ export default function PipelineProcessor({ results, currCycle, currentPreset }:
       stageLabels={stageLabels}
       hazards={hazards}
       active={latestResult != null}
+      activeStageColor="#ff0000"
       analysisText={currentPreset ? `Analysis:\n${currentPreset.note}` : undefined}
     />
   );

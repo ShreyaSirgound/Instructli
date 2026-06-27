@@ -95,7 +95,8 @@ export default function PipelineModule() {
     [progress, mounted]
   );
 
-  const currentComplete = progress[activeTab] ?? false;
+  /*const currentComplete = progress[activeTab] ?? false;*/
+  const currentComplete = mounted ? (progress[activeTab] ?? false) : false;
 
   function markSectionComplete() {
     const updated = { ...progress, [activeTab]: !currentComplete };

@@ -213,6 +213,14 @@ function buildHoverText(label: string | null, question: PipelineQuizQuestion): s
           ? "MemToReg=1 — writes data read from memory back to the register file."
           : "MemToReg=0 — writes the ALU result back to the register file."
       }`;
+    case "IF/ID":
+      return `IF/ID\n\nHolds the fetched instruction and program counter while the decode stage reads the fields.\nThis lets the next cycle begin ID without waiting for IF to finish.`;
+    case "ID/EX":
+      return `ID/EX\n\nCarries decoded register values, control signals, and immediate values into the execute stage.\nIt separates instruction decode from execution.`;
+    case "EX/MEM":
+      return `EX/MEM\n\nStores the ALU result, branch decision signals, and register data for the memory stage.\nIt separates execution from memory access.`;
+    case "MEM/WB":
+      return `MEM/WB\n\nHolds the value from data memory or the ALU result until the write-back stage writes it into the register file.`;
     case "HAZARDS":
       return `HAZARDS\n\nIn a pipelined processor, hazards occur when an instruction depends on the result of a previous instruction that hasn't completed yet (data hazard), or when a branch changes the PC before the pipeline has fetched the correct next instruction (control hazard).`;
     default:
@@ -230,6 +238,14 @@ export default function PipelineProcessorQuiz() {
   const correctSet = new Set<AllPathKeys>([
     ...question.activeIF, ...question.activeID, ...question.activeEX,
     ...question.activeMEM, ...question.activeWB,
+  ]);
+
+  const activeStages = new Set<"IF" | "ID" | "EX" | "MEM" | "WB">([
+    ...([...selected].some(k => SELECTABLE_IF.includes(k as keyof IFPath))   ? ["IF"]  as const : []),
+    ...([...selected].some(k => SELECTABLE_ID.includes(k as keyof IDPath))   ? ["ID"]  as const : []),
+    ...([...selected].some(k => SELECTABLE_EX.includes(k as keyof EXPath))   ? ["EX"]  as const : []),
+    ...([...selected].some(k => SELECTABLE_MEM.includes(k as keyof MEMPath)) ? ["MEM"] as const : []),
+    ...([...selected].some(k => SELECTABLE_WB.includes(k as keyof WBPath))   ? ["WB"]  as const : []),
   ]);
 
   const handleClickIF  = useCallback((key: keyof IFPath)  => { if (!submitted) setSelected(prev => toggle(prev, key as AllPathKeys)); }, [submitted]);
@@ -301,6 +317,9 @@ export default function PipelineProcessorQuiz() {
         onBlockHover={submitted ? setActiveBlock : undefined}
         hoverContent={hoverContent}
         active={true}
+        hideStageLabels={true}
+        activeStages={activeStages}
+        activeStageColor=""
         analysisText={submitted
           ? "Hover over a block to see what it does for this instruction."
           : "Click segments on the diagram to select them."}
