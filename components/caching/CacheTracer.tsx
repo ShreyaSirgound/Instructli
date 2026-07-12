@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 type CacheType = "direct-mapped" | "fully-associative" | "set-associative";
+type ReplacementPolicy = "lru" | "random";
 
 interface CacheConfig {
   type: CacheType;
   numBlocks: number;   // total blocks (= numSets * numWays)
   blockSizeWords: number;
   numWays: number;     // 1 = direct-mapped, numBlocks = fully-associative
+  policy: ReplacementPolicy;
 }
 
 // One slot in the cache
@@ -58,6 +60,22 @@ function emptyCache(config: CacheConfig): CacheState {
 }
 
 /**
+ * Pick which way to evict when a set is full. LRU evicts the least-recently
+ * used way (lowest counter); random picks uniformly among all ways in the
+ * set (all are guaranteed valid here, since this is only called when there's
+ * no empty way left).
+ */
+function pickEvictionWay(set: CacheWay[], policy: ReplacementPolicy): number {
+  if (policy === "random") {
+    return Math.floor(Math.random() * set.length);
+  }
+  return set.reduce(
+    (lruIdx, w, i) => (w.lruCounter < set[lruIdx].lruCounter ? i : lruIdx),
+    0
+  );
+}
+
+/**
  * Simulate one cache access. Returns the result and the new cache state.
  */
 function simulateAccess(
@@ -82,20 +100,13 @@ function simulateAccess(
 
   if (hit) {
     wayHit = hitWayIdx;
-    // Update LRU: bump hit way to highest counter
     const maxCounter = Math.max(...newSet.map((w) => w.lruCounter));
     newSet[hitWayIdx].lruCounter = maxCounter + 1;
   } else {
-    // Find an empty way first, otherwise evict LRU
+    // Find an empty way first, otherwise evict per the configured policy
     const emptyWayIdx = newSet.findIndex((w) => !w.valid);
     const targetWayIdx =
-      emptyWayIdx !== -1
-        ? emptyWayIdx
-        : newSet.reduce(
-            (lruIdx, w, i) =>
-              w.lruCounter < newSet[lruIdx].lruCounter ? i : lruIdx,
-            0
-          );
+      emptyWayIdx !== -1 ? emptyWayIdx : pickEvictionWay(newSet, config.policy);
 
     if (newSet[targetWayIdx].valid) {
       evictedWay = targetWayIdx;
@@ -157,12 +168,19 @@ function buildFeedback(result: AccessResult, config: CacheConfig): string {
 
   if (hit) {
     const wayDesc = config.numWays > 1 ? ` in way ${wayHit}` : "";
-    return `Hit! Addr ${addr} maps to ${locationDesc}. The cache holds tag ${tag}${wayDesc} — LRU counter updated.`;
+    const bookkeepingDesc =
+      config.numWays > 1
+        ? config.policy === "lru"
+          ? " — LRU counter updated."
+          : " — no recency bookkeeping needed under random replacement."
+        : ".";
+    return `Hit! Addr ${addr} maps to ${locationDesc}. The cache holds tag ${tag}${wayDesc}${bookkeepingDesc}`;
   }
 
+  const policyLabel = config.policy === "lru" ? "LRU" : "random";
   const installDesc =
     evictedTag !== null
-      ? `Tag ${evictedTag} (way ${evictedWay}) was evicted (LRU). Tag ${tag} installed.`
+      ? `Tag ${evictedTag} (way ${evictedWay}) was evicted (${policyLabel}). Tag ${tag} installed.`
       : `Empty slot found. Tag ${tag} installed.`;
 
   if (config.type === "direct-mapped") {
@@ -179,6 +197,7 @@ const DEFAULT_CONFIG: CacheConfig = {
   numBlocks: 4,
   blockSizeWords: 1,
   numWays: 1,
+  policy: "lru",
 };
 
 export default function CacheTracer() {
@@ -199,11 +218,13 @@ export default function CacheTracer() {
   const done = currentStep >= accessAddrs.length;
   const currentAddr = accessAddrs[currentStep];
 
-  // Pre-compute what the simulator would say for the current step (without mutating state)
-  const preview =
-    !done
-      ? simulateAccess(cacheState, currentAddr, config)
-      : null;
+  // Pre-compute what the simulator would say for the current step (without mutating state).
+  // Memoized so that under the random policy, the eviction choice for a given step is settled
+  // once (on step change) rather than being re-rolled on every unrelated re-render.
+  const preview = useMemo(
+    () => (!done ? simulateAccess(cacheState, currentAddr, config) : null),
+    [currentStep, config, done]
+  );
   const actuallyHit = preview?.result.hit ?? false;
 
   function handlePrediction(userSaidHit: boolean) {
@@ -250,6 +271,10 @@ export default function CacheTracer() {
 
   function handleWaysChange(numWays: number) {
     applyConfig({ ...config, numWays });
+  }
+
+  function handlePolicyChange(policy: ReplacementPolicy) {
+    applyConfig({ ...config, policy });
   }
 
   function handleReset() {
@@ -339,13 +364,27 @@ export default function CacheTracer() {
               <option key={n} value={n}>{n} {n === 1 ? "word" : "words"}</option>
             ))}
           </select>
+
+          {config.numWays > 1 && (
+            <>
+              <label style={styles.configLabel}>Replacement:</label>
+              <select
+                style={styles.configChip}
+                value={config.policy}
+                onChange={(e) => handlePolicyChange(e.target.value as ReplacementPolicy)}
+              >
+                <option value="lru">LRU</option>
+                <option value="random">random</option>
+              </select>
+            </>
+          )}
         </div>
 
         {/* Config summary pill */}
         <div style={styles.summaryPill}>
           {config.type === "direct-mapped" && `${config.numBlocks} sets × 1 way`}
-          {config.type === "fully-associative" && `1 set × ${config.numBlocks} ways (LRU)`}
-          {config.type === "set-associative" && `${sets} sets × ${config.numWays} ways (LRU)`}
+          {config.type === "fully-associative" && `1 set × ${config.numBlocks} ways (${config.policy === "lru" ? "LRU" : "random"})`}
+          {config.type === "set-associative" && `${sets} sets × ${config.numWays} ways (${config.policy === "lru" ? "LRU" : "random"})`}
           {" · "}block size {config.blockSizeWords} word{config.blockSizeWords > 1 ? "s" : ""}
         </div>
 
@@ -394,7 +433,7 @@ export default function CacheTracer() {
                   <th style={styles.th}>Way</th>
                   <th style={styles.th}>Valid</th>
                   <th style={styles.th}>Tag</th>
-                  {config.numWays > 1 && <th style={styles.th}>LRU</th>}
+                  {config.numWays > 1 && config.policy === "lru" && <th style={styles.th}>LRU</th>}
                 </tr>
               </thead>
               <tbody>
@@ -435,7 +474,7 @@ export default function CacheTracer() {
                               : way.tag
                             : "–"}
                         </td>
-                        {config.numWays > 1 && (
+                        {config.numWays > 1 && config.policy === "lru" && (
                           <td style={{ ...styles.td, ...styles.tdLru }}>
                             {way.valid ? way.lruCounter : "–"}
                           </td>
