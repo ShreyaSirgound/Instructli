@@ -142,7 +142,7 @@ export default function PipelineModule() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-6 py-0 my-0 pt-12">
+      <div className="max-w-5xl mx-auto px-6 py-0 my-0 pt-12">
         <Link
           href="/"
           className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-gray-700 transition mb-6"
@@ -312,13 +312,13 @@ export default function PipelineModule() {
                 />
               </div>
 
-              <div className="flex-1 overflow-auto bg-white pb-[50px]">
+              <div className="flex-1 overflow-auto bg-white pb-[30]">
                 <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset} />
               </div>
             </Card>
 
             <Card variant="simulation" title="Trace the datapath">
-              <div className="flex-1 overflow-auto bg-white pb-[50px]">
+              <div className="flex-1 overflow-auto bg-white pb-[30px]">
                 <PipelineQuiz />
               </div>
             </Card>

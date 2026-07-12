@@ -15,6 +15,8 @@ type PipelineDatapathSVGProps = {
   hideStageLabels?: boolean;
   activeStages?: Set<"IF" | "ID" | "EX" | "MEM" | "WB">;
   activeStageColor: string;
+  clickableStages?: Set<"IF" | "ID" | "EX" | "MEM" | "WB">;
+  stageColors?: { IF?: string; ID?: string; EX?: string; MEM?: string; WB?: string };
   analysisText?: string;
   // click handlers for quiz mode
   onSegmentClickIF?:  (key: keyof IFPath)  => void;
@@ -38,6 +40,8 @@ export default function PipelineDatapathSVG({
   hideStageLabels,
   activeStages,
   activeStageColor,
+  clickableStages,
+  stageColors,
   analysisText,
   onSegmentClickIF,
   onSegmentClickID,
@@ -78,6 +82,26 @@ export default function PipelineDatapathSVG({
   return (
     <>
       <svg width="100%" height="100%" viewBox="0 0 965 570" fill="transparent" preserveAspectRatio="xMidYMid meet">
+        {clickableStages && Object.entries({
+          IF:  [-10, 259.758],
+          ID:  [283.2967, 465.67],
+          EX:  [489.2087, 653.444],
+          MEM: [676.9827, 828.415],
+          WB:  [851.9537, 975],
+        } as Record<"IF" | "ID" | "EX" | "MEM" | "WB", [number, number]>).map(([stage, [x0, x1]]) =>
+          clickableStages.has(stage as "IF" | "ID" | "EX" | "MEM" | "WB") ? (
+            <rect
+              key={`clickable-${stage}`}
+              x={x0}
+              y={12}
+              width={x1 - x0}
+              height={548}
+              fill={`${stageColors?.[stage as "IF" | "ID" | "EX" | "MEM" | "WB"] ?? "#4f46e5"}26`}
+              rx={8}
+              pointerEvents="none"
+            />
+          ) : null
+        )}
 
         {/* INSTRUCTION MEMORY BOX */}
         <g onMouseEnter={() => hover("INSTRUCTION MEMORY")} onMouseLeave={unhover}>
@@ -429,23 +453,23 @@ export default function PipelineDatapathSVG({
           <>
           <g>
             <rect x="60" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="70" y="45">{stageLabels?.IF ?? ""}</text>
+            <text fill={stageColors?.IF ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="70" y="45">{stageLabels?.IF ?? ""}</text>
           </g>
           <g>
             <rect x="320" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="325" y="45">{stageLabels?.ID ?? ""}</text>
+            <text fill={stageColors?.ID ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="325" y="45">{stageLabels?.ID ?? ""}</text>
           </g>
           <g>
             <rect x="515" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="520" y="45">{stageLabels?.EX ?? ""}</text>
+            <text fill={stageColors?.EX ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="520" y="45">{stageLabels?.EX ?? ""}</text>
           </g>
           <g>
             <rect x="690" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="695" y="45">{stageLabels?.MEM ?? ""}</text>
+            <text fill={stageColors?.MEM ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="695" y="45">{stageLabels?.MEM ?? ""}</text>
           </g>
           <g>
             <rect x="865" y="32" width="120" height="18" fill="#f2f4f6" rx="6" />
-            <text fill="#374151" xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="865" y="45">{stageLabels?.WB ?? ""}</text>
+            <text fill={stageColors?.WB ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="865" y="45">{stageLabels?.WB ?? ""}</text>
           </g>
           </>
         )}
