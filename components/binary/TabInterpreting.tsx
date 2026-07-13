@@ -250,7 +250,7 @@ export function TabInterpreting() {
       {/* Simulation */}
       <Card variant="simulation" title="Live base converter">
         <p className="text-sm text-gray-700 mb-4">
-          Click any bit to toggle it. The decimal, octal, and hex representations update instantly.
+          Click any bit to toggle it. The decimal, octal, and hex representations update instantly. All values are interpreted as <strong>unsigned</strong> (range 0–255).
         </p>
         <BaseConverter />
       </Card>

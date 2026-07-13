@@ -23,7 +23,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
     prompt: <>What is <code className="rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono">1011 1110</code> in 8-bit unsigned?</>,
     options: [
       { label: 'A', text: '190' },
-      { label: 'B', text: '128', wrongExplanation: 'That is only 2⁷; include all the other 1-bits: 64, 32, 16, 8, 4, 2.' },
+      { label: 'B', text: '128', wrongExplanation: 'That is only 2⁷; include all the other 1-bits: 32, 16, 8, 4, 2.' },
       { label: 'C', text: '66', wrongExplanation: 'Recount the powers of 2: 128 + 32 + 16 + 8 + 4 + 2 = 190.' },
       { label: 'D', text: '-66', wrongExplanation: 'That is two\'s complement interpretation; unsigned only uses positive values.' },
     ],

@@ -69,10 +69,10 @@ function InteractiveAdder() {
   function toggleB(i: number) { setBB((p) => p.map((b, j) => j === i ? b ^ 1 : b)); }
 
   const statCards = [
-    { label: 'A (decimal)',      main: uA, sub: `signed: ${sA}` },
-    { label: 'B (decimal)',      main: uB, sub: `signed: ${sB}` },
-    { label: 'Result (decimal)', main: uR, sub: `signed: ${sR}` },
-    { label: 'Carry out',        main: co, sub: 'out of MSB' },
+    { label: 'A (unsigned)',      main: uA, sub: `two's complement: ${sA}` },
+    { label: 'B (unsigned)',      main: uB, sub: `two's complement: ${sB}` },
+    { label: 'Result (unsigned)', main: uR, sub: `two's complement: ${sR}` },
+    { label: 'Carry out',         main: co, sub: 'out of MSB' },
   ];
 
   return (
