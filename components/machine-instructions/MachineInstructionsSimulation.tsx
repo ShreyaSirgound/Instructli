@@ -3,11 +3,13 @@
 import { useMemo, useState } from 'react';
 import { Card } from '../Card';
 
-type FormatKind = 'R' | 'I' | 'S';
+type FormatKind = 'R' | 'I' | 'S' | 'B' | 'J';
 
 type RInstruction = 'add' | 'sub' | 'sll';
 type IInstruction = 'addi' | 'lw' | 'slli';
 type SInstruction = 'sw' | 'sh' | 'sb';
+type BInstruction = 'beq' | 'bne';
+type JInstruction = 'jal';
 
 type BitField = {
   label: string;
@@ -18,9 +20,9 @@ type BitField = {
 type DecodeCase = {
   word: number;
   format: FormatKind;
-  mnemonic: RInstruction | IInstruction | SInstruction;
+  mnemonic: RInstruction | IInstruction | SInstruction | BInstruction | JInstruction;
   rd?: number;
-  rs1: number;
+  rs1?: number;
   rs2?: number;
   immediate?: number;
   assembly: string;
@@ -42,6 +44,15 @@ const S_META: Record<SInstruction, { funct3: number; opcode: number }> = {
   sw: { funct3: 2, opcode: 0x23 },
   sh: { funct3: 1, opcode: 0x23 },
   sb: { funct3: 0, opcode: 0x23 },
+};
+
+const B_META: Record<BInstruction, { funct3: number; opcode: number }> = {
+  beq: { funct3: 0, opcode: 0x63 },
+  bne: { funct3: 1, opcode: 0x63 },
+};
+
+const J_META: Record<JInstruction, { opcode: number }> = {
+  jal: { opcode: 0x6F },
 };
 
 function maskBits(value: number, bits: number) {
@@ -117,6 +128,14 @@ export function MachineInstructionsSimulation() {
   const [sRs1, setSRs1] = useState('18');
   const [sImmediate, setSImmediate] = useState(120);
 
+  const [bInstruction, setBInstruction] = useState<BInstruction>('beq');
+  const [bRs1, setBRs1] = useState('5');
+  const [bRs2, setBRs2] = useState('6');
+  const [bOffset, setBOffset] = useState(16);
+
+  const [jRd, setJRd] = useState('1');
+  const [jOffset, setJOffset] = useState(100);
+
   const decodeCases: DecodeCase[] = [
     {
       word: 0x015A04B3,
@@ -154,6 +173,23 @@ export function MachineInstructionsSimulation() {
       rs2: 22,
       assembly: 'sub x7, x5, x22',
     },
+    {
+      word: 0x00628863,
+      format: 'B',
+      mnemonic: 'beq',
+      rs1: 5,
+      rs2: 6,
+      immediate: 16,
+      assembly: 'beq x5, x6, 16',
+    },
+    {
+      word: 0x064000EF,
+      format: 'J',
+      mnemonic: 'jal',
+      rd: 1,
+      immediate: 100,
+      assembly: 'jal x1, 100',
+    },
   ];
 
   const [decodeIndex, setDecodeIndex] = useState(0);
@@ -171,7 +207,7 @@ export function MachineInstructionsSimulation() {
   const decodeRequiredComplete =
     decodeFormat !== '' &&
     decodeMnemonic !== '' &&
-    decodeRs1 !== '' &&
+    (activeDecode.rs1 == null || decodeRs1 !== '') &&
     (activeDecode.rd == null || decodeRd !== '') &&
     (activeDecode.rs2 == null || decodeRs2 !== '') &&
     (activeDecode.immediate == null || decodeImmediate !== '');
@@ -234,35 +270,92 @@ export function MachineInstructionsSimulation() {
       };
     }
 
-    const meta = S_META[sInstruction];
-  const rs1 = maskBits(parseRegisterValue(sRs1), 5);
-  const rs2 = maskBits(parseRegisterValue(sRs2), 5);
-    const imm12 = maskBits(sImmediate, 12);
-    const immUpper = (imm12 >> 5) & 0x7F;
-    const immLower = imm12 & 0x1F;
-    const word =
-      (immUpper << 25) |
-      (rs2 << 20) |
-      (rs1 << 15) |
-      (meta.funct3 << 12) |
-      (immLower << 7) |
-      meta.opcode;
+    if (format === 'S') {
+      const meta = S_META[sInstruction];
+      const rs1 = maskBits(parseRegisterValue(sRs1), 5);
+      const rs2 = maskBits(parseRegisterValue(sRs2), 5);
+      const imm12 = maskBits(sImmediate, 12);
+      const immUpper = (imm12 >> 5) & 0x7F;
+      const immLower = imm12 & 0x1F;
+      const word =
+        (immUpper << 25) |
+        (rs2 << 20) |
+        (rs1 << 15) |
+        (meta.funct3 << 12) |
+        (immLower << 7) |
+        meta.opcode;
+      const fields: BitField[] = [
+        { label: 'imm[11:5]', bits: 7, value: immUpper },
+        { label: 'rs2', bits: 5, value: rs2 },
+        { label: 'rs1', bits: 5, value: rs1 },
+        { label: 'funct3', bits: 3, value: meta.funct3 },
+        { label: 'imm[4:0]', bits: 5, value: immLower },
+        { label: 'opcode', bits: 7, value: meta.opcode },
+      ];
+      return {
+        assembly: `${sInstruction} x${rs2}, ${sImmediate}(x${rs1})`,
+        fields,
+        word,
+      };
+    }
 
-    const fields: BitField[] = [
-      { label: 'imm[11:5]', bits: 7, value: immUpper },
-      { label: 'rs2', bits: 5, value: rs2 },
-      { label: 'rs1', bits: 5, value: rs1 },
-      { label: 'funct3', bits: 3, value: meta.funct3 },
-      { label: 'imm[4:0]', bits: 5, value: immLower },
-      { label: 'opcode', bits: 7, value: meta.opcode },
+    if (format === 'B') {
+      const meta = B_META[bInstruction];
+      const rs1 = maskBits(parseRegisterValue(bRs1), 5);
+      const rs2 = maskBits(parseRegisterValue(bRs2), 5);
+      const imm12  = (bOffset >> 12) & 1;
+      const imm11  = (bOffset >> 11) & 1;
+      const imm10_5 = (bOffset >> 5) & 0x3F;
+      const imm4_1  = (bOffset >> 1) & 0xF;
+      const word =
+        (imm12 << 31) |
+        (imm10_5 << 25) |
+        (rs2 << 20) |
+        (rs1 << 15) |
+        (meta.funct3 << 12) |
+        (imm4_1 << 8) |
+        (imm11 << 7) |
+        meta.opcode;
+      const fields: BitField[] = [
+        { label: 'imm[12,10:5]', bits: 7, value: (imm12 << 6) | imm10_5 },
+        { label: 'rs2', bits: 5, value: rs2 },
+        { label: 'rs1', bits: 5, value: rs1 },
+        { label: 'funct3', bits: 3, value: meta.funct3 },
+        { label: 'imm[4:1,11]', bits: 5, value: (imm4_1 << 1) | imm11 },
+        { label: 'opcode', bits: 7, value: meta.opcode },
+      ];
+      return {
+        assembly: `${bInstruction} x${rs1}, x${rs2}, ${bOffset}`,
+        fields,
+        word,
+      };
+    }
+
+    // J-format
+    const jMeta = J_META['jal'];
+    const jRdVal = maskBits(parseRegisterValue(jRd), 5);
+    const jImm20    = (jOffset >> 20) & 1;
+    const jImm10_1  = (jOffset >> 1) & 0x3FF;
+    const jImm11    = (jOffset >> 11) & 1;
+    const jImm19_12 = (jOffset >> 12) & 0xFF;
+    const jWord =
+      (jImm20 << 31) |
+      (jImm10_1 << 21) |
+      (jImm11 << 20) |
+      (jImm19_12 << 12) |
+      (jRdVal << 7) |
+      jMeta.opcode;
+    const jFields: BitField[] = [
+      { label: 'imm[20,10:1,11,19:12]', bits: 20, value: (jImm20 << 19) | (jImm10_1 << 9) | (jImm11 << 8) | jImm19_12 },
+      { label: 'rd', bits: 5, value: jRdVal },
+      { label: 'opcode', bits: 7, value: jMeta.opcode },
     ];
-
     return {
-      assembly: `${sInstruction} x${rs2}, ${sImmediate}(x${rs1})`,
-      fields,
-      word,
+      assembly: `jal x${jRdVal}, ${jOffset}`,
+      fields: jFields,
+      word: jWord,
     };
-  }, [format, iImmediate, iInstruction, iRd, iRs1, rInstruction, rRd, rRs1, rRs2, sImmediate, sInstruction, sRs1, sRs2]);
+  }, [format, bInstruction, bOffset, bRs1, bRs2, iImmediate, iInstruction, iRd, iRs1, jOffset, jRd, rInstruction, rRd, rRs1, rRs2, sImmediate, sInstruction, sRs1, sRs2]);
 
   function resetDecoderAnswers(nextIndex: number) {
     setDecodeIndex(nextIndex);
@@ -290,7 +383,7 @@ export function MachineInstructionsSimulation() {
     const formatOk = decodeFormat === activeDecode.format;
     const mnemonicOk = decodeMnemonic === activeDecode.mnemonic;
     const rdOk = activeDecode.rd == null ? true : rdValue === activeDecode.rd;
-    const rs1Ok = rs1Value === activeDecode.rs1;
+    const rs1Ok = activeDecode.rs1 == null ? true : rs1Value === activeDecode.rs1;
     const rs2Ok = activeDecode.rs2 == null ? true : rs2Value === activeDecode.rs2;
     const immOk = activeDecode.immediate == null ? true : immValue === activeDecode.immediate;
 
@@ -308,7 +401,7 @@ export function MachineInstructionsSimulation() {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {(['R', 'I', 'S'] as const).map((kind) => (
+            {(['R', 'I', 'S', 'B', 'J'] as const).map((kind) => (
               <button
                 key={kind}
                 type="button"
@@ -456,6 +549,67 @@ export function MachineInstructionsSimulation() {
             </div>
           )}
 
+          {format === 'B' && (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+              <label className="text-sm text-gray-700">
+                Instruction
+                <select value={bInstruction} onChange={(e) => setBInstruction(e.target.value as BInstruction)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2">
+                  <option value="beq">beq</option>
+                  <option value="bne">bne</option>
+                </select>
+              </label>
+              <label className="text-sm text-gray-700">
+                rs1
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={bRs1}
+                  onChange={(e) => setBRs1(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
+              </label>
+              <label className="text-sm text-gray-700">
+                rs2
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={bRs2}
+                  onChange={(e) => setBRs2(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
+              </label>
+              <label className="text-sm text-gray-700">
+                offset (bytes, even)
+                <input type="number" step={2} min={-4094} max={4094} value={bOffset} onChange={(e) => setBOffset(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+              </label>
+            </div>
+          )}
+
+          {format === 'J' && (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              <label className="text-sm text-gray-700">
+                Instruction
+                <select className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" disabled>
+                  <option value="jal">jal</option>
+                </select>
+              </label>
+              <label className="text-sm text-gray-700">
+                rd
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={jRd}
+                  onChange={(e) => setJRd(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
+              </label>
+              <label className="text-sm text-gray-700">
+                offset (bytes, even)
+                <input type="number" step={2} min={-1048574} max={1048574} value={jOffset} onChange={(e) => setJOffset(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+              </label>
+            </div>
+          )}
+
           <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-indigo-700">Assembly Preview</p>
             <p className="mt-1 font-mono text-sm text-indigo-900">{encoderResult.assembly}</p>
@@ -498,6 +652,8 @@ export function MachineInstructionsSimulation() {
                 <option value="R">R</option>
                 <option value="I">I</option>
                 <option value="S">S</option>
+                <option value="B">B</option>
+                <option value="J">J</option>
               </select>
             </label>
             <label className="text-sm text-gray-700 md:col-span-2">
@@ -520,6 +676,9 @@ export function MachineInstructionsSimulation() {
                 <option value="sw">sw</option>
                 <option value="sh">sh</option>
                 <option value="sb">sb</option>
+                <option value="beq">beq</option>
+                <option value="bne">bne</option>
+                <option value="jal">jal</option>
               </select>
             </label>
           </div>
@@ -541,20 +700,22 @@ export function MachineInstructionsSimulation() {
                 />
               </label>
             )}
-            <label className="text-sm text-gray-700">
-              rs1
-              <input
-                type="number"
-                min={0}
-                max={31}
-                value={decodeRs1}
-                onChange={(e) => {
-                  setDecodeRs1(e.target.value);
-                  clearDecodeFeedback();
-                }}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
-              />
-            </label>
+            {activeDecode.rs1 != null && (
+              <label className="text-sm text-gray-700">
+                rs1
+                <input
+                  type="number"
+                  min={0}
+                  max={31}
+                  value={decodeRs1}
+                  onChange={(e) => {
+                    setDecodeRs1(e.target.value);
+                    clearDecodeFeedback();
+                  }}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
+              </label>
+            )}
             {activeDecode.rs2 != null && (
               <label className="text-sm text-gray-700">
                 rs2
@@ -576,8 +737,8 @@ export function MachineInstructionsSimulation() {
                 immediate/offset
                 <input
                   type="number"
-                  min={-2048}
-                  max={2047}
+                  min={-1048576}
+                  max={1048574}
                   value={decodeImmediate}
                   onChange={(e) => {
                     setDecodeImmediate(e.target.value);
