@@ -3,13 +3,14 @@
 import { useMemo, useState } from 'react';
 import { Card } from '../Card';
 
-type FormatKind = 'R' | 'I' | 'S' | 'B' | 'J';
+type FormatKind = 'R' | 'I' | 'S' | 'B' | 'J' | 'U';
 
 type RInstruction = 'add' | 'sub' | 'sll';
 type IInstruction = 'addi' | 'lw' | 'slli';
 type SInstruction = 'sw' | 'sh' | 'sb';
 type BInstruction = 'beq' | 'bne';
 type JInstruction = 'jal';
+type UInstruction = 'lui' | 'auipc';
 
 type BitField = {
   label: string;
@@ -53,6 +54,11 @@ const B_META: Record<BInstruction, { funct3: number; opcode: number }> = {
 
 const J_META: Record<JInstruction, { opcode: number }> = {
   jal: { opcode: 0x6F },
+};
+
+const U_META: Record<UInstruction, { opcode: number }> = {
+  lui:   { opcode: 0x37 },
+  auipc: { opcode: 0x17 },
 };
 
 function maskBits(value: number, bits: number) {
@@ -135,6 +141,10 @@ export function MachineInstructionsSimulation() {
 
   const [jRd, setJRd] = useState('1');
   const [jOffset, setJOffset] = useState(100);
+
+  const [uInstruction, setUInstruction] = useState<UInstruction>('lui');
+  const [uRd, setURd] = useState('5');
+  const [uImmediate, setUImmediate] = useState(74565);
 
   const decodeCases: DecodeCase[] = [
     {
@@ -357,7 +367,22 @@ export function MachineInstructionsSimulation() {
       };
     }
 
-  }, [format, bInstruction, bOffset, bRs1, bRs2, iImmediate, iInstruction, iRd, iRs1, jOffset, jRd, rInstruction, rRd, rRs1, rRs2, sImmediate, sInstruction, sRs1, sRs2]);
+    // U-format
+    const uMeta = U_META[uInstruction];
+    const uRdVal = maskBits(parseRegisterValue(uRd), 5);
+    const uImm20 = uImmediate & 0xFFFFF;
+    const uWord = (uImm20 << 12) | (uRdVal << 7) | uMeta.opcode;
+    const uFields: BitField[] = [
+      { label: 'imm[31:12]', bits: 20, value: uImm20 },
+      { label: 'rd', bits: 5, value: uRdVal },
+      { label: 'opcode', bits: 7, value: uMeta.opcode },
+    ];
+    return {
+      assembly: `${uInstruction} x${uRdVal}, ${uImm20}`,
+      fields: uFields,
+      word: uWord,
+    };
+  }, [format, bInstruction, bOffset, bRs1, bRs2, iImmediate, iInstruction, iRd, iRs1, jOffset, jRd, rInstruction, rRd, rRs1, rRs2, sImmediate, sInstruction, sRs1, sRs2, uImmediate, uInstruction, uRd]);
 
   function resetDecoderAnswers(nextIndex: number) {
     setDecodeIndex(nextIndex);
@@ -403,7 +428,7 @@ export function MachineInstructionsSimulation() {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {(['R', 'I', 'S', 'B', 'J'] as const).map((kind) => (
+            {(['R', 'I', 'S', 'B', 'J', 'U'] as const).map((kind) => (
               <button
                 key={kind}
                 type="button"
@@ -608,6 +633,32 @@ export function MachineInstructionsSimulation() {
               <label className="text-sm text-gray-700">
                 offset (bytes, even)
                 <input type="number" step={2} min={-1048574} max={1048574} value={jOffset} onChange={(e) => setJOffset(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
+              </label>
+            </div>
+          )}
+
+          {format === 'U' && (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+              <label className="text-sm text-gray-700">
+                Instruction
+                <select value={uInstruction} onChange={(e) => setUInstruction(e.target.value as UInstruction)} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2">
+                  <option value="lui">lui</option>
+                  <option value="auipc">auipc</option>
+                </select>
+              </label>
+              <label className="text-sm text-gray-700">
+                rd
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={uRd}
+                  onChange={(e) => setURd(sanitizeRegisterInput(e.target.value))}
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                />
+              </label>
+              <label className="text-sm text-gray-700">
+                imm[31:12] (0 – 1048575)
+                <input type="number" min={0} max={1048575} value={uImmediate} onChange={(e) => setUImmediate(Number(e.target.value))} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />
               </label>
             </div>
           )}
