@@ -10,8 +10,8 @@ export default function Dashboard() {
       <div className="max-w-5xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900">Welcome back Jane</h1>
-          <p className="text-gray-500 mt-2">Choose a module to continue working on</p>
+          <h1 className="text-4xl font-bold text-gray-900">Welcome back, Jane</h1>
+          <p className="text-gray-500 mt-2">This app provides short interactive modules to help you practice and develop a deeper understanding of CSC258 concepts. It is not intended to teach new material. Use it to reinforce and explore the topics you are expected to know after lectures.</p>
         </div>
 
         {/* Module grid */}
