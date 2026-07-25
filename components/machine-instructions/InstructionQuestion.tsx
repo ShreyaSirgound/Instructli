@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { recordActivityOutcome } from '../../src/utils/analytics';
 import { Card } from '../Card';
 import { ChevronDown, ChevronUp, AlertCircle, CheckCircle } from 'lucide-react';
 
@@ -130,6 +131,7 @@ export function InstructionQuestion({
         <button
           onClick={() => {
             setSubmitted(true);
+            recordActivityOutcome('machine-instructions', 'question', allCorrect ? 'correct' : 'incorrect', allCorrect ? 1 : 0, 1, instruction);
           }}
           disabled={!fields.every(f => answers[f]) || allCorrect}
           className={`px-4 py-2 rounded font-semibold text-sm transition-colors ${

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { recordActivityOutcome } from "../../src/utils/analytics";
 
 type CacheType = "direct-mapped" | "fully-associative" | "set-associative";
 type ReplacementPolicy = "lru" | "random";
@@ -230,14 +231,16 @@ export default function CacheTracer() {
   function handlePrediction(userSaidHit: boolean) {
     if (!preview) return;
     const { result, newState } = preview;
+    const correct = userSaidHit === result.hit;
 
     setResults((prev) => [...prev, result]);
     setFeedback({
-      correct: userSaidHit === result.hit,
+      correct,
       message: buildFeedback(result, config),
     });
     setCacheState(newState);
     setCurrentStep((s) => s + 1);
+    recordActivityOutcome('caching', 'simulation', correct ? 'correct' : 'incorrect', correct ? 1 : 0, 1, `${config.type} ${config.numWays}-way`);
   }
 
   function applyConfig(newConfig: CacheConfig) {

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { Card } from '../Card';
+import { recordActivityOutcome } from '../../src/utils/analytics';
 
 type FormatKind = 'R' | 'I' | 'S' | 'B' | 'J' | 'U';
 
@@ -417,6 +418,7 @@ export function MachineInstructionsSimulation() {
     const allOk = formatOk && mnemonicOk && rdOk && rs1Ok && rs2Ok && immOk;
     setDecodeChecked(true);
     setDecodeCorrect(allOk);
+    recordActivityOutcome('machine-instructions', 'question', allOk ? 'correct' : 'incorrect', allOk ? 1 : 0, 1, activeDecode.assembly);
   }
 
   return (

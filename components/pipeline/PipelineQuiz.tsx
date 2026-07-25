@@ -7,6 +7,7 @@ import type {
 import { instructionTypeMap, CommandType } from "../../src/utils/pipeline-types";
 import { simulatePipeline } from "../../src/utils/pipeline-processor";
 import PipelineDatapathSVG from "./PipelineDatapathSVG";
+import { recordActivityOutcome } from "../../src/utils/analytics";
 
 type StageId = "IF" | "ID" | "EX" | "MEM" | "WB";
 const STAGE_ORDER: StageId[] = ["IF", "ID", "EX", "MEM", "WB"];
@@ -225,7 +226,9 @@ export default function PipelineProcessorQuiz() {
     const hits = [...selected].filter((k) => correctSet.has(k)).length;
     const wrong = selected.size - hits;
     const missed = [...correctSet].filter((k) => !selected.has(k)).length;
+    const outcome = wrong === 0 && missed === 0 ? 'correct' : wrong > 0 ? 'incorrect' : 'partial';
     setSessionStats((prev) => ({ hits: prev.hits + hits, wrong: prev.wrong + wrong, missed: prev.missed + missed }));
+    recordActivityOutcome('pipeline', 'simulation', outcome, hits, correctSet.size, `${program.label} • cycle ${state.cycle}`);
   };
 
   const handleNextCycle = () => {

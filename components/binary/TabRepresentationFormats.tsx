@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Card } from '../Card';
+import { recordActivityOutcome } from '../../src/utils/analytics';
 
 type QuizOption = {
   label: string;
@@ -137,6 +138,7 @@ export function TabRepresentationFormats() {
 
   const handleSubmit = () => {
     setSubmitted(true);
+    recordActivityOutcome('binary-arithmetic', 'question', isCorrect ? 'correct' : 'incorrect', isCorrect ? 1 : 0, 1, 'representation-formats');
   };
 
   const handleNext = () => {

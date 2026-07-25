@@ -7,6 +7,7 @@ import { Card } from '../../../components/Card'
 import { getSavedProgress, computeProgress, saveProgress } from '@/app/progressConfig';
 import { hazardsConfig } from '@/app/moduleConfigs';
 import HazardSimulation from "@/components/hazards/HazardsSimulation";
+import { recordActivityOutcome } from '@/src/utils/analytics';
 
 export type TabId = 'overview' | 'simulation';
 
@@ -151,6 +152,7 @@ function PracticeBlock({
 
   function handleSubmit() {
     setSubmitted(true);
+    recordActivityOutcome('hazards', 'question', isCorrect ? 'correct' : 'incorrect', isCorrect ? 1 : 0, 1, currentQuestion.title);
   }
 
   function handleNext() {

@@ -1,10 +1,15 @@
-import type { ReactNode } from 'react'
+'use client';
+
+import { useEffect } from 'react';
 import { Binary, Cpu, MonitorCogIcon, Rows2, AlertTriangle, Database } from "lucide-react"
 import ModuleCard from '@/components/ModuleCard'
-import { ProgressConfig} from './progressConfig';
 import { binaryArithmeticConfig, cachingConfig, hazardsConfig, machineInstructionsConfig, pipelineConfig, singleCycleConfig } from './moduleConfigs';
+import { recordAnalyticsVisit } from '../src/utils/analytics';
 
 export default function Dashboard() {
+  useEffect(() => {
+    recordAnalyticsVisit('app');
+  }, []);
   return (
     <main className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-6 py-16">
@@ -24,6 +29,7 @@ export default function Dashboard() {
             iconBg="#E6F1FB"
             barColor="#195FA5"
             progressConfig={binaryArithmeticConfig}
+            moduleKey="binary-arithmetic"
           />
 
           <ModuleCard
@@ -35,6 +41,7 @@ export default function Dashboard() {
             barColor="#3F681B"
             progressConfig={singleCycleConfig}
             scrollKey="singleCycleScrollProgress"
+            moduleKey="single-cycle"
           />
 
           <ModuleCard
@@ -45,6 +52,7 @@ export default function Dashboard() {
             iconBg="#EDECFD"
             barColor="#4F4898"
             progressConfig={pipelineConfig}
+            moduleKey="pipeline"
           />
 
           <ModuleCard
@@ -55,6 +63,7 @@ export default function Dashboard() {
             iconBg="#FEf9E0"
             barColor="#F9AB00"
             progressConfig={machineInstructionsConfig}
+            moduleKey="machine-instructions"
           />
 
           <ModuleCard
@@ -65,6 +74,7 @@ export default function Dashboard() {
             iconBg="#FAEEDC"
             barColor="#b6761d"
             progressConfig={hazardsConfig}
+            moduleKey="hazards"
           />
 
           <ModuleCard
@@ -75,6 +85,7 @@ export default function Dashboard() {
             iconBg="#FBECE6"
             barColor="#b15636"
             progressConfig={cachingConfig}
+            moduleKey="caching"
           />
         </div>
       </div>

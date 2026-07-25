@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Card } from '../Card';
 import { InfoNote } from '../InfoNote';
+import { recordActivityOutcome } from '../../src/utils/analytics';
 
 const N = 8;
 
@@ -159,6 +160,7 @@ export function TabInterpreting() {
 
   const handleSubmit = () => {
     setSubmitted(true);
+    recordActivityOutcome('binary-arithmetic', 'question', isCorrect ? 'correct' : 'incorrect', isCorrect ? 1 : 0, 1, 'interpreting');
   };
 
   const handleNext = () => {

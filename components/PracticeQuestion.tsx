@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
 import { colors } from './types';
+import { recordActivityOutcome } from '../src/utils/analytics';
 
 interface Option {
   label: string;
@@ -30,8 +31,10 @@ export function PracticeQuestion({
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   function pick(label: string) {
+    const correct = label === correctLabel;
     setChosen(label);
-    setIsCorrect(label === correctLabel);
+    setIsCorrect(correct);
+    recordActivityOutcome('app', 'question', correct ? 'correct' : 'incorrect', correct ? 1 : 0, 1, title);
   }
 
   function borderStyle(label: string) {

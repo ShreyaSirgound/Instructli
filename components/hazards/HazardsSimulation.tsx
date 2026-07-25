@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { recordActivityOutcome } from "../../src/utils/analytics";
 
 type StageName = "IF" | "ID" | "EX" | "MEM" | "WB";
 type CellValue = StageName | "stall" | "";
@@ -160,6 +161,7 @@ export default function HazardsSimulation() {
     const correct = q.correctStallsBefore.every((v, i) => v === stallsBefore[i]);
     setIsCorrect(correct);
     setChecked(true);
+    recordActivityOutcome('hazards', 'simulation', correct ? 'correct' : 'incorrect', correct ? 1 : 0, 1, q.instructions.join(' | '));
   }
 
   function handleReset() {

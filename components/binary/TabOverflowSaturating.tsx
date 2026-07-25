@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Card } from '../Card';
 import { colors } from '../types';
+import { recordActivityOutcome } from '../../src/utils/analytics';
 
 function OverflowCases() {
   const cases = [
@@ -157,6 +158,7 @@ export function TabOverflowSaturating() {
 
   const handleSubmit = () => {
     setSubmitted(true);
+    recordActivityOutcome('binary-arithmetic', 'question', isCorrect ? 'correct' : 'incorrect', isCorrect ? 1 : 0, 1, 'overflow-saturating');
   };
 
   const handleNext = () => {

@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from "react";
 import type { DataPath } from "../../src/utils/return-types";
 import DatapathSVG from "./DatapathSVG";
+import { recordActivityOutcome } from "../../src/utils/analytics";
 
 type QuizQuestion = {
   label: string;
@@ -156,9 +157,11 @@ export default function SingleCycleQuiz() {
     const wrong = selected.size - hits;
     const missed = question.activeSegments.filter((k) => !selected.has(k)).length;
     const earned = Math.max(0, hits - wrong - missed);
+    const outcome = earned >= question.activeSegments.length ? 'correct' : wrong > 0 ? 'incorrect' : 'partial';
     setTotalScore((s) => s + earned);
     setAnswered((a) => a + 1);
     setSubmitted(true);
+    recordActivityOutcome('single-cycle', 'question', outcome, earned, question.activeSegments.length, question.label);
   };
 
   const handleNext = () => {

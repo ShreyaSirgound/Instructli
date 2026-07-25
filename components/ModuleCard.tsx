@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ReactNode } from 'react';
 import { ProgressConfig, getSavedProgress, computeProgress } from '../app/progressConfig';
+import { recordAnalyticsClick } from '../src/utils/analytics';
 
 type ModuleCardProps = {
   title: string;
@@ -14,10 +15,11 @@ type ModuleCardProps = {
   barColor: string;
   progressConfig: ProgressConfig<string>;
   scrollKey?: string;
+  moduleKey?: string;
 };
 
 export default function ModuleCard({
-  title, description, href, icon, iconBg, barColor, progressConfig, scrollKey
+  title, description, href, icon, iconBg, barColor, progressConfig, scrollKey, moduleKey
 }: ModuleCardProps) {
   const [progress, setProgress] = useState(0);
 
@@ -41,7 +43,7 @@ export default function ModuleCard({
   }, [progressConfig, scrollKey]);
 
   return (
-    <Link href={href} className="group block bg-white border border-gray-200 rounded-2xl p-6 min-w-74 hover:shadow-md hover:border-gray-300 transition-all duration-200">
+    <Link href={href} onClick={() => recordAnalyticsClick(moduleKey)} className="group block bg-white border border-gray-200 rounded-2xl p-6 min-w-74 hover:shadow-md hover:border-gray-300 transition-all duration-200">
       <div
         style={{ backgroundColor: iconBg, color: barColor }}
         className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4"

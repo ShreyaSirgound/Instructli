@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Card } from '../Card';
 import { InfoNote } from '../InfoNote';
+import { recordActivityOutcome } from '../../src/utils/analytics';
 
 type QuizOption = {
   label: string;
@@ -161,6 +162,7 @@ export default function TabAssociativeCaching() {
 
   function handleSubmit() {
     setSubmitted(true);
+    recordActivityOutcome('caching', 'question', isCorrect ? 'correct' : 'incorrect', isCorrect ? 1 : 0, 1, 'associative-caching');
   }
 
   function handleNext() {

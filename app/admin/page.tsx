@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent
 } from '@dnd-kit/core'
@@ -8,7 +8,9 @@ import {
   SortableContext, rectSortingStrategy, useSortable, arrayMove
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Binary, Cpu, MonitorCog, Rows2, AlertTriangle, Database, Eye, EyeOff, Lock, Unlock } from "lucide-react"
+import { GripVertical, Binary, Cpu, MonitorCog, Rows2, AlertTriangle, Database, Eye, EyeOff, Lock, Unlock, BarChart3 } from "lucide-react"
+import Link from 'next/link'
+import { recordAnalyticsVisit } from '../../src/utils/analytics'
 
 const ORDER_KEY = 'adminModuleOrder'
 
@@ -133,6 +135,10 @@ function SortableCard({
 }
 
 export default function Dashboard() {
+  useEffect(() => {
+    recordAnalyticsVisit('admin')
+  }, [])
+
   const [modules, setModules] = useState(() => {
     if (typeof window === 'undefined') return initialModules
     try {
@@ -172,11 +178,15 @@ export default function Dashboard() {
           <h1 className="text-4xl font-bold text-gray-900">Manage Modules</h1>
         </div>
 
-        <div className="flex justify-center gap-8 mt-6 mb-8">
+        <div className="flex flex-wrap justify-center gap-3 mt-6 mb-8">
           <button onClick={() => setModules(prev => prev.map(m => ({ ...m, hidden: false })))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Show all</button>
           <button onClick={() => setModules(prev => prev.map(m => ({ ...m, hidden: true })))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Hide all</button>
           <button onClick={() => setModules(prev => prev.map(m => ({ ...m, locked: false })))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Unlock all</button>
           <button onClick={() => setModules(prev => prev.map(m => ({ ...m, locked: true })))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Lock all</button>
+          <Link href="/admin/stats" className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition">
+            <BarChart3 size={15} />
+            View stats
+          </Link>
         </div>
 
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
