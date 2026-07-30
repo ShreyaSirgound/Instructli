@@ -49,7 +49,11 @@ export async function GET() {
     .order('created_at', { ascending: true });
 
   if (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    {/*return Response.json({ error: error.message }, { status: 500 });*/}
+    return Response.json(
+      { error: error.message, code: error.code, details: error.details, hint: error.hint },
+      { status: 500 }
+    );
   }
 
   const clicks = events.filter((e) => e.type === 'click').length;
