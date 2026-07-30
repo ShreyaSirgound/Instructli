@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { getAnalyticsSummary, subscribeToAnalytics, type AnalyticsSummary } from '../../../src/utils/analytics';
+import { getAnalyticsSummary, type AnalyticsSummary } from '../../../src/utils/analytics';
 
 function StatCard({ label, value, subtitle }: { label: string; value: string; subtitle?: string }) {
   return (
@@ -25,12 +25,29 @@ function ProgressBar({ value, total }: { value: number; total: number }) {
 
 export default function AdminStatsPage() {
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const refresh = () => setSummary(getAnalyticsSummary());
+    let cancelled = false;
+
+    const refresh = async () => {
+      try {
+        const data = await getAnalyticsSummary();
+        if (!cancelled) {
+          setSummary(data);
+          setError(null);
+        }
+      } catch {
+        if (!cancelled) setError('Could not load analytics.');
+      }
+    };
+
     refresh();
-    const unsubscribe = subscribeToAnalytics(refresh);
-    return () => unsubscribe();
+    const interval = setInterval(refresh, 15000); // poll for fresh data every 15s
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, []);
 
   const overallAccuracy = useMemo(() => {
@@ -51,6 +68,10 @@ export default function AdminStatsPage() {
             Back to admin
           </Link>
         </div>
+
+        {error ? (
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+        ) : null}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard label="Total clicks" value={summary?.clicks?.toString() ?? '0'} subtitle="Tracked interactions across the app" />

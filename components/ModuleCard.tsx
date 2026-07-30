@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ReactNode } from 'react';
+import { Lock } from 'lucide-react';
 import { ProgressConfig, getSavedProgress, computeProgress } from '../app/progressConfig';
 import { recordAnalyticsClick } from '../src/utils/analytics';
 
@@ -16,10 +17,11 @@ type ModuleCardProps = {
   progressConfig: ProgressConfig<string>;
   scrollKey?: string;
   moduleKey?: string;
+  locked?: boolean;
 };
 
 export default function ModuleCard({
-  title, description, href, icon, iconBg, barColor, progressConfig, scrollKey, moduleKey
+  title, description, href, icon, iconBg, barColor, progressConfig, scrollKey, moduleKey, locked
 }: ModuleCardProps) {
   const [progress, setProgress] = useState(0);
 
@@ -41,6 +43,25 @@ export default function ModuleCard({
       window.removeEventListener(progressConfig.eventName, update as EventListener);
     };
   }, [progressConfig, scrollKey]);
+
+  if (locked) {
+    return (
+      <div className="relative block bg-white border border-gray-100 rounded-2xl p-6 min-w-74 opacity-60 cursor-not-allowed">
+        <div className="absolute top-4 right-4 text-gray-400">
+          <Lock size={16} />
+        </div>
+        <div
+          style={{ backgroundColor: iconBg, color: barColor }}
+          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-4"
+        >
+          {icon}
+        </div>
+        <h3 className="text-lg font-semibold text-gray-500">{title}</h3>
+        <p className="text-sm text-gray-400 mt-1">{description}</p>
+        <p className="text-sm text-gray-400 mt-4">Locked by your instructor</p>
+      </div>
+    );
+  }
 
   return (
     <Link href={href} onClick={() => recordAnalyticsClick(moduleKey)} className="group block bg-white border border-gray-200 rounded-2xl p-6 min-w-74 hover:shadow-md hover:border-gray-300 transition-all duration-200">
