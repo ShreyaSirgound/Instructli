@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent
 } from '@dnd-kit/core'
@@ -8,81 +8,24 @@ import {
   SortableContext, rectSortingStrategy, useSortable, arrayMove
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Binary, Cpu, MonitorCog, Rows2, AlertTriangle, Database, Eye, EyeOff, Lock, Unlock, BarChart3 } from "lucide-react"
+import { GripVertical, Eye, EyeOff, Lock, Unlock, BarChart3, LogOut } from "lucide-react"
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { recordAnalyticsVisit } from '../../src/utils/analytics'
-
-const ORDER_KEY = 'adminModuleOrder'
-
-const initialModules = [
-  { id: 1, 
-    title: "Binary arithmetic", 
-    description: "Addition, overflow, two's complement", 
-    icon: <Binary size={20} />, 
-    iconBg: "#E6F1FB", 
-    iconColor: "#195FA5", 
-    hidden: false, 
-    locked: false 
-  },
-  { id: 2, 
-    title: "Single cycle", 
-    description: "Datapath, control signals", 
-    icon: <Cpu size={20} />, 
-    iconBg: "#E9F2DD", 
-    iconColor: "#3F681B", 
-    hidden: false, 
-    locked: false 
-  },
-  { id: 3, 
-    title: "5-stage pipeline", 
-    description: "IF, ID, EX, MEM, WB", 
-    icon: <Rows2 size={20} />, 
-    iconBg: "#EDECFD", 
-    iconColor: "#4F4898", 
-    hidden: false, 
-    locked: false 
-  },
-  { id: 4, 
-    title: "Machine Instructions", 
-    description: "Instruction types, opcodes", 
-    icon: <MonitorCog size={20} />, 
-    iconBg: "#fef9e0", 
-    iconColor: "#f9ab00", 
-    hidden: false, 
-    locked: true 
-  },
-  { id: 5, 
-    title: "Hazards and Detection", 
-    description: "RAW, WAR, WAW, structural", 
-    icon: <AlertTriangle size={20} />, 
-    iconBg: "#FAEEDC", 
-    iconColor: "#b6761d", 
-    hidden: false, 
-    locked: true 
-  },
-  { id: 6, 
-    title: "Caching", 
-    description: "Direct-mapped, set associative", 
-    icon: <Database size={20} />, 
-    iconBg: "#FBECE6", 
-    iconColor: "#b15636", 
-    hidden: true, 
-    locked: true 
-  },
-]
-
-type Module = (typeof initialModules)[0]
+import { getModuleIcon } from '../../lib/moduleIcons'
+import type { ModuleRow } from '../api/modules/route'
 
 function SortableCard({
   mod,
   onToggleHidden,
   onToggleLocked,
 }: {
-  mod: Module
+  mod: ModuleRow
   onToggleHidden: () => void
   onToggleLocked: () => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: mod.id })
+  const Icon = getModuleIcon(mod.icon_key)
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -105,8 +48,8 @@ function SortableCard({
       >
         <GripVertical size={16} />
       </div>
-      <div style={{ backgroundColor: mod.iconBg, color: mod.iconColor }} className="w-12 h-12 rounded-xl flex items-center justify-center mb-4">
-        {mod.icon}
+      <div style={{ backgroundColor: mod.icon_bg, color: mod.bar_color }} className="w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+        <Icon size={20} />
       </div>
       <h3 className={`text-lg font-semibold ${mod.hidden ? 'text-gray-400' : 'text-gray-900'}`}>{mod.title}</h3>
       <p className="text-sm text-gray-500 mt-1">{mod.description}</p>
@@ -135,23 +78,49 @@ function SortableCard({
 }
 
 export default function Dashboard() {
+  const router = useRouter()
+  const [modules, setModules] = useState<ModuleRow[]>([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   useEffect(() => {
     recordAnalyticsVisit('admin')
   }, [])
 
-  const [modules, setModules] = useState(() => {
-    if (typeof window === 'undefined') return initialModules
-    try {
-      const saved = localStorage.getItem(ORDER_KEY)
-      if (!saved) return initialModules
-      const savedOrder: number[] = JSON.parse(saved)
-      return savedOrder.map(id => initialModules.find(m => m.id === id)!).filter(Boolean)
-    } catch {
-      return initialModules
-    }
-  })
+  useEffect(() => {
+    fetch('/api/modules')
+      .then((res) => res.json())
+      .then((data) => setModules(data.modules ?? []))
+      .catch(() => setError('Could not load modules.'))
+      .finally(() => setLoading(false))
+  }, [])
 
   const sensors = useSensors(useSensor(PointerSensor))
+
+  const persist = useCallback(async (next: ModuleRow[]) => {
+    setSaving(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/modules', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          modules: next.map((m, index) => ({
+            id: m.id,
+            order_index: index,
+            locked: m.locked,
+            hidden: m.hidden,
+          })),
+        }),
+      })
+      if (!res.ok) throw new Error();
+    } catch {
+      setError('Failed to save changes. Your last change may not have been saved.')
+    } finally {
+      setSaving(false)
+    }
+  }, [])
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
@@ -160,49 +129,80 @@ export default function Dashboard() {
       const oldIndex = prev.findIndex(m => m.id === active.id)
       const newIndex = prev.findIndex(m => m.id === over.id)
       const reordered = arrayMove(prev, oldIndex, newIndex)
-      localStorage.setItem(ORDER_KEY, JSON.stringify(reordered.map(m => m.id)))
+      persist(reordered)
       return reordered
     })
   }
 
-  const toggleHidden = (id: number) =>
-    setModules(prev => prev.map(m => m.id === id ? { ...m, hidden: !m.hidden } : m))
+  const toggleHidden = (id: string) =>
+    setModules(prev => {
+      const next = prev.map(m => m.id === id ? { ...m, hidden: !m.hidden } : m)
+      persist(next)
+      return next
+    })
 
-  const toggleLocked = (id: number) =>
-    setModules(prev => prev.map(m => m.id === id ? { ...m, locked: !m.locked } : m))
+  const toggleLocked = (id: string) =>
+    setModules(prev => {
+      const next = prev.map(m => m.id === id ? { ...m, locked: !m.locked } : m)
+      persist(next)
+      return next
+    })
+
+  const bulkUpdate = (fn: (m: ModuleRow) => ModuleRow) =>
+    setModules(prev => {
+      const next = prev.map(fn)
+      persist(next)
+      return next
+    })
+
+  async function handleLogout() {
+    await fetch('/api/admin/logout', { method: 'POST' })
+    router.push('/')
+    router.refresh()
+  }
 
   return (
     <main className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-6 py-16">
         <div className="text-center mb-2">
           <h1 className="text-4xl font-bold text-gray-900">Manage Modules</h1>
+          {saving ? <p className="text-xs text-gray-400 mt-2">Saving…</p> : null}
+          {error ? <p className="text-xs text-red-600 mt-2">{error}</p> : null}
         </div>
 
         <div className="flex flex-wrap justify-center gap-3 mt-6 mb-8">
-          <button onClick={() => setModules(prev => prev.map(m => ({ ...m, hidden: false })))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Show all</button>
-          <button onClick={() => setModules(prev => prev.map(m => ({ ...m, hidden: true })))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Hide all</button>
-          <button onClick={() => setModules(prev => prev.map(m => ({ ...m, locked: false })))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Unlock all</button>
-          <button onClick={() => setModules(prev => prev.map(m => ({ ...m, locked: true })))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Lock all</button>
+          <button onClick={() => bulkUpdate(m => ({ ...m, hidden: false }))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Show all</button>
+          <button onClick={() => bulkUpdate(m => ({ ...m, hidden: true }))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Hide all</button>
+          <button onClick={() => bulkUpdate(m => ({ ...m, locked: false }))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Unlock all</button>
+          <button onClick={() => bulkUpdate(m => ({ ...m, locked: true }))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Lock all</button>
           <Link href="/admin/stats" className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition">
             <BarChart3 size={15} />
             View stats
           </Link>
+          <button onClick={handleLogout} className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+            <LogOut size={15} />
+            Log out
+          </button>
         </div>
 
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={modules.map(m => m.id)} strategy={rectSortingStrategy}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {modules.map(mod => (
-                <SortableCard
-                  key={mod.id}
-                  mod={mod}
-                  onToggleHidden={() => toggleHidden(mod.id)}
-                  onToggleLocked={() => toggleLocked(mod.id)}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+        {loading ? (
+          <p className="text-center text-sm text-gray-400">Loading modules…</p>
+        ) : (
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={modules.map(m => m.id)} strategy={rectSortingStrategy}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {modules.map(mod => (
+                  <SortableCard
+                    key={mod.id}
+                    mod={mod}
+                    onToggleHidden={() => toggleHidden(mod.id)}
+                    onToggleLocked={() => toggleLocked(mod.id)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
       </div>
     </main>
   )

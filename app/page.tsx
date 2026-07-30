@@ -35,12 +35,12 @@ export default function Dashboard() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="max-w-5xl mx-auto px-6 py-16">
+      <div className="max-w-5xl mx-auto px-6 py-10">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-6">
           <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-gray-900">Welcome to Instructli</h1>
-            <p className="text-gray-500 mt-4 max-w-4xl mx-auto">This app provides short interactive modules to help you practice and develop a deeper understanding of CSC258 concepts. It is not intended to teach new material. Use it to reinforce and explore the topics you are expected to know after lectures.</p>
+            <h1 className="text-4xl font-bold text-gray-900">Welcome to Instructli!</h1>
+            <p className="text-gray-500 mt-4 max-w-4xl mx-auto">This platform provides interactive practice modules for CSC258. Each module reinforces material already introduced in lecture and is intended to support review, not first exposure to new content. Click on a module to begin.</p>
           </div>
         </div>
 
