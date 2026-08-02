@@ -20,28 +20,9 @@ const MODULE_META: Record<string, { href: string; progressConfig: typeof binaryA
 export default function Dashboard() {
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     recordAnalyticsVisit('app');
-  }, []);
-
-  useEffect(() => {
-    const loadUser = async () => {
-      const { data, error } = await supabasePublic.auth.getUser();
-      if (error || !data.user) return;
-
-      const name =
-        data.user.user_metadata?.name ||
-        data.user.user_metadata?.full_name ||
-        data.user.user_metadata?.preferred_username ||
-        data.user.email?.split('@')[0] ||
-        '';
-
-      if (name) setUserName(name);
-    };
-
-    loadUser();
   }, []);
 
   useEffect(() => {
@@ -59,9 +40,7 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-6">
           <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-gray-900">
-              {userName ? `Welcome back, ${userName}` : 'Welcome back'}
-            </h1>
+            <h1 className="text-4xl font-bold text-gray-900">Welcome back</h1>
             <p className="text-gray-500 mt-4 max-w-4xl mx-auto">This platform provides interactive practice modules for CSC258. Each module reinforces material already introduced in lecture and is intended to support review, not first exposure to new content. Click on a module to begin.</p>
           </div>
         </div>
