@@ -2,10 +2,27 @@ import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 
-const COOKIE_NAME = 'admin_session';
+export const COOKIE_NAME = 'admin_session';
 const SESSION_DURATION = '7d';
 
-function getSecretKey() {
+const SHIBBOLETH_IDENTITY_HEADERS = [
+  'x-shib-eppn',
+  'x-shibboleth-eppn',
+  'x-shib-uid',
+  'x-shibboleth-uid',
+  'x-shib-mail',
+  'x-shibboleth-mail',
+  'x-forwarded-email',
+  'x-forwarded-user',
+  'x-remote-user',
+  'remote_user',
+  'eppn',
+  'uid',
+  'mail',
+  'user',
+];
+
+export function getSecretKey() {
   const secret = process.env.SESSION_SECRET;
   if (!secret || secret.length < 32) {
     throw new Error(
@@ -15,8 +32,51 @@ function getSecretKey() {
   return new TextEncoder().encode(secret);
 }
 
-export async function createAdminSessionToken() {
-  return new SignJWT({ role: 'admin' })
+function normalizeShibbolethIdentity(rawValue: string | null | undefined) {
+  if (!rawValue) return null;
+  const value = rawValue.trim();
+  if (!value) return null;
+  return value.toLowerCase();
+}
+
+export function getShibbolethIdentity(headers: Headers | null | undefined) {
+  if (!headers) return null;
+
+  for (const headerName of SHIBBOLETH_IDENTITY_HEADERS) {
+    const value = headers.get(headerName);
+    const normalized = normalizeShibbolethIdentity(value);
+    if (normalized) return normalized;
+  }
+
+  return null;
+}
+
+const DEFAULT_ALLOWED_ADMIN_USERS = ['pasterhe'];
+
+export function getAllowedAdminUsers(): Set<string> {
+  const raw = process.env.ADMIN_SHIBBOLETH_ALLOWED_USERS ?? '';
+  const values = raw
+    ? raw
+        .split(',')
+        .map((value) => value.trim().toLowerCase())
+        .filter(Boolean)
+    : DEFAULT_ALLOWED_ADMIN_USERS;
+
+  return new Set(values);
+}
+
+export function isAllowedShibbolethAdmin(headers: Headers | null | undefined) {
+  const identity = getShibbolethIdentity(headers);
+  if (!identity) return false;
+  const allowedUsers = getAllowedAdminUsers();
+  return allowedUsers.has(identity);
+}
+
+export async function createAdminSessionToken(identity?: string) {
+  const claims: { role: 'admin'; identity?: string } = { role: 'admin' };
+  if (identity) claims.identity = identity;
+
+  return new SignJWT(claims)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime(SESSION_DURATION)

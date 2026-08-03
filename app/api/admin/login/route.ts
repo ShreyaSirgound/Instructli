@@ -1,5 +1,10 @@
 import { NextRequest } from 'next/server';
-import { createAdminSessionToken, setAdminSessionCookie } from '@/lib/auth/session';
+import {
+  createAdminSessionToken,
+  getAllowedAdminUsers,
+  getShibbolethIdentity,
+  setAdminSessionCookie,
+} from '@/lib/auth/session';
 import { checkRateLimit, resetRateLimit } from '@/lib/auth/rate-limit';
 
 export async function POST(req: NextRequest) {
@@ -13,20 +18,26 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { passcode } = await req.json().catch(() => ({ passcode: '' }));
+  const identity = getShibbolethIdentity(req.headers);
+  const allowedUsers = getAllowedAdminUsers();
 
-  const expected = process.env.ADMIN_PASSCODE;
-  if (!expected) {
-    return Response.json({ error: 'Server is missing ADMIN_PASSCODE' }, { status: 500 });
+  if (allowedUsers.size === 0) {
+    return Response.json(
+      { error: 'Server is missing ADMIN_SHIBBOLETH_ALLOWED_USERS' },
+      { status: 500 }
+    );
   }
 
-  if (typeof passcode !== 'string' || passcode !== expected) {
-    return Response.json({ error: 'Incorrect passcode' }, { status: 401 });
+  if (!identity || !allowedUsers.has(identity)) {
+    return Response.json(
+      { error: 'Your Shibboleth account is not authorized for admin access.' },
+      { status: 403 }
+    );
   }
 
   resetRateLimit(ip);
-  const token = await createAdminSessionToken();
+  const token = await createAdminSessionToken(identity);
   await setAdminSessionCookie(token);
 
-  return Response.json({ ok: true });
+  return Response.json({ ok: true, identity });
 }
