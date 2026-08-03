@@ -56,10 +56,7 @@ function LoginForm() {
         <div className="w-12 h-12 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center mb-6 mx-auto">
           <ShieldCheck size={20} />
         </div>
-        <h1 className="text-2xl font-semibold text-gray-900">Admin access</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Checking your Shibboleth identity and redirecting you to the admin area.
-        </p>
+        <h1 className="text-2xl font-semibold text-gray-900">Admin Access</h1>
 
         <div className="mt-8 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-5 text-sm text-gray-600">
           {loading ? 'Checking access…' : error ? <span className="text-red-600">{error}</span> : 'Redirecting…'}
