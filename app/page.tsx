@@ -2,18 +2,53 @@
 
 import { useEffect, useState } from 'react';
 import ModuleCard from '@/components/ModuleCard'
-import { binaryArithmeticConfig, cachingConfig, hazardsConfig, machineInstructionsConfig, pipelineConfig, singleCycleConfig } from './moduleConfigs';
 import { recordAnalyticsVisit } from '../src/utils/analytics';
 import { getModuleIcon } from '../lib/moduleIcons';
 import type { ModuleRow } from './api/modules/route';
 
-const MODULE_META: Record<string, { href: string; progressConfig: typeof binaryArithmeticConfig; scrollKey?: string }> = {
-  'binary-arithmetic': { href: '/modules/binary-arithmetic', progressConfig: binaryArithmeticConfig },
-  'single-cycle': { href: '/modules/single-cycle', progressConfig: singleCycleConfig, scrollKey: 'singleCycleScrollProgress' },
-  pipeline: { href: '/modules/pipeline', progressConfig: pipelineConfig },
-  'machine-instructions': { href: '/modules/machine-instructions', progressConfig: machineInstructionsConfig },
-  hazards: { href: '/modules/hazards', progressConfig: hazardsConfig },
-  caching: { href: '/modules/caching', progressConfig: cachingConfig },
+const MODULE_META: Record<string, { href: string; sections: string[]; simulations: number; exercises: number; duration: string }> = {
+  'binary-arithmetic': {
+    href: '/modules/binary-arithmetic',
+    sections: ['Interpreting Numbers', 'Representation Formats', 'Arithmetic', 'Overflow'],
+    simulations: 2,
+    exercises: 8,
+    duration: '~20 minutes',
+  },
+  'single-cycle': {
+    href: '/modules/single-cycle',
+    sections: ['Hardware Blocks', 'Muxes & Control Signals', 'Instruction Datapaths'],
+    simulations: 1,
+    exercises: 7,
+    duration: '~18 minutes',
+  },
+  pipeline: {
+    href: '/modules/pipeline',
+    sections: ['Pipeline Overview', 'Interactive Simulation'],
+    simulations: 1,
+    exercises: 5,
+    duration: '~15 minutes',
+  },
+  'machine-instructions': {
+    href: '/modules/machine-instructions',
+    sections: ['R-Format', 'I-Format', 'S-Format', 'Interactive Simulation'],
+    simulations: 1,
+    exercises: 9,
+    duration: '~22 minutes',
+  },
+  hazards: {
+    href: '/modules/hazards',
+    sections: ['Hazards Overview', 'Interactive Simulation'],
+    simulations: 1,
+    exercises: 6,
+    duration: '~18 minutes',
+  },
+  caching: {
+    href: '/modules/caching',
+    sections: ['Caching Fundamentals', 'Associative Caching', 'Interactive Simulation'],
+    simulations: 1,
+    exercises: 8,
+    duration: '~20 minutes',
+  },
 };
 
 export default function Dashboard() {
@@ -56,7 +91,7 @@ export default function Dashboard() {
         <div className="flex items-start justify-between gap-4 mb-6">
           <div className="text-center flex-1">
             <h1 className="text-4xl font-bold text-gray-900">
-              {userName ? `Welcome back, ${userName}` : 'Welcome back'}
+              {userName ? `Welcome to Instructli, ${userName}` : 'Welcome to Instructli'}
             </h1>
             <p className="text-gray-500 mt-4 max-w-4xl mx-auto">This platform provides interactive practice modules for CSC258. Each module reinforces material already introduced in lecture and is intended to support review, not first exposure to new content. Click on a module to begin.</p>
           </div>
@@ -66,7 +101,7 @@ export default function Dashboard() {
         {loading ? (
           <p className="text-center text-sm text-gray-400">Loading modules…</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr">
             {visibleModules.map((mod) => {
               const meta = MODULE_META[mod.id];
               if (!meta) return null;
@@ -75,13 +110,15 @@ export default function Dashboard() {
                 <ModuleCard
                   key={mod.id}
                   title={mod.title}
-                  description={mod.description}
+                  description={meta.sections.join(', ')}
                   href={meta.href}
                   icon={<Icon size={22} />}
                   iconBg={mod.icon_bg}
                   barColor={mod.bar_color}
-                  progressConfig={meta.progressConfig}
-                  scrollKey={meta.scrollKey}
+                  sections={meta.sections}
+                  simulations={meta.simulations}
+                  exercises={meta.exercises}
+                  duration={meta.duration}
                   moduleKey={mod.id}
                   locked={mod.locked}
                 />
