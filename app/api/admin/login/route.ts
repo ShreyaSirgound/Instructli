@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import {
   createAdminSessionToken,
   getAllowedAdminUsers,
+  getShibbolethHeaderValues,
   getShibbolethIdentity,
   isAllowedShibbolethAdmin,
   setAdminSessionCookie,
@@ -21,6 +22,7 @@ export async function POST(req: NextRequest) {
 
   const identity = getShibbolethIdentity(req.headers);
   const allowedUsers = getAllowedAdminUsers();
+  const headerValues = getShibbolethHeaderValues(req.headers);
 
   if (allowedUsers.size === 0) {
     return Response.json(
@@ -29,9 +31,25 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!identity || !isAllowedShibbolethAdmin(req.headers)) {
+  if (!identity) {
     return Response.json(
-      { error: 'You do not have admin access permission.' },
+      {
+        error:
+          'Shibboleth identity was not detected. Ensure your proxy passes a stable identity header such as eppn, uid, mail, or remote_user.',
+        detectedHeaders: headerValues,
+      },
+      { status: 403 }
+    );
+  }
+
+  if (!isAllowedShibbolethAdmin(req.headers)) {
+    return Response.json(
+      {
+        error:
+          'Your Shibboleth identity is not on the admin whitelist. Confirm the utorid or email listed in ADMIN_SHIBBOLETH_ALLOWED_USERS.',
+        identity,
+        allowedUserCount: allowedUsers.size,
+      },
       { status: 403 }
     );
   }

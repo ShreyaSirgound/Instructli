@@ -10,6 +10,7 @@ function LoginForm() {
   const from = searchParams.get('from') ?? '/admin';
 
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,6 +26,7 @@ function LoginForm() {
           const data = await res.json().catch(() => ({}));
           if (active) {
             setError(data.error ?? 'You are not authorized for admin access.');
+            setErrorDetails(data);
           }
           return;
         }
@@ -61,6 +63,18 @@ function LoginForm() {
         <div className="mt-8 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-5 text-sm text-gray-600">
           {loading ? 'Checking access…' : error ? <span className="text-red-600">{error}</span> : 'Redirecting…'}
         </div>
+        {error ? (
+          <div className="mt-4 space-y-3 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-xs text-red-700">
+            <p>
+              If you see this message after a successful Shibboleth login, verify the header identity is being detected by the server.
+            </p>
+            {errorDetails ? (
+              <pre className="overflow-x-auto whitespace-pre-wrap text-left text-[11px] text-red-800">
+                {JSON.stringify(errorDetails, null, 2)}
+              </pre>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </main>
   );

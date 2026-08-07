@@ -12,8 +12,6 @@ const SHIBBOLETH_IDENTITY_HEADERS = [
   'x-shibboleth-uid',
   'x-shib-mail',
   'x-shibboleth-mail',
-  'x-shib-displayname',
-  'x-shibboleth-displayname',
   'x-forwarded-email',
   'x-forwarded-user',
   'x-remote-user',
@@ -23,6 +21,8 @@ const SHIBBOLETH_IDENTITY_HEADERS = [
   'mail',
   'user',
 ];
+
+const SHIBBOLETH_DEBUG_HEADERS = ['x-shib-displayname', 'x-shibboleth-displayname'];
 
 export function getSecretKey() {
   const secret = process.env.SESSION_SECRET;
@@ -69,6 +69,21 @@ export function getShibbolethIdentity(headers: Headers | null | undefined) {
   return null;
 }
 
+export function getShibbolethHeaderValues(headers: Headers | null | undefined) {
+  if (!headers) return {} as Record<string, string | null>;
+
+  const values = SHIBBOLETH_IDENTITY_HEADERS.reduce<Record<string, string | null>>((acc, headerName) => {
+    acc[headerName] = normalizeShibbolethIdentity(headers.get(headerName));
+    return acc;
+  }, {});
+
+  for (const headerName of SHIBBOLETH_DEBUG_HEADERS) {
+    values[headerName] = normalizeShibbolethIdentity(headers.get(headerName));
+  }
+
+  return values;
+}
+
 function parseAllowedAdminValues(raw: string): Set<string> {
   return raw
     .split(/[\r\n,;]+/)
@@ -85,8 +100,9 @@ function parseAllowedAdminValues(raw: string): Set<string> {
 }
 
 export function getAllowedAdminUsers(): Set<string> {
-  const raw = process.env.ADMIN_SHIBBOLETH_ALLOWED_USERS ?? '';
-  return raw ? parseAllowedAdminValues(raw) : parseAllowedAdminValues(DEFAULT_ALLOWED_ADMIN_USERS.join(','));
+  const raw = process.env.ADMIN_SHIBBOLETH_ALLOWED_USERS;
+  const trimmed = raw?.trim() ?? '';
+  return trimmed ? parseAllowedAdminValues(trimmed) : parseAllowedAdminValues(DEFAULT_ALLOWED_ADMIN_USERS.join(','));
 }
 
 export function isAllowedShibbolethAdmin(headers: Headers | null | undefined) {
