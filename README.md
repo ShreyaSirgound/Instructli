@@ -29,6 +29,16 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Admin access whitelist
+
+The admin login is protected by Shibboleth and restricted by `ADMIN_SHIBBOLETH_ALLOWED_USERS`.
+
+- This should be a comma-separated list of allowed utorids or email addresses.
+- Example value: `pasterhe,rhea.paste@mail.utoronto.ca`
+- When the env var is not set, the app currently allows the defaults:
+  - `pasterhe`
+  - `rhea.paste@mail.utoronto.ca`
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

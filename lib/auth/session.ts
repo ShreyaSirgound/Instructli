@@ -12,6 +12,8 @@ const SHIBBOLETH_IDENTITY_HEADERS = [
   'x-shibboleth-uid',
   'x-shib-mail',
   'x-shibboleth-mail',
+  'x-shib-displayname',
+  'x-shibboleth-displayname',
   'x-forwarded-email',
   'x-forwarded-user',
   'x-remote-user',
@@ -36,7 +38,23 @@ function normalizeShibbolethIdentity(rawValue: string | null | undefined) {
   if (!rawValue) return null;
   const value = rawValue.trim();
   if (!value) return null;
-  return value.toLowerCase();
+
+  return value.toLowerCase().replace(/\s+/g, ' ');
+}
+
+const DEFAULT_ALLOWED_ADMIN_USERS = ['pasterhe', 'rhea.paste@mail.utoronto.ca'];
+
+function identityVariants(rawValue: string | null | undefined): Set<string> {
+  const normalized = normalizeShibbolethIdentity(rawValue);
+  if (!normalized) return new Set();
+
+  const ids = new Set<string>([normalized]);
+  const atIndex = normalized.indexOf('@');
+  if (atIndex > 0) {
+    ids.add(normalized.slice(0, atIndex));
+  }
+
+  return ids;
 }
 
 export function getShibbolethIdentity(headers: Headers | null | undefined) {
@@ -51,25 +69,39 @@ export function getShibbolethIdentity(headers: Headers | null | undefined) {
   return null;
 }
 
-const DEFAULT_ALLOWED_ADMIN_USERS = ['pasterhe'];
+function parseAllowedAdminValues(raw: string): Set<string> {
+  return raw
+    .split(/[\r\n,;]+/)
+    .map((value) => normalizeShibbolethIdentity(value))
+    .filter(Boolean)
+    .reduce((set, value) => {
+      set.add(value as string);
+      const atIndex = value!.indexOf('@');
+      if (atIndex > 0) {
+        set.add((value as string).slice(0, atIndex));
+      }
+      return set;
+    }, new Set<string>());
+}
 
 export function getAllowedAdminUsers(): Set<string> {
   const raw = process.env.ADMIN_SHIBBOLETH_ALLOWED_USERS ?? '';
-  const values = raw
-    ? raw
-        .split(',')
-        .map((value) => value.trim().toLowerCase())
-        .filter(Boolean)
-    : DEFAULT_ALLOWED_ADMIN_USERS;
-
-  return new Set(values);
+  return raw ? parseAllowedAdminValues(raw) : parseAllowedAdminValues(DEFAULT_ALLOWED_ADMIN_USERS.join(','));
 }
 
 export function isAllowedShibbolethAdmin(headers: Headers | null | undefined) {
+  const allowedUsers = getAllowedAdminUsers();
+  if (allowedUsers.size === 0) return false;
+
   const identity = getShibbolethIdentity(headers);
   if (!identity) return false;
-  const allowedUsers = getAllowedAdminUsers();
-  return allowedUsers.has(identity);
+
+  const identities = identityVariants(identity);
+  for (const id of identities) {
+    if (allowedUsers.has(id)) return true;
+  }
+
+  return false;
 }
 
 export async function createAdminSessionToken(identity?: string) {

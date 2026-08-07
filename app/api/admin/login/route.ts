@@ -3,6 +3,7 @@ import {
   createAdminSessionToken,
   getAllowedAdminUsers,
   getShibbolethIdentity,
+  isAllowedShibbolethAdmin,
   setAdminSessionCookie,
 } from '@/lib/auth/session';
 import { checkRateLimit, resetRateLimit } from '@/lib/auth/rate-limit';
@@ -28,16 +29,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!identity || !allowedUsers.has(identity)) {
+  if (!identity || !isAllowedShibbolethAdmin(req.headers)) {
     return Response.json(
-      { error: 'Your Shibboleth account is not authorized for admin access.' },
+      { error: 'You do not have admin access permission.' },
       { status: 403 }
     );
   }
 
   resetRateLimit(ip);
-  const token = await createAdminSessionToken(identity);
-  await setAdminSessionCookie(token);
+
+  try {
+    const token = await createAdminSessionToken(identity);
+    await setAdminSessionCookie(token);
+  } catch {
+    return Response.json(
+      { error: 'Unable to establish admin session. Please verify server configuration.' },
+      { status: 500 }
+    );
+  }
 
   return Response.json({ ok: true, identity });
 }
