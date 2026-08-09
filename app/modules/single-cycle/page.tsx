@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Card } from '../../../components/Card'
@@ -8,7 +8,6 @@ import dynamic from "next/dynamic";
 import { returnPath,  JsonResponse} from '../../../src/utils/single-processor';
 import  SingleProcessor from '@/components/single-cycle/SingleCycle';
 import SingleCycleQuiz from '@/components/single-cycle/SingleCycleQuiz';
-import { singleCycleConfig } from '@/app/moduleConfigs';
 
 const Terminal = dynamic(
   () => import('../../../components/single-cycle/Terminal'),
@@ -363,27 +362,6 @@ function PracticeBlock({
 }
 
 export default function SingleCycleModule() {
-  const SCROLL_KEY = 'singleCycleScrollProgress';
-
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
-
-  useEffect(() => {
-    setScrollProgress(Number(localStorage.getItem(SCROLL_KEY) ?? 0));
-
-    function handleScroll() {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
-
-      setScrollProgress(pct);
-      localStorage.setItem(SCROLL_KEY, String(pct));
-      window.dispatchEvent(new Event(singleCycleConfig.eventName));
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const [code, setCode] = useState<string>("add x28, x6, x7\n");
   const [results, setResults] = useState<JsonResponse | null | undefined>();
   const [activeTab, setActiveTab] = useState<TabId>('hardware');

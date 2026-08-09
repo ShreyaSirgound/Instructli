@@ -1,16 +1,12 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Card } from '../../../components/Card'
-import dynamic from "next/dynamic";
-import { getSavedProgress, computeProgress, saveProgress } from '@/app/progressConfig';
-import { InfoNote } from "@/components/InfoNote";
 import CacheTracer from "@/components/caching/CacheTracer";
 import TabCachingBasics from "@/components/caching/TabCachingBasics";
 import TabAssociativeCaching from "@/components/caching/TabAssociativeCaching";
-import { cachingConfig } from '@/app/moduleConfigs';
 
 export type TabId = 'simulation' | 'caching-basics' | 'associative-caching';
 
@@ -22,26 +18,6 @@ const TABS: { id: TabId; label: string }[] = [
 
 export default function CachingModule() {
   const [activeTab, setActiveTab] = useState<TabId>('simulation');
-  const [progress, setProgress] = useState(() => getSavedProgress(cachingConfig));
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    setProgress(getSavedProgress(cachingConfig));
-  }, []);
-
-  const progressValue = useMemo(
-    () => (mounted ? computeProgress(cachingConfig, progress) : 0),
-    [progress, mounted]
-  );
-
-  const currentComplete = mounted ? (progress[activeTab] ?? false) : false;
-
-  function markSectionComplete() {
-    const updated = { ...progress, [activeTab]: !currentComplete };
-    setProgress(updated);
-    saveProgress(cachingConfig, updated);
-  }
 
   return (
     <main className="min-h-screen bg-white">
@@ -58,21 +34,6 @@ export default function CachingModule() {
           Module 6: Caching
         </h1>
 
-        <div className="mb-8 rounded-3xl border border-gray-200 bg-slate-50 p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
-            <div>
-              <p className="text-sm font-semibold text-gray-900">Module progress</p>
-              <p className="text-sm text-gray-500">Complete each section to track your caching understanding.</p>
-            </div>
-            <p className="text-sm font-semibold text-gray-900">{progressValue}% complete</p>
-          </div>
-          <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-300"
-              style={{ width: `${progressValue}%`, backgroundColor: progressValue === 100 ? '#16a34a' : '#4f46e5' }}
-            />
-          </div>
-        </div>
 
         <div className="flex flex-wrap gap-2 mb-8">
           {TABS.map((tab) => (
@@ -109,21 +70,6 @@ export default function CachingModule() {
           <TabAssociativeCaching />
         )}
 
-        <div className="mt-6 mb-10 rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-lg font-semibold text-gray-900">Finished this section?</p>
-            </div>
-            <button
-              type="button"
-              onClick={markSectionComplete}
-              className={`inline-flex items-center justify-center rounded-full px-4 py-3 text-sm font-semibold transition ${currentComplete ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}
-              aria-pressed={currentComplete}
-            >
-              {currentComplete ? '✓ Section complete' : 'Mark section complete'}
-            </button>
-          </div>
-        </div>
       </div>
     </main>
   );
