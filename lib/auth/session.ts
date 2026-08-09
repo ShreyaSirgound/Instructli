@@ -42,8 +42,6 @@ function normalizeShibbolethIdentity(rawValue: string | null | undefined) {
   return value.toLowerCase().replace(/\s+/g, ' ');
 }
 
-const DEFAULT_ALLOWED_ADMIN_USERS = ['pasterhe', 'rhea.paste@mail.utoronto.ca'];
-
 function identityVariants(rawValue: string | null | undefined): Set<string> {
   const normalized = normalizeShibbolethIdentity(rawValue);
   if (!normalized) return new Set();
@@ -102,11 +100,21 @@ function parseAllowedAdminValues(raw: string): Set<string> {
 export function getAllowedAdminUsers(): Set<string> {
   const raw = process.env.ADMIN_SHIBBOLETH_ALLOWED_USERS;
   const trimmed = raw?.trim() ?? '';
-  return trimmed ? parseAllowedAdminValues(trimmed) : parseAllowedAdminValues(DEFAULT_ALLOWED_ADMIN_USERS.join(','));
+  if (!trimmed) {
+    throw new Error(
+      'ADMIN_SHIBBOLETH_ALLOWED_USERS is missing. Set a comma-separated list of allowed utorids/emails in your environment variables.'
+    );
+  }
+  return parseAllowedAdminValues(trimmed);
 }
 
 export function isAllowedShibbolethAdmin(headers: Headers | null | undefined) {
-  const allowedUsers = getAllowedAdminUsers();
+  let allowedUsers: Set<string>;
+  try {
+    allowedUsers = getAllowedAdminUsers();
+  } catch {
+    return false;
+  }
   if (allowedUsers.size === 0) return false;
 
   const identity = getShibbolethIdentity(headers);

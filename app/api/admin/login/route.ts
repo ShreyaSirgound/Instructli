@@ -21,7 +21,15 @@ export async function POST(req: NextRequest) {
   }
 
   const identity = getShibbolethIdentity(req.headers);
-  const allowedUsers = getAllowedAdminUsers();
+  let allowedUsers: Set<string>;
+  try {
+    allowedUsers = getAllowedAdminUsers();
+  } catch {
+    return Response.json(
+      { error: 'Server is missing ADMIN_SHIBBOLETH_ALLOWED_USERS' },
+      { status: 500 }
+    );
+  }
   const headerValues = getShibbolethHeaderValues(req.headers);
 
   if (allowedUsers.size === 0) {
