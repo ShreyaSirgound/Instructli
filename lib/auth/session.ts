@@ -19,6 +19,7 @@ const SHIBBOLETH_IDENTITY_HEADERS = [
   'eppn',
   'uid',
   'mail',
+  'email',
   'user',
 ];
 
