@@ -35,6 +35,11 @@ create table if not exists analytics_events (
 create index if not exists analytics_events_module_idx on analytics_events (module);
 create index if not exists analytics_events_created_at_idx on analytics_events (created_at);
 
+alter table analytics_events
+  add column if not exists student_id text;
+
+create index if not exists analytics_events_student_id_idx on analytics_events (student_id);
+
 -- ── Row Level Security ───────────────────────────────────────────────────────
 alter table modules enable row level security;
 alter table analytics_events enable row level security;

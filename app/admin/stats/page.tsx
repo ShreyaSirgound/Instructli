@@ -56,6 +56,18 @@ export default function AdminStatsPage() {
     return `${value.toFixed(1)}%`;
   }, [summary]);
 
+  const knownStudents = useMemo(
+    () => summary?.studentStats?.filter((s) => s.isKnown) ?? [],
+    [summary]
+  );
+  const unknownBucket = useMemo(
+    () => summary?.studentStats?.find((s) => !s.isKnown) ?? null,
+    [summary]
+  );
+  const unknownHasActivity =
+    !!unknownBucket &&
+    unknownBucket.clicks + unknownBucket.visits + unknownBucket.questionAttempts + unknownBucket.simulationAttempts > 0;
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-12">
@@ -154,6 +166,69 @@ export default function AdminStatsPage() {
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Student activity</h2>
+              <p className="mt-1 text-sm text-gray-500">Per-student engagement and accuracy (Shibboleth identity)</p>
+            </div>
+            <div className="rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700">{knownStudents.length} students</div>
+          </div>
+
+          <div className="mt-6 overflow-x-auto">
+            {knownStudents.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                No per-student data yet — identity is only captured when requests pass through the Shibboleth proxy.
+              </p>
+            ) : (
+              <table className="w-full min-w-[720px] text-sm">
+                <thead>
+                  <tr className="divide-x divide-gray-100 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    <th className="pb-2 pr-3">Student</th>
+                    <th className="pb-2 px-3">Visits</th>
+                    <th className="pb-2 px-3">Clicks</th>
+                    <th className="pb-2 px-3">Questions</th>
+                    <th className="pb-2 px-3">Simulations</th>
+                    <th className="pb-2 px-3">Accuracy</th>
+                    <th className="pb-2 px-3">Modules touched</th>
+                    <th className="pb-2 pl-3">Last active</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {knownStudents.map((student) => (
+                    <tr key={student.studentId}>
+                      <td className="py-2 pr-3 font-medium text-gray-900">{student.label}</td>
+                      <td className="py-2 px-3 text-gray-500">{student.visits}</td>
+                      <td className="py-2 px-3 text-gray-500">{student.clicks}</td>
+                      <td className="py-2 px-3 text-gray-500">{student.questionAttempts}</td>
+                      <td className="py-2 px-3 text-gray-500">{student.simulationAttempts}</td>
+                      <td className="py-2 px-3 text-gray-500">{(student.averageAccuracy * 100).toFixed(1)}%</td>
+                      <td className="py-2 px-3 text-gray-500">{student.modulesTouched.join(', ') || '—'}</td>
+                      <td className="py-2 pl-3 text-gray-500">
+                        {student.lastActiveAt ? new Date(student.lastActiveAt).toLocaleString() : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                  {unknownHasActivity && unknownBucket ? (
+                    <tr className="italic text-gray-400">
+                      <td className="py-2 pr-3">{unknownBucket.label}</td>
+                      <td className="py-2 px-3">{unknownBucket.visits}</td>
+                      <td className="py-2 px-3">{unknownBucket.clicks}</td>
+                      <td className="py-2 px-3">{unknownBucket.questionAttempts}</td>
+                      <td className="py-2 px-3">{unknownBucket.simulationAttempts}</td>
+                      <td className="py-2 px-3">{(unknownBucket.averageAccuracy * 100).toFixed(1)}%</td>
+                      <td className="py-2 px-3">{unknownBucket.modulesTouched.join(', ') || '—'}</td>
+                      <td className="py-2 pl-3">
+                        {unknownBucket.lastActiveAt ? new Date(unknownBucket.lastActiveAt).toLocaleString() : '—'}
+                      </td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>

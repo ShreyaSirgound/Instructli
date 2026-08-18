@@ -11,6 +11,19 @@ export type ModuleAnalytics = {
   trend: Array<{ day: string; count: number }>;
 };
 
+export type StudentAnalytics = {
+  studentId: string;
+  label: string;
+  isKnown: boolean;
+  clicks: number;
+  visits: number;
+  questionAttempts: number;
+  simulationAttempts: number;
+  averageAccuracy: number;
+  modulesTouched: string[];
+  lastActiveAt: string | null;
+};
+
 export type AnalyticsSummary = {
   clicks: number;
   visits: number;
@@ -18,32 +31,56 @@ export type AnalyticsSummary = {
   simulationAttempts: number;
   averageAccuracy: number;
   moduleStats: ModuleAnalytics[];
+  studentStats: StudentAnalytics[];
 };
 
-function postEvent(input: {
-  module?: string;
-  type: AnalyticsActivityType;
-  outcome?: 'correct' | 'incorrect' | 'partial';
-  score?: number;
-  maxScore?: number;
-  detail?: string;
-}) {
+const POST_RETRY_DELAY_MS = 600;
+const POST_MAX_ATTEMPTS = 2;
+
+async function postEvent(
+  input: {
+    module?: string;
+    type: AnalyticsActivityType;
+    outcome?: 'correct' | 'incorrect' | 'partial';
+    score?: number;
+    maxScore?: number;
+    detail?: string;
+  },
+  attempt = 1
+): Promise<void> {
   if (typeof window === 'undefined') return;
 
-  fetch('/api/analytics', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(input),
-    keepalive: true,
-  }).catch(() => {});
+  let res: Response | undefined;
+  try {
+    res = await fetch('/api/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+      keepalive: true,
+    });
+    if (res.ok) return;
+  } catch {
+    // network error, fall through to retry/log below
+  }
+
+  if (attempt < POST_MAX_ATTEMPTS) {
+    await new Promise((resolve) => setTimeout(resolve, POST_RETRY_DELAY_MS));
+    return postEvent(input, attempt + 1);
+  }
+
+  console.error('[analytics] failed to record event', {
+    type: input.type,
+    module: input.module,
+    status: res?.status,
+  });
 }
 
 export function recordAnalyticsVisit(module?: string) {
-  postEvent({ module, type: 'visit' });
+  void postEvent({ module, type: 'visit' });
 }
 
 export function recordAnalyticsClick(module?: string) {
-  postEvent({ module, type: 'click' });
+  void postEvent({ module, type: 'click' });
 }
 
 export function recordActivityOutcome(
@@ -54,7 +91,7 @@ export function recordActivityOutcome(
   maxScore: number,
   detail?: string
 ) {
-  postEvent({ module, type: activityType, outcome, score, maxScore, detail });
+  void postEvent({ module, type: activityType, outcome, score, maxScore, detail });
 }
 
 export async function getAnalyticsSummary(): Promise<AnalyticsSummary> {

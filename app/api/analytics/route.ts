@@ -1,10 +1,25 @@
 import { NextRequest } from 'next/server';
 import { supabasePublic } from '@/lib/supabase/public';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { requireAdmin } from '@/lib/auth/session';
+import { requireAdmin, getShibbolethIdentity } from '@/lib/auth/session';
 
 type EventType = 'visit' | 'click' | 'question' | 'simulation';
 type Outcome = 'correct' | 'incorrect' | 'partial';
+
+type AnalyticsEventRow = {
+  id: string;
+  module: string;
+  type: EventType;
+  outcome: Outcome | null;
+  score: number | null;
+  max_score: number | null;
+  detail: string | null;
+  student_id: string | null;
+  created_at: string;
+};
+
+const ALLOWED_TYPES: EventType[] = ['visit', 'click', 'question', 'simulation'];
+const ALLOWED_OUTCOMES: Outcome[] = ['correct', 'incorrect', 'partial'];
 
 const MODULE_LABELS: Record<string, string> = {
   'binary-arithmetic': 'Binary arithmetic',
@@ -19,17 +34,31 @@ const MODULE_LABELS: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  if (!body?.type) {
-    return Response.json({ error: 'Missing type' }, { status: 400 });
+
+  if (!ALLOWED_TYPES.includes(body?.type)) {
+    return Response.json({ error: 'Invalid or missing type' }, { status: 400 });
+  }
+  if (body.outcome !== undefined && !ALLOWED_OUTCOMES.includes(body.outcome)) {
+    return Response.json({ error: 'Invalid outcome' }, { status: 400 });
+  }
+  if (body.score !== undefined && (typeof body.score !== 'number' || !Number.isFinite(body.score))) {
+    return Response.json({ error: 'Invalid score' }, { status: 400 });
+  }
+  if (body.maxScore !== undefined && (typeof body.maxScore !== 'number' || !Number.isFinite(body.maxScore))) {
+    return Response.json({ error: 'Invalid maxScore' }, { status: 400 });
   }
 
+  const moduleKey = typeof body.module === 'string' ? body.module.toLowerCase() : 'app';
+  const studentId = getShibbolethIdentity(req.headers);
+
   const { error } = await supabasePublic.from('analytics_events').insert({
-    module: (body.module ?? 'app').toLowerCase(),
+    module: moduleKey,
     type: body.type as EventType,
     outcome: body.outcome as Outcome | undefined,
     score: body.score,
     max_score: body.maxScore,
     detail: body.detail,
+    student_id: studentId,
   });
 
   if (error) {
@@ -39,19 +68,95 @@ export async function POST(req: NextRequest) {
   return Response.json({ ok: true });
 }
 
+async function fetchAllAnalyticsEvents(): Promise<{ data: AnalyticsEventRow[] | null; error: { message: string; code?: string; details?: string; hint?: string } | null }> {
+  const PAGE_SIZE = 1000;
+  let from = 0;
+  const rows: AnalyticsEventRow[] = [];
+
+  while (true) {
+    const { data, error } = await supabaseAdmin
+      .from('analytics_events')
+      .select('*')
+      .order('created_at', { ascending: true })
+      .order('id', { ascending: true })
+      .range(from, from + PAGE_SIZE - 1);
+
+    if (error) return { data: null, error };
+
+    rows.push(...((data as AnalyticsEventRow[]) ?? []));
+    if (!data || data.length < PAGE_SIZE) break;
+    from += PAGE_SIZE;
+  }
+
+  return { data: rows, error: null };
+}
+
+const UNKNOWN_STUDENT_KEY = '__unknown__';
+
+function computeStudentStats(events: AnalyticsEventRow[]) {
+  const buckets = new Map<string, AnalyticsEventRow[]>();
+
+  for (const e of events) {
+    const key = e.student_id ?? UNKNOWN_STUDENT_KEY;
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key)!.push(e);
+  }
+
+  const stats = Array.from(buckets.entries()).map(([studentId, studentEvents]) => {
+    const clicks = studentEvents.filter((e) => e.type === 'click').length;
+    const visits = studentEvents.filter((e) => e.type === 'visit').length;
+    const questionAttempts = studentEvents.filter((e) => e.type === 'question').length;
+    const simulationAttempts = studentEvents.filter((e) => e.type === 'simulation').length;
+
+    const accuracyEntries = studentEvents.filter((e) => e.outcome === 'correct' || e.outcome === 'incorrect');
+    const averageAccuracy =
+      accuracyEntries.length > 0
+        ? accuracyEntries.filter((e) => e.outcome === 'correct').length / accuracyEntries.length
+        : 0;
+
+    const modulesTouched = Array.from(
+      new Set(studentEvents.map((e) => e.module).filter((m) => m !== 'app' && m !== 'admin'))
+    );
+
+    const lastActiveAt = studentEvents.reduce<string | null>(
+      (latest, e) => (!latest || e.created_at > latest ? e.created_at : latest),
+      null
+    );
+
+    const isKnown = studentId !== UNKNOWN_STUDENT_KEY;
+
+    return {
+      studentId,
+      label: isKnown ? studentId : 'Unknown / no identity',
+      isKnown,
+      clicks,
+      visits,
+      questionAttempts,
+      simulationAttempts,
+      averageAccuracy,
+      modulesTouched,
+      lastActiveAt,
+    };
+  });
+
+  return stats.sort((a, b) => {
+    if (a.isKnown !== b.isKnown) return a.isKnown ? -1 : 1;
+    return (
+      b.clicks + b.visits + b.questionAttempts + b.simulationAttempts -
+      (a.clicks + a.visits + a.questionAttempts + a.simulationAttempts)
+    );
+  });
+}
+
 export async function GET() {
   const unauthorized = await requireAdmin();
   if (unauthorized) return unauthorized;
 
-  const { data: events, error } = await supabaseAdmin
-    .from('analytics_events')
-    .select('*')
-    .order('created_at', { ascending: true });
+  const { data: events, error } = await fetchAllAnalyticsEvents();
 
-  if (error) {
-    {/*return Response.json({ error: error.message }, { status: 500 });*/}
+  if (error || !events) {
     return Response.json(
-      { error: error.message, code: error.code, details: error.details, hint: error.hint },
+      { error: error?.message ?? 'Unknown error', code: error?.code, details: error?.details, hint: error?.hint },
       { status: 500 }
     );
   }
@@ -79,7 +184,10 @@ export async function GET() {
       const mQuestions = moduleEvents.filter((e) => e.type === 'question').length;
       const mSimulations = moduleEvents.filter((e) => e.type === 'simulation').length;
 
-      const scored = moduleEvents.filter((e) => typeof e.score === 'number' && typeof e.max_score === 'number');
+      const scored = moduleEvents.filter(
+        (e): e is AnalyticsEventRow & { score: number; max_score: number } =>
+          typeof e.score === 'number' && typeof e.max_score === 'number'
+      );
       const averageScore =
         scored.length > 0
           ? (scored.reduce((sum, e) => sum + e.score / e.max_score, 0) / scored.length) * 100
@@ -106,6 +214,8 @@ export async function GET() {
     })
     .sort((a, b) => b.clicks + b.visits - (a.clicks + a.visits));
 
+  const studentStats = computeStudentStats(events);
+
   return Response.json({
     summary: {
       clicks,
@@ -114,6 +224,7 @@ export async function GET() {
       simulationAttempts,
       averageAccuracy,
       moduleStats,
+      studentStats,
     },
   });
 }
