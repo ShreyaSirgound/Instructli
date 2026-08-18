@@ -123,6 +123,26 @@ function computeStudentStats(events: AnalyticsEventRow[]) {
       null
     );
 
+    const trend = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - (6 - i));
+      const key = date.toISOString().slice(0, 10);
+      const dayEvents = studentEvents.filter((e) => e.created_at.startsWith(key));
+
+      const attempts = dayEvents.filter((e) => e.type === 'question' || e.type === 'simulation').length;
+      const dayAccuracyEntries = dayEvents.filter((e) => e.outcome === 'correct' || e.outcome === 'incorrect');
+      const accuracy =
+        dayAccuracyEntries.length > 0
+          ? dayAccuracyEntries.filter((e) => e.outcome === 'correct').length / dayAccuracyEntries.length
+          : null;
+
+      return {
+        day: date.toLocaleDateString('en', { month: 'short', day: 'numeric' }),
+        attempts,
+        accuracy,
+      };
+    });
+
     const isKnown = studentId !== UNKNOWN_STUDENT_KEY;
 
     return {
@@ -136,6 +156,7 @@ function computeStudentStats(events: AnalyticsEventRow[]) {
       averageAccuracy,
       modulesTouched,
       lastActiveAt,
+      trend,
     };
   });
 

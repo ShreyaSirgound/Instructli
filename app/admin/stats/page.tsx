@@ -14,6 +14,29 @@ function StatCard({ label, value, subtitle }: { label: string; value: string; su
   );
 }
 
+function StudentTrendChart({ trend }: { trend: Array<{ day: string; attempts: number; accuracy: number | null }> }) {
+  return (
+    <div className="flex items-end gap-1">
+      {trend.map((point) => (
+        <div
+          key={point.day}
+          className="flex flex-col items-center gap-0.5"
+          title={
+            point.accuracy !== null
+              ? `${point.day}: ${point.attempts} attempt${point.attempts === 1 ? '' : 's'}, ${(point.accuracy * 100).toFixed(0)}% accuracy`
+              : `${point.day}: no graded attempts`
+          }
+        >
+          <div
+            className={`w-2 rounded-t-full ${point.accuracy !== null ? 'bg-indigo-500' : 'bg-gray-200'}`}
+            style={{ height: `${point.accuracy !== null ? Math.max(4, Math.round(point.accuracy * 28)) : 4}px` }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ProgressBar({ value, total }: { value: number; total: number }) {
   const width = total > 0 ? Math.max(8, Math.round((value / total) * 100)) : 0;
   return (
@@ -173,7 +196,7 @@ export default function AdminStatsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">Student activity</h2>
-              <p className="mt-1 text-sm text-gray-500">Per-student engagement and accuracy (Shibboleth identity)</p>
+              <p className="mt-1 text-sm text-gray-500">Per-student engagement, accuracy, and progress over time (by utorid/Shibboleth identity)</p>
             </div>
             <div className="rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700">{knownStudents.length} students</div>
           </div>
@@ -184,7 +207,7 @@ export default function AdminStatsPage() {
                 No per-student data yet — identity is only captured when requests pass through the Shibboleth proxy.
               </p>
             ) : (
-              <table className="w-full min-w-[720px] text-sm">
+              <table className="w-full min-w-[880px] text-sm">
                 <thead>
                   <tr className="divide-x divide-gray-100 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
                     <th className="pb-2 pr-3">Student</th>
@@ -194,7 +217,8 @@ export default function AdminStatsPage() {
                     <th className="pb-2 px-3">Simulations</th>
                     <th className="pb-2 px-3">Accuracy</th>
                     <th className="pb-2 px-3">Modules touched</th>
-                    <th className="pb-2 pl-3">Last active</th>
+                    <th className="pb-2 px-3">Last active</th>
+                    <th className="pb-2 pl-3">7-day progress</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -207,8 +231,11 @@ export default function AdminStatsPage() {
                       <td className="py-2 px-3 text-gray-500">{student.simulationAttempts}</td>
                       <td className="py-2 px-3 text-gray-500">{(student.averageAccuracy * 100).toFixed(1)}%</td>
                       <td className="py-2 px-3 text-gray-500">{student.modulesTouched.join(', ') || '—'}</td>
-                      <td className="py-2 pl-3 text-gray-500">
+                      <td className="py-2 px-3 text-gray-500">
                         {student.lastActiveAt ? new Date(student.lastActiveAt).toLocaleString() : '—'}
+                      </td>
+                      <td className="py-2 pl-3">
+                        <StudentTrendChart trend={student.trend} />
                       </td>
                     </tr>
                   ))}
@@ -221,8 +248,11 @@ export default function AdminStatsPage() {
                       <td className="py-2 px-3">{unknownBucket.simulationAttempts}</td>
                       <td className="py-2 px-3">{(unknownBucket.averageAccuracy * 100).toFixed(1)}%</td>
                       <td className="py-2 px-3">{unknownBucket.modulesTouched.join(', ') || '—'}</td>
-                      <td className="py-2 pl-3">
+                      <td className="py-2 px-3">
                         {unknownBucket.lastActiveAt ? new Date(unknownBucket.lastActiveAt).toLocaleString() : '—'}
+                      </td>
+                      <td className="py-2 pl-3">
+                        <StudentTrendChart trend={unknownBucket.trend} />
                       </td>
                     </tr>
                   ) : null}

@@ -22,6 +22,7 @@ export type StudentAnalytics = {
   averageAccuracy: number;
   modulesTouched: string[];
   lastActiveAt: string | null;
+  trend: Array<{ day: string; attempts: number; accuracy: number | null }>;
 };
 
 export type AnalyticsSummary = {
