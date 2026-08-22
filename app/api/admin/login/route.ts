@@ -1,11 +1,12 @@
 import { NextRequest } from 'next/server';
 import {
   createAdminSessionToken,
-  getAllowedAdminUsers,
+  getAllAllowedAdminIdentities,
   getShibbolethHeaderValues,
   getShibbolethIdentity,
-  isAllowedShibbolethAdmin,
+  identityVariants,
   setAdminSessionCookie,
+  setViewMode,
 } from '@/lib/auth/session';
 import { checkRateLimit, resetRateLimit } from '@/lib/auth/rate-limit';
 
@@ -21,23 +22,7 @@ export async function POST(req: NextRequest) {
   }
 
   const identity = getShibbolethIdentity(req.headers);
-  let allowedUsers: Set<string>;
-  try {
-    allowedUsers = getAllowedAdminUsers();
-  } catch {
-    return Response.json(
-      { error: 'Server is missing ADMIN_SHIBBOLETH_ALLOWED_USERS' },
-      { status: 500 }
-    );
-  }
   const headerValues = getShibbolethHeaderValues(req.headers);
-
-  if (allowedUsers.size === 0) {
-    return Response.json(
-      { error: 'Server is missing ADMIN_SHIBBOLETH_ALLOWED_USERS' },
-      { status: 500 }
-    );
-  }
 
   if (!identity) {
     return Response.json(
@@ -50,11 +35,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (!isAllowedShibbolethAdmin(req.headers)) {
+  const allowedUsers = await getAllAllowedAdminIdentities();
+  if (allowedUsers.size === 0) {
     return Response.json(
       {
         error:
-          'Your Shibboleth identity is not on the admin whitelist. Confirm the utorid or email listed in ADMIN_SHIBBOLETH_ALLOWED_USERS.',
+          'No admins are configured. Set ADMIN_SHIBBOLETH_ALLOWED_USERS or add an admin from the dashboard.',
+      },
+      { status: 500 }
+    );
+  }
+
+  const isAllowed = Array.from(identityVariants(identity)).some((id) => allowedUsers.has(id));
+  if (!isAllowed) {
+    return Response.json(
+      {
+        error:
+          'Your Shibboleth identity is not on the admin whitelist. Confirm the utorid or email listed in ADMIN_SHIBBOLETH_ALLOWED_USERS or the Manage Admins page.',
         identity,
         allowedUserCount: allowedUsers.size,
       },
@@ -67,6 +64,9 @@ export async function POST(req: NextRequest) {
   try {
     const token = await createAdminSessionToken(identity);
     await setAdminSessionCookie(token);
+    // A fresh login always lands in the admin view, even if a previous
+    // browser session had left viewMode set to 'student'.
+    await setViewMode('admin');
   } catch {
     return Response.json(
       { error: 'Unable to establish admin session. Please verify server configuration.' },

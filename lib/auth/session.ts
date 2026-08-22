@@ -1,9 +1,14 @@
 import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export const COOKIE_NAME = 'admin_session';
+export const VIEW_MODE_COOKIE = 'admin_view_mode';
 const SESSION_DURATION = '7d';
+const ADMIN_USERS_TABLE = 'admin_users';
+
+export type ViewMode = 'admin' | 'student';
 
 const SHIBBOLETH_IDENTITY_HEADERS = [
   'x-shib-eppn',
@@ -35,7 +40,7 @@ export function getSecretKey() {
   return new TextEncoder().encode(secret);
 }
 
-function normalizeShibbolethIdentity(rawValue: string | null | undefined) {
+export function normalizeShibbolethIdentity(rawValue: string | null | undefined) {
   if (!rawValue) return null;
   const value = rawValue.trim();
   if (!value) return null;
@@ -43,7 +48,7 @@ function normalizeShibbolethIdentity(rawValue: string | null | undefined) {
   return value.toLowerCase().replace(/\s+/g, ' ');
 }
 
-function identityVariants(rawValue: string | null | undefined): Set<string> {
+export function identityVariants(rawValue: string | null | undefined): Set<string> {
   const normalized = normalizeShibbolethIdentity(rawValue);
   if (!normalized) return new Set();
 
@@ -99,34 +104,77 @@ function parseAllowedAdminValues(raw: string): Set<string> {
 }
 
 export function getAllowedAdminUsers(): Set<string> {
-  const raw = process.env.ADMIN_SHIBBOLETH_ALLOWED_USERS;
-  const trimmed = raw?.trim() ?? '';
-  if (!trimmed) {
-    throw new Error(
-      'ADMIN_SHIBBOLETH_ALLOWED_USERS is missing. Set a comma-separated list of allowed utorids/emails in your environment variables.'
-    );
-  }
-  return parseAllowedAdminValues(trimmed);
+  const raw = process.env.ADMIN_SHIBBOLETH_ALLOWED_USERS?.trim() ?? '';
+  if (!raw) return new Set();
+  return parseAllowedAdminValues(raw);
 }
 
-export function isAllowedShibbolethAdmin(headers: Headers | null | undefined) {
-  let allowedUsers: Set<string>;
+export async function getDynamicAdminIdentities(): Promise<Set<string>> {
   try {
-    allowedUsers = getAllowedAdminUsers();
-  } catch {
-    return false;
-  }
-  if (allowedUsers.size === 0) return false;
+    const { data, error } = await supabaseAdmin.from(ADMIN_USERS_TABLE).select('identity');
+    if (error || !data) return new Set();
 
+    return data.reduce((set, row: { identity: string }) => {
+      for (const variant of identityVariants(row.identity)) {
+        set.add(variant);
+      }
+      return set;
+    }, new Set<string>());
+  } catch {
+    return new Set();
+  }
+}
+
+export async function getAllAllowedAdminIdentities(): Promise<Set<string>> {
+  const merged = new Set(getAllowedAdminUsers());
+  const dynamic = await getDynamicAdminIdentities();
+  for (const id of dynamic) merged.add(id);
+  return merged;
+}
+
+export async function isAllowedShibbolethAdmin(headers: Headers | null | undefined) {
   const identity = getShibbolethIdentity(headers);
   if (!identity) return false;
 
   const identities = identityVariants(identity);
+  const allowedUsers = await getAllAllowedAdminIdentities();
+  if (allowedUsers.size === 0) return false;
+
   for (const id of identities) {
     if (allowedUsers.has(id)) return true;
   }
 
   return false;
+}
+
+export async function listAdminUsers() {
+  const { data, error } = await supabaseAdmin
+    .from(ADMIN_USERS_TABLE)
+    .select('identity, added_by, created_at')
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function addAdminUser(identity: string, addedBy: string) {
+  const normalized = normalizeShibbolethIdentity(identity);
+  if (!normalized) throw new Error('Invalid identity');
+
+  const { error } = await supabaseAdmin
+    .from(ADMIN_USERS_TABLE)
+    .upsert({ identity: normalized, added_by: addedBy }, { onConflict: 'identity' });
+
+  if (error) throw error;
+  return normalized;
+}
+
+export async function removeAdminUser(identity: string) {
+  const normalized = normalizeShibbolethIdentity(identity);
+  if (!normalized) throw new Error('Invalid identity');
+
+  const { error } = await supabaseAdmin.from(ADMIN_USERS_TABLE).delete().eq('identity', normalized);
+  if (error) throw error;
 }
 
 export async function createAdminSessionToken(identity?: string) {
@@ -147,13 +195,35 @@ export async function setAdminSessionCookie(token: string) {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
-    maxAge: 60 * 60 * 24 * 7, // 7 days, matches SESSION_DURATION
+    maxAge: 60 * 60 * 24 * 7,
   });
 }
 
 export async function clearAdminSessionCookie() {
   const store = await cookies();
   store.delete(COOKIE_NAME);
+}
+
+export async function getViewMode(): Promise<ViewMode> {
+  const store = await cookies();
+  const value = store.get(VIEW_MODE_COOKIE)?.value;
+  return value === 'student' ? 'student' : 'admin';
+}
+
+export async function setViewMode(mode: ViewMode) {
+  const store = await cookies();
+  store.set(VIEW_MODE_COOKIE, mode, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+  });
+}
+
+export async function clearViewMode() {
+  const store = await cookies();
+  store.delete(VIEW_MODE_COOKIE);
 }
 
 export async function isAdminSession() {
@@ -166,6 +236,20 @@ export async function isAdminSession() {
     return payload.role === 'admin';
   } catch {
     return false;
+  }
+}
+
+export async function getAdminSessionPayload(): Promise<{ role: string; identity?: string } | null> {
+  const store = await cookies();
+  const token = store.get(COOKIE_NAME)?.value;
+  if (!token) return null;
+
+  try {
+    const { payload } = await jwtVerify(token, getSecretKey());
+    if (payload.role !== 'admin') return null;
+    return payload as { role: string; identity?: string };
+  } catch {
+    return null;
   }
 }
 

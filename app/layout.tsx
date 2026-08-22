@@ -26,13 +26,13 @@ export default function RootLayout({
             <span className="font-semibold text-gray-900">Instructli</span>
           </a>
 
-          <Link
+          {/*<Link
             href="/admin/login"
             className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition"
           >
             <ShieldQuestion size={15} />
             Are you an admin?
-          </Link>
+          </Link>*/}
         </nav>
 
         {children}

@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ModuleCard from '@/components/ModuleCard'
 import { recordAnalyticsVisit } from '../src/utils/analytics';
 import { getModuleIcon } from '../lib/moduleIcons';
 import type { ModuleRow } from './api/modules/route';
+import { ShieldCheck } from 'lucide-react';
 
 const MODULE_META: Record<string, { href: string; sections: string[]; simulations: number; exercises: number; duration: string }> = {
   'binary-arithmetic': {
@@ -52,13 +54,38 @@ const MODULE_META: Record<string, { href: string; sections: string[]; simulation
 };
 
 export default function Dashboard() {
+  const router = useRouter();
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
+  const [viewingAsStudent, setViewingAsStudent] = useState(false);
+  const [switchingView, setSwitchingView] = useState(false);
 
   useEffect(() => {
     recordAnalyticsVisit('app');
   }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    fetch('/api/admin/session')
+      .then((res) => res.json())
+      .then((data) => {
+        if (!active) return;
+        if (data.isAdmin && data.viewMode === 'admin') {
+          router.replace('/admin');
+        } else if (data.isAdmin && data.viewMode === 'student') {
+          setViewingAsStudent(true);
+        }
+      })
+      .catch(() => {
+        // Not an admin, or the check failed — just show the student view.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [router]);
 
   useEffect(() => {
     const loadUserName = async () => {
@@ -84,9 +111,39 @@ export default function Dashboard() {
 
   const visibleModules = modules.filter((m) => !m.hidden);
 
+  async function handleReturnToAdmin() {
+    setSwitchingView(true);
+    try {
+      await fetch('/api/admin/view-mode', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'admin' }),
+      });
+      router.push('/admin');
+    } finally {
+      setSwitchingView(false);
+    }
+  }
+
   return (
     <main className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-6 py-10">
+        {viewingAsStudent ? (
+          <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-sm text-indigo-700">
+            <span className="flex items-center gap-2">
+              <ShieldCheck size={15} />
+              You&apos;re previewing the student view.
+            </span>
+            <button
+              onClick={handleReturnToAdmin}
+              disabled={switchingView}
+              className="text-sm font-medium underline underline-offset-2 hover:text-indigo-900 disabled:opacity-50"
+            >
+              {switchingView ? 'Switching…' : 'Return to admin view'}
+            </button>
+          </div>
+        ) : null}
+
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-6">
           <div className="text-center flex-1">

@@ -8,7 +8,7 @@ import {
   SortableContext, rectSortingStrategy, useSortable, arrayMove
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Eye, EyeOff, Lock, Unlock, BarChart3, LogOut } from "lucide-react"
+import { GripVertical, Eye, EyeOff, Lock, Unlock, BarChart3, LogOut, Users } from "lucide-react"
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { recordAnalyticsVisit } from '../../src/utils/analytics'
@@ -161,6 +161,15 @@ export default function Dashboard() {
     router.refresh()
   }
 
+  async function handleViewAsStudent() {
+    await fetch('/api/admin/view-mode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'student' }),
+    })
+    router.push('/')
+  }
+
   return (
     <main className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-6 py-16">
@@ -179,6 +188,14 @@ export default function Dashboard() {
             <BarChart3 size={15} />
             View stats
           </Link>
+          <Link href="/admin/admins" className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition">
+            <Users size={15} />
+            Manage admins
+          </Link>
+          <button onClick={handleViewAsStudent} className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
+            <Eye size={15} />
+            View as student
+          </button>
           <button onClick={handleLogout} className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
             <LogOut size={15} />
             Log out

@@ -51,3 +51,17 @@ create policy "anyone can read modules"
 create policy "anyone can insert an analytics event"
   on analytics_events for insert
   with check (true);
+
+-- ── Dynamic admin whitelist ────────────────────────────────────────────────
+-- Admins added/removed from the "Manage admins" dashboard page. Admins
+-- configured via ADMIN_SHIBBOLETH_ALLOWED_USERS remain separate and are
+-- never stored here.
+create table if not exists admin_users (
+  identity text primary key,
+  added_by text,
+  created_at timestamptz not null default now()
+);
+
+alter table admin_users enable row level security;
+-- Intentionally no public policies: only the service-role key
+-- (via supabaseAdmin, server-side only) can read or write this table.
