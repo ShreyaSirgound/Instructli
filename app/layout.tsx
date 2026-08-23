@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from 'next/link';
-import {BarChart3, Users, Eye} from 'lucide-react';
+import { BarChart3, Users } from 'lucide-react';
 import StudentViewButton from "@/components/admin/StudentView";
 
 export const metadata: Metadata = {
@@ -22,33 +22,29 @@ export default function RootLayout({
       <body style={{ fontFamily: "'Google Sans Flex', sans-serif" }} className="min-h-full flex flex-col">
         {/* Navbar */}
         <nav className="flex items-center justify-between sticky top-0 bg-white z-100 border-b border-gray-100 px-6 py-4">
-          <a href="/" className="flex items-center gap-2 w-fit">
-            <img src="/favicon.ico" className="w-5 h-5" />
+          <a href="/" className="flex items-center gap-2 shrink-0">
+            <img src="/favicon.ico" className="w-5 h-5" alt="Instructli logo" />
             <span className="font-semibold text-gray-900">Instructli</span>
           </a>
 
-          <Link
-            href="/admin/stats"
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-          >
-            <BarChart3 size={15} />
-            View stats
-          </Link>
-          <Link
-            href="/admin/admins"
-            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-          >
-            <Users size={15} />
-            Manage admins
-          </Link>
-          <StudentViewButton />
-          {/*<Link
-            href="/admin/login"
-            className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition"
-          >
-            <ShieldQuestion size={15} />
-            Are you an admin?
-          </Link>}*/}
+          {/* Wrapper with whitespace-nowrap & shrink-0 */}
+          <div className="flex items-center gap-1 shrink-0 whitespace-nowrap">
+            <Link
+              href="/admin/stats"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
+            >
+              <BarChart3 size={15} />
+              View stats
+            </Link>
+            <Link
+              href="/admin/admins"
+              className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
+            >
+              <Users size={15} />
+              Manage admins
+            </Link>
+            <StudentViewButton />
+          </div>
         </nav>
 
         {children}
