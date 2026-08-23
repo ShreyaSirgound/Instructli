@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Link from 'next/link';
 import {BarChart3, Users, Eye} from 'lucide-react';
-import router from "next/router";
+import router from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Instructli",
