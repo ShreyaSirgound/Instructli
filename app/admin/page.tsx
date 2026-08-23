@@ -155,21 +155,6 @@ export default function Dashboard() {
       return next
     })
 
-  async function handleLogout() {
-    await fetch('/api/admin/logout', { method: 'POST' })
-    router.push('/')
-    router.refresh()
-  }
-
-  async function handleViewAsStudent() {
-    await fetch('/api/admin/view-mode', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'student' }),
-    })
-    router.push('/')
-  }
-
   return (
     <main className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-6 py-16">
@@ -184,18 +169,6 @@ export default function Dashboard() {
           <button onClick={() => bulkUpdate(m => ({ ...m, hidden: true }))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Hide all</button>
           <button onClick={() => bulkUpdate(m => ({ ...m, locked: false }))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Unlock all</button>
           <button onClick={() => bulkUpdate(m => ({ ...m, locked: true }))} className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">Lock all</button>
-          <Link href="/admin/stats" className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition">
-            <BarChart3 size={15} />
-            View stats
-          </Link>
-          <Link href="/admin/admins" className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition">
-            <Users size={15} />
-            Manage admins
-          </Link>
-          <button onClick={handleViewAsStudent} className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
-            <Eye size={15} />
-            View as student
-          </button>
         </div>
 
         {loading ? (

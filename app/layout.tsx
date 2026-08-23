@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from 'next/link';
-import { ShieldQuestion } from 'lucide-react';
-import AdminMenu from '@/components/admin/AdminMenu';
+import {BarChart3, Users, Eye} from 'lucide-react';
+import router from "next/router";
 
 export const metadata: Metadata = {
   title: "Instructli",
   description: "",
 };
+
+  async function handleViewAsStudent() {
+    await fetch('/api/admin/view-mode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'student' }),
+    })
+    router.push('/')
+  }
 
 export default function RootLayout({
   children,
@@ -27,15 +36,35 @@ export default function RootLayout({
             <span className="font-semibold text-gray-900">Instructli</span>
           </a>
 
-          <AdminMenu />
-          
-          {<Link
+          <Link
+            href="/admin/stats"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+          >
+            <BarChart3 size={15} />
+            View stats
+          </Link>
+          <Link
+            href="/admin/admins"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+          >
+            <Users size={15} />
+            Manage admins
+          </Link>
+          <button
+            onClick={handleViewAsStudent}
+            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left"
+          >
+            <Eye size={15} />
+            View as student
+          </button>
+
+          {/*<Link
             href="/admin/login"
             className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition"
           >
             <ShieldQuestion size={15} />
             Are you an admin?
-          </Link>}
+          </Link>}*/}
         </nav>
 
         {children}
