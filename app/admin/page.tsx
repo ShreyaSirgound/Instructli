@@ -8,7 +8,7 @@ import {
   SortableContext, rectSortingStrategy, useSortable, arrayMove
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Eye, EyeOff, Lock, Unlock, BarChart3, LogOut, Users } from "lucide-react"
+import { GripVertical, Eye, EyeOff, Lock, Unlock, BarChart3, Users } from "lucide-react"
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { recordAnalyticsVisit } from '../../src/utils/analytics'
@@ -195,10 +195,6 @@ export default function Dashboard() {
           <button onClick={handleViewAsStudent} className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
             <Eye size={15} />
             View as student
-          </button>
-          <button onClick={handleLogout} className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition">
-            <LogOut size={15} />
-            Log out
           </button>
         </div>
 
