@@ -1,26 +1,13 @@
-'use client'
-
 import type { Metadata } from "next";
 import "./globals.css";
 import Link from 'next/link';
 import {BarChart3, Users, Eye} from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import StudentViewButton from "@/components/admin/StudentView";
 
 export const metadata: Metadata = {
   title: "Instructli",
   description: "",
 };
-
-const router = useRouter();
-
-async function handleViewAsStudent() {
-  await fetch('/api/admin/view-mode', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mode: 'student' }),
-  })
-  router.push('/')
-}
 
 export default function RootLayout({
   children,
@@ -54,14 +41,7 @@ export default function RootLayout({
             <Users size={15} />
             Manage admins
           </Link>
-          <button
-            onClick={handleViewAsStudent}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left"
-          >
-            <Eye size={15} />
-            View as student
-          </button>
-
+          <StudentViewButton />
           {/*<Link
             href="/admin/login"
             className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition"
