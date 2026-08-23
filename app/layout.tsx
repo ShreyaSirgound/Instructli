@@ -3,6 +3,7 @@ import "./globals.css";
 import Link from 'next/link';
 import { BarChart3, Users } from 'lucide-react';
 import StudentViewButton from "@/components/admin/StudentView";
+import AdminMenu from "@/components/admin/AdminMenu"
 
 export const metadata: Metadata = {
   title: "Instructli",
@@ -27,8 +28,8 @@ export default function RootLayout({
             <span className="font-semibold text-gray-900">Instructli</span>
           </a>
 
-          {/* Wrapper with whitespace-nowrap & shrink-0 */}
-          <div className="flex items-center gap-1 shrink-0 whitespace-nowrap">
+          <AdminMenu />
+          {/*<div className="flex items-center gap-1 shrink-0 whitespace-nowrap">
             <Link
               href="/admin/stats"
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
@@ -44,7 +45,7 @@ export default function RootLayout({
               Manage admins
             </Link>
             <StudentViewButton />
-          </div>
+          </div>*/}
         </nav>
 
         {children}
