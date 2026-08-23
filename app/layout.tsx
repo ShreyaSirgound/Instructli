@@ -2,21 +2,23 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Link from 'next/link';
 import {BarChart3, Users, Eye} from 'lucide-react';
-import router from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: "Instructli",
   description: "",
 };
 
-  async function handleViewAsStudent() {
-    await fetch('/api/admin/view-mode', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: 'student' }),
-    })
-    router.push('/')
-  }
+const router = useRouter();
+
+async function handleViewAsStudent() {
+  await fetch('/api/admin/view-mode', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mode: 'student' }),
+  })
+  router.push('/')
+}
 
 export default function RootLayout({
   children,
