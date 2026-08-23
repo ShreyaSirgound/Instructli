@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Link from 'next/link';
 import { ShieldQuestion } from 'lucide-react';
+import AdminMenu from '@/components/admin/AdminMenu';
 
 export const metadata: Metadata = {
   title: "Instructli",
@@ -26,6 +27,8 @@ export default function RootLayout({
             <span className="font-semibold text-gray-900">Instructli</span>
           </a>
 
+          <AdminMenu />
+          
           {<Link
             href="/admin/login"
             className="inline-flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition"
