@@ -95,10 +95,6 @@ function parseAllowedAdminValues(raw: string): Set<string> {
     .filter(Boolean)
     .reduce((set, value) => {
       set.add(value as string);
-      const atIndex = value!.indexOf('@');
-      if (atIndex > 0) {
-        set.add((value as string).slice(0, atIndex));
-      }
       return set;
     }, new Set<string>());
 }

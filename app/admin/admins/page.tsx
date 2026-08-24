@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Lock, ShieldCheck, Trash2, UserPlus } from 'lucide-react';
+import { Lock, CircleUserRound, Trash2, UserPlus } from 'lucide-react';
 
 type DynamicAdmin = { identity: string; added_by: string | null; created_at: string };
 type AdminsResponse = { seedAdmins: string[]; dynamicAdmins: DynamicAdmin[] };
@@ -103,7 +103,7 @@ export default function ManageAdminsPage() {
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-medium text-gray-900 mb-2">Manage admins</h1>
         <p className="text-sm text-gray-500 mb-4">
-          Add or remove UTORids/emails that should have admin access via Shibboleth.
+          Add UofT emails that should have admin access.
         </p>
 
         <form onSubmit={handleAdd} className="flex gap-2 mb-4">
@@ -111,7 +111,7 @@ export default function ManageAdminsPage() {
             type="text"
             value={newIdentity}
             onChange={(e) => setNewIdentity(e.target.value)}
-            placeholder="Enter UTORid or email"
+            placeholder="Enter UofT email"
             className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
           />
           <button
@@ -126,7 +126,7 @@ export default function ManageAdminsPage() {
 
         {error ? <p className="text-sm text-red-600 mb-6">{error}</p> : null}
 
-        <p className="font-medium text-gray-500 mb-2">
+        <p className="font-medium text-sm text-gray-500 mb-2">
           Admin List
         </p>
 
@@ -138,9 +138,9 @@ export default function ManageAdminsPage() {
               <li key={row.identity} className="flex items-center justify-between px-4 py-3">
                 <div>
                   <p className="text-sm font-medium text-gray-900 flex items-center gap-2">
-                    {row.source === 'env' ? (
-                      <ShieldCheck size={14} className="text-gray-400" />
-                    ) : null}
+                    {/*{row.source === 'env' ? (*/}
+                      <CircleUserRound size={14} className="text-gray-400" />
+                    {/*) : null}*/}
                     {row.identity}
                   </p>
                 </div>
