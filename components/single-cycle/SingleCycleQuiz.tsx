@@ -202,7 +202,7 @@ export default function SingleCycleQuiz() {
         <p className="text-sm font-medium text-gray-800">
           Which datapath segments are active when executing:
         </p>
-        <code className="mt-1 block text-base font-mono font-semibold text-indigo-700">
+        <code className="mt-1 block text-base font-mono font-medium text-indigo-700">
           {question.label}
         </code>
       </div>

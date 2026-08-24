@@ -321,7 +321,7 @@ export default function PipelineProcessorQuiz() {
 
       <div className="rounded-xl  space-y-2">
         <div className="flex items-center gap-2">
-          <h3 className="text-base font-bold text-gray-900">Question {programIndex + 1} of {PROGRAMS.length}</h3>
+          <h3 className="text-base font-medium text-gray-900">Question {programIndex + 1} of {PROGRAMS.length}</h3>
           <span className="text-gray-300">—</span>
           <div className="flex items-center gap-1">
             <button
@@ -471,7 +471,7 @@ export default function PipelineProcessorQuiz() {
 
       {finished && (
         <div className={`rounded-xl border px-5 py-4 text-sm space-y-2 ${finalPerfect ? "border-green-200 bg-green-50 text-green-800" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
-          <p className="font-semibold">{finalPerfect ? `✓ Perfect run through all ${PIPELINE_STATES.length} cycles!` : `Program complete — ${finalStats.hits} correct selections`}</p>
+          <p className="font-medium">{finalPerfect ? `✓ Perfect run through all ${PIPELINE_STATES.length} cycles!` : `Program complete — ${finalStats.hits} correct selections`}</p>
           <p className="text-xs">
             {finalStats.wrong > 0 && <span className="mr-3 text-red-700">{finalStats.wrong} incorrect</span>}
             {finalStats.missed > 0 && <span className="text-amber-700">{finalStats.missed} missed</span>}

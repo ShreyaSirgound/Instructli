@@ -75,11 +75,11 @@ export function InstructionQuestion({
 
       {showHints && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
-          <p className="font-semibold text-blue-900 text-sm mb-2">Hints:</p>
+          <p className="font-medium text-blue-900 text-sm mb-2">Hints:</p>
           <div className="space-y-1">
             {fields.map(field => (
               <div key={field} className="text-sm text-blue-800">
-                <span className="font-mono font-semibold">{field}:</span> {hints[field]}
+                <span className="font-mono font-medium">{field}:</span> {hints[field]}
               </div>
             ))}
           </div>
@@ -89,7 +89,7 @@ export function InstructionQuestion({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
         {fields.map(field => (
           <div key={field}>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               {getFieldLabel(field)}
             </label>
             <input
@@ -111,12 +111,12 @@ export function InstructionQuestion({
                 {checkAnswer(field, answers[field]) ? (
                   <>
                     <CheckCircle size={16} className="text-green-600" />
-                    <span className="text-xs text-green-600 font-semibold">Correct!</span>
+                    <span className="text-xs text-green-600 font-medium">Correct!</span>
                   </>
                 ) : (
                   <>
                     <AlertCircle size={16} className="text-red-600" />
-                    <span className="text-xs text-red-600 font-semibold">
+                    <span className="text-xs text-red-600 font-medium">
                       Expected: {expectedValues[field]}
                     </span>
                   </>
@@ -134,7 +134,7 @@ export function InstructionQuestion({
             recordActivityOutcome('machine-instructions', 'question', allCorrect ? 'correct' : 'incorrect', allCorrect ? 1 : 0, 1, instruction);
           }}
           disabled={!fields.every(f => answers[f]) || allCorrect}
-          className={`px-4 py-2 rounded font-semibold text-sm transition-colors ${
+          className={`px-4 py-2 rounded font-medium text-sm transition-colors ${
             allCorrect
               ? 'bg-green-600 text-white'
               : fields.every(f => answers[f])
@@ -151,7 +151,7 @@ export function InstructionQuestion({
               setAnswers({});
               setSubmitted(false);
             }}
-            className="px-4 py-2 rounded font-semibold text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
+            className="px-4 py-2 rounded font-medium text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors"
           >
             Try Again
           </button>
@@ -160,9 +160,9 @@ export function InstructionQuestion({
 
       {submitted && allCorrect && (
         <div className="mt-4 p-3 bg-green-50 border-l-4 border-green-500 rounded">
-          <p className="font-semibold text-green-900 text-sm mb-1">Excellent!</p>
+          <p className="font-medium text-green-900 text-sm mb-1">Excellent!</p>
           <p className="text-sm text-green-800">
-            Machine code (hex): <span className="font-mono font-bold">{expectedValues.hex}</span>
+            Machine code (hex): <span className="font-mono font-semibold">{expectedValues.hex}</span>
           </p>
         </div>
       )}

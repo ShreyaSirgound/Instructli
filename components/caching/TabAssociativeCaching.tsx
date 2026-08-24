@@ -212,7 +212,7 @@ export default function TabAssociativeCaching() {
                 <tr key={i} className={r.bg}>
                   <td className="border border-gray-200 px-3 py-2 font-mono">{r.addr}</td>
                   <td className="border border-gray-200 px-3 py-2 font-mono">{r.set}</td>
-                  <td className={`border border-gray-200 px-3 py-2 font-semibold ${r.tc}`}>{r.hm}</td>
+                  <td className={`border border-gray-200 px-3 py-2 font-medium ${r.tc}`}>{r.hm}</td>
                   <td className="border border-gray-200 px-3 py-2 font-mono text-xs">{r.cache}</td>
                 </tr>
               ))}
@@ -221,13 +221,13 @@ export default function TabAssociativeCaching() {
         </div>
         <div className="mt-4 space-y-3">
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">4 misses, 1 hit — miss rate = 80%</p>
+            <p className="text-sm font-medium text-gray-900">4 misses, 1 hit — miss rate = 80%</p>
             <p className="text-sm text-gray-600 leading-relaxed mt-1">
               All three distinct word addresses (0, 8, 6) hash to set 0. With only 2 ways, the third distinct address must evict one of the first two — a <strong>conflict miss</strong>. A 3-way or fully associative cache would let all three coexist.
             </p>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">LRU always evicts the oldest entry in the set</p>
+            <p className="text-sm font-medium text-gray-900">LRU always evicts the oldest entry in the set</p>
             <p className="text-sm text-gray-600 leading-relaxed mt-1">
               After addr 0 hits at step 3, it becomes MRU and tag 100 becomes LRU. When addr 6 arrives and causes a miss, tag 100 (LRU) is evicted — not tag 000 (MRU).
             </p>
@@ -242,21 +242,21 @@ export default function TabAssociativeCaching() {
         </p>
         <div className="mt-4 space-y-3">
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">Step 1 — Convert latencies to cycles</p>
+            <p className="text-sm font-medium text-gray-900">Step 1 — Convert latencies to cycles</p>
             <div className="mt-2 rounded bg-gray-100 px-3 py-2 font-mono text-sm space-y-1">
               <div>Main memory penalty = 100 ns / 0.25 ns = <strong>400 cycles</strong></div>
               <div>L2 access time &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 5 ns / 0.25 ns &nbsp;= <strong>20 cycles</strong></div>
             </div>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">Step 2 — CPI with L1 only</p>
+            <p className="text-sm font-medium text-gray-900">Step 2 — CPI with L1 only</p>
             <div className="mt-2 rounded bg-gray-100 px-3 py-2 font-mono text-sm space-y-1">
               <div className="text-gray-500">CPI = Base CPI + miss rate × miss penalty</div>
               <div>= 1 + 0.02 × 400 = <strong>9</strong></div>
             </div>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">Step 3 — CPI with L1 + L2</p>
+            <p className="text-sm font-medium text-gray-900">Step 3 — CPI with L1 + L2</p>
             <p className="text-sm text-gray-600 mt-1">On an L1 miss, access L2 first (20 cycles). Only if L2 also misses do we pay the full 400-cycle penalty.</p>
             <div className="mt-2 rounded bg-gray-100 px-3 py-2 font-mono text-sm space-y-1">
               <div className="text-gray-500">Effective miss penalty = L2 time + (L2 miss rate × DRAM penalty)</div>
@@ -275,7 +275,7 @@ export default function TabAssociativeCaching() {
         <div className="space-y-6">
           <p className="text-sm text-gray-700">Test your understanding of associativity, replacement policies, miss types, and multilevel cache performance.</p>
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-gray-900">{currentQuestion.title}</p>
+            <p className="text-sm font-medium text-gray-900">{currentQuestion.title}</p>
             <div className="text-sm text-gray-700">{currentQuestion.prompt}</div>
           </div>
 
@@ -291,7 +291,7 @@ export default function TabAssociativeCaching() {
                   className="h-4 w-4 text-indigo-600"
                 />
                 <span className="text-sm text-gray-700">
-                  <strong className="font-semibold">{option.label}.</strong> {option.text}
+                  <strong className="font-medium">{option.label}.</strong> {option.text}
                 </span>
               </label>
             ))}
@@ -302,7 +302,7 @@ export default function TabAssociativeCaching() {
               type="button"
               onClick={handleSubmit}
               disabled={selectedOption === null || submitted}
-              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition disabled:opacity-50"
             >
               Submit answer
             </button>
@@ -310,14 +310,14 @@ export default function TabAssociativeCaching() {
               <button
                 type="button"
                 onClick={handlePrevious}
-                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
+                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
               >
                 Previous question
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
+                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
               >
                 Next question
               </button>
@@ -326,7 +326,7 @@ export default function TabAssociativeCaching() {
 
           {submitted && (
             <div className={`rounded-2xl border px-4 py-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-rose-300 bg-rose-50 text-rose-800'}`}>
-              <p className="text-sm font-semibold">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
+              <p className="text-sm font-medium">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
               <div className="mt-2 text-sm leading-relaxed">
                 {isCorrect ? currentQuestion.correctExplanation : currentQuestion.wrongExplanation}
               </div>

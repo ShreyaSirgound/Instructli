@@ -106,7 +106,7 @@ function FieldRow({ fields }: { fields: BitField[] }) {
       <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${fields.length}, minmax(0, 1fr))` }}>
         {fields.map((field) => (
           <div key={field.label} className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2">
-            <p className="text-xs font-semibold text-gray-700">{field.label}</p>
+            <p className="text-xs font-medium text-gray-700">{field.label}</p>
             <p className="text-xs text-gray-500">{field.bits} bits</p>
             <p className="mt-1 font-mono text-sm text-gray-900">{toBitString(field.value, field.bits)}</p>
             <p className="text-xs text-gray-500">dec: {maskBits(field.value, field.bits)}</p>
@@ -435,7 +435,7 @@ export function MachineInstructionsSimulation() {
                 key={kind}
                 type="button"
                 onClick={() => setFormat(kind)}
-                className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition ${
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                   format === kind ? 'border-gray-900 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-700 hover:border-gray-500'
                 }`}
               >
@@ -668,16 +668,16 @@ export function MachineInstructionsSimulation() {
 
 
           <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-indigo-700">Assembly Preview</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-indigo-700">Assembly Preview</p>
             <p className="mt-1 font-mono text-sm text-indigo-900">{encoderResult.assembly}</p>
           </div>
 
           <FieldRow fields={encoderResult.fields} />
 
           <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">Final Encoding</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-700">Final Encoding</p>
             <p className="mt-1 font-mono text-sm text-gray-900">{groupNibbleBits(encoderResult.word)}</p>
-            <p className="mt-1 font-mono text-base font-semibold text-gray-900">{toHex32(encoderResult.word)}</p>
+            <p className="mt-1 font-mono text-base font-medium text-gray-900">{toHex32(encoderResult.word)}</p>
           </div>
         </div>
       </Card>
@@ -689,8 +689,8 @@ export function MachineInstructionsSimulation() {
           </p>
 
           <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">Machine Code Prompt</p>
-            <p className="mt-1 font-mono text-base font-semibold text-gray-900">{toHex32(activeDecode.word)}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-700">Machine Code Prompt</p>
+            <p className="mt-1 font-mono text-base font-medium text-gray-900">{toHex32(activeDecode.word)}</p>
             <p className="mt-1 font-mono text-sm text-gray-900">{groupNibbleBits(activeDecode.word)}</p>
           </div>
 
@@ -813,7 +813,7 @@ export function MachineInstructionsSimulation() {
                 type="button"
                 onClick={checkDecodeAnswer}
                 disabled={!decodeRequiredComplete}
-                className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Check decode
               </button>
@@ -823,14 +823,14 @@ export function MachineInstructionsSimulation() {
             <button
               type="button"
               onClick={() => resetDecoderAnswers((decodeIndex - 1 + decodeCases.length) % decodeCases.length)}
-              className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-gray-400"
+              className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400"
             >
               Previous challenge
             </button>
             <button
               type="button"
               onClick={() => resetDecoderAnswers((decodeIndex + 1) % decodeCases.length)}
-              className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-gray-400"
+              className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400"
             >
               Next challenge
             </button>
@@ -840,10 +840,10 @@ export function MachineInstructionsSimulation() {
           {decodeChecked && decodeRequiredComplete && (
             <div className={`rounded-xl border px-4 py-3 ${decodeCorrect ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
               {decodeCorrect ? (
-                <p className="text-sm font-semibold text-green-800">Correct! {activeDecode.assembly}</p>
+                <p className="text-sm font-medium text-green-800">Correct! {activeDecode.assembly}</p>
               ) : (
                 <div className="space-y-1">
-                  <p className="text-sm font-semibold text-red-800">Not quite. Expected decode:</p>
+                  <p className="text-sm font-medium text-red-800">Not quite. Expected decode:</p>
                   <p className="font-mono text-sm text-red-900">{activeDecode.assembly}</p>
                 </div>
               )}
@@ -851,7 +851,7 @@ export function MachineInstructionsSimulation() {
           )}
 
           <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-700">Challenge {decodeIndex + 1} of {decodeCases.length}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-700">Challenge {decodeIndex + 1} of {decodeCases.length}</p>
             <p className="mt-1 text-sm text-gray-700">Decode format, mnemonic, and operand fields from the prompt above.</p>
           </div>
         </div>

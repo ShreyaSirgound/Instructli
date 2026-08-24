@@ -164,7 +164,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
         <div className="rounded bg-gray-100 px-3 py-2 font-mono text-sm">
           <div>AMAT = 1 + 0.04 × 50</div>
           <div>AMAT = 1 + 2</div>
-          <div className="border-t border-gray-300 mt-1 pt-1 font-bold">AMAT = 3 cycles</div>
+          <div className="border-t border-gray-300 mt-1 pt-1 font-medium">AMAT = 3 cycles</div>
         </div>
         <p>Even a modest 4% miss rate doubles the effective memory access time over a perfect cache (1 cycle), showing how impactful misses are on performance.</p>
       </div>
@@ -245,7 +245,7 @@ export default function TabCachingBasics() {
                   <td className="border border-gray-200 px-3 py-2 font-mono">{row.bin}</td>
                   <td className="border border-gray-200 px-3 py-2 font-mono">{row.tag}</td>
                   <td className="border border-gray-200 px-3 py-2 font-mono">{row.idx}</td>
-                  <td className={`border border-gray-200 px-3 py-2 font-semibold ${row.tc}`}>{row.result}</td>
+                  <td className={`border border-gray-200 px-3 py-2 font-medium ${row.tc}`}>{row.result}</td>
                 </tr>
               ))}
             </tbody>
@@ -253,14 +253,14 @@ export default function TabCachingBasics() {
         </div>
         <div className="mt-4 space-y-3">
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">4 misses, 3 hits — miss rate ≈ 57%</p>
+            <p className="text-sm font-medium text-gray-900">4 misses, 3 hits — miss rate ≈ 57%</p>
             <p className="text-sm text-gray-600 leading-relaxed mt-1">
               The first access to any address is always a <strong>compulsory miss</strong> — the block has never been in the cache.
               Subsequent accesses to the same address (22→22, 26→26, 16→16) are hits, showing temporal locality being exploited.
             </p>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">A hit requires two conditions</p>
+            <p className="text-sm font-medium text-gray-900">A hit requires two conditions</p>
             <p className="text-sm text-gray-600 leading-relaxed mt-1">
               The valid bit (V) must be 1, and the stored tag at that index must match the incoming address tag.
               If either condition fails, it is a miss and the block is fetched from memory.
@@ -276,14 +276,14 @@ export default function TabCachingBasics() {
         </p>
         <div className="mt-4 space-y-3">
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">Step 1 — Instruction cache stall cycles per instruction</p>
+            <p className="text-sm font-medium text-gray-900">Step 1 — Instruction cache stall cycles per instruction</p>
             <div className="mt-2 rounded bg-gray-100 px-3 py-2 font-mono text-sm space-y-1">
               <div className="text-gray-500">I-cache stalls = miss rate × miss penalty</div>
               <div>= 0.02 × 100 = <strong>2 cycles / instruction</strong></div>
             </div>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">Step 2 — Data cache stall cycles per instruction</p>
+            <p className="text-sm font-medium text-gray-900">Step 2 — Data cache stall cycles per instruction</p>
             <p className="text-sm text-gray-600 mt-1">Only load/store instructions access data memory, so the miss rate is scaled by the fraction of such instructions.</p>
             <div className="mt-2 rounded bg-gray-100 px-3 py-2 font-mono text-sm space-y-1">
               <div className="text-gray-500">D-cache stalls = (load/store fraction) × miss rate × miss penalty</div>
@@ -291,7 +291,7 @@ export default function TabCachingBasics() {
             </div>
           </div>
           <div className="rounded-2xl border border-gray-100 bg-gray-50 px-5 py-4">
-            <p className="text-sm font-semibold text-gray-900">Step 3 — Actual CPI</p>
+            <p className="text-sm font-medium text-gray-900">Step 3 — Actual CPI</p>
             <div className="mt-2 rounded bg-gray-100 px-3 py-2 font-mono text-sm space-y-1">
               <div>Actual CPI = Base CPI + I-cache stalls + D-cache stalls</div>
               <div>= 2 + 2 + 1.44 = <strong>5.44</strong></div>
@@ -309,7 +309,7 @@ export default function TabCachingBasics() {
         <div className="space-y-6">
           <p className="text-sm text-gray-700">Test your understanding of locality, address decomposition, and cache performance.</p>
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-gray-900">{currentQuestion.title}</p>
+            <p className="text-sm font-medium text-gray-900">{currentQuestion.title}</p>
             <div className="text-sm text-gray-700">{currentQuestion.prompt}</div>
           </div>
 
@@ -325,7 +325,7 @@ export default function TabCachingBasics() {
                   className="h-4 w-4 text-indigo-600"
                 />
                 <span className="text-sm text-gray-700">
-                  <strong className="font-semibold">{option.label}.</strong> {option.text}
+                  <strong className="font-medium">{option.label}.</strong> {option.text}
                 </span>
               </label>
             ))}
@@ -336,7 +336,7 @@ export default function TabCachingBasics() {
               type="button"
               onClick={handleSubmit}
               disabled={selectedOption === null || submitted}
-              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition disabled:opacity-50"
             >
               Submit answer
             </button>
@@ -344,14 +344,14 @@ export default function TabCachingBasics() {
               <button
                 type="button"
                 onClick={handlePrevious}
-                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
+                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
               >
                 Previous question
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
+                className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
               >
                 Next question
               </button>
@@ -360,7 +360,7 @@ export default function TabCachingBasics() {
 
           {submitted && (
             <div className={`rounded-2xl border px-4 py-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-rose-300 bg-rose-50 text-rose-800'}`}>
-              <p className="text-sm font-semibold">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
+              <p className="text-sm font-medium">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
               <div className="mt-2 text-sm leading-relaxed">
                 {isCorrect ? currentQuestion.correctExplanation : currentQuestion.wrongExplanation}
               </div>

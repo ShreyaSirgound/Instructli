@@ -18,7 +18,7 @@ export function Badge({ variant }: { variant: Variant }) {
   const s = variantStyles[variant];
   return (
     <span
-      className="inline-flex items-center rounded-full px-3 py-0.5 text-xs font-semibold"
+      className="inline-flex items-center rounded-full px-3 py-0.5 text-xs font-medium"
       style={{ backgroundColor: s.bg, color: s.color }}
     >
       {label[variant]}

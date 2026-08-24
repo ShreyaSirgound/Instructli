@@ -208,7 +208,7 @@ export default function HazardsSimulation() {
       <p className="text-gray-600 text-sm mb-1">
         Add stall cycles to correct all hazards in the diagram below.
       </p>
-      <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-3 mt-4">
+      <p className="text-xs font-medium tracking-widest text-gray-400 uppercase mb-3 mt-4">
         Execution Timeline
       </p>
 
@@ -217,7 +217,7 @@ export default function HazardsSimulation() {
         <button
           onClick={handleCheck}
           disabled={checked && isCorrect}
-          className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white text-sm font-semibold px-4 py-1.5 rounded-full transition-colors"
+          className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white text-sm font-medium px-4 py-1.5 rounded-full transition-colors"
         >
           Check
         </button>
@@ -238,7 +238,7 @@ export default function HazardsSimulation() {
               {ccLabels.map((cc) => (
                 <th
                   key={cc}
-                  className="text-center text-xs font-semibold text-gray-400 tracking-wider pb-2 px-0.5 min-w-[74px]"
+                  className="text-center text-xs font-medium text-gray-400 tracking-wider pb-2 px-0.5 min-w-[74px]"
                 >
                   {cc}
                 </th>
@@ -300,7 +300,7 @@ export default function HazardsSimulation() {
               : "bg-red-50 border border-red-200 text-red-900"
           }`}
         >
-          <p className="font-semibold mb-1">
+          <p className="font-medium mb-1">
             {isCorrect ? "Correct!" : "Not quite — try again."}
           </p>
           {isCorrect ? (

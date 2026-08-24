@@ -96,8 +96,8 @@ export default function AdminStatsPage() {
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-12">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600">Analytics</p>
-            <h1 className="mt-2 text-3xl font-semibold text-gray-900">Student usage & performance dashboard</h1>
+            <p className="text-sm font-medium uppercase tracking-[0.2em] text-indigo-600">Analytics</p>
+            <h1 className="mt-2 text-3xl font-medium text-gray-900">Student usage & performance dashboard</h1>
           </div>
           <Link href="/admin" className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400">
             Back to admin
@@ -119,7 +119,7 @@ export default function AdminStatsPage() {
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">Module activity</h2>
+                <h2 className="text-lg font-medium text-gray-900">Module activity</h2>
                 <p className="mt-1 text-sm text-gray-500">Clicks and visits by module</p>
               </div>
               <div className="rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700">{summary?.moduleStats?.length ?? 0} modules</div>
@@ -130,30 +130,30 @@ export default function AdminStatsPage() {
                 <div key={module.module} className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-gray-900">{module.title}</p>
+                      <p className="font-medium text-gray-900">{module.title}</p>
                       <p className="mt-1 text-sm text-gray-500">{module.clicks} clicks • {module.visits} visits</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900">{module.questionAttempts + module.simulationAttempts} interactions</p>
+                      <p className="text-sm font-medium text-gray-900">{module.questionAttempts + module.simulationAttempts} interactions</p>
                       <p className="text-sm text-gray-500">{overallAccuracy}</p>
                     </div>
                   </div>
                   <div className="mt-4 grid gap-3 md:grid-cols-3">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Questions</p>
-                      <p className="mt-1 text-lg font-semibold text-gray-900">{module.questionAttempts}</p>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Questions</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">{module.questionAttempts}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Simulations</p>
-                      <p className="mt-1 text-lg font-semibold text-gray-900">{module.simulationAttempts}</p>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Simulations</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">{module.simulationAttempts}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Accuracy</p>
-                      <p className="mt-1 text-lg font-semibold text-gray-900">{(module.averageScore || 0).toFixed(1)}%</p>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Accuracy</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">{(module.averageScore || 0).toFixed(1)}%</p>
                     </div>
                   </div>
                   <div className="mt-4">
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Recent weekly trend</p>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">Recent weekly trend</p>
                     <div className="flex items-end gap-2">
                       {module.trend.map((point) => (
                         <div key={`${module.module}-${point.day}`} className="flex flex-1 flex-col items-center gap-1">
@@ -169,21 +169,21 @@ export default function AdminStatsPage() {
           </div>
 
           <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900">Performance snapshot</h2>
+            <h2 className="text-lg font-medium text-gray-900">Performance snapshot</h2>
             <p className="mt-1 text-sm text-gray-500">How well students are answering across the curriculum</p>
 
             <div className="mt-6 space-y-4">
               <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-900">Average accuracy</p>
-                  <p className="text-lg font-semibold text-indigo-700">{overallAccuracy}</p>
+                  <p className="text-sm font-medium text-gray-900">Average accuracy</p>
+                  <p className="text-lg font-medium text-indigo-700">{overallAccuracy}</p>
                 </div>
                 <div className="mt-3">
                   <ProgressBar value={Math.round(summary?.averageAccuracy ? summary.averageAccuracy * 100 : 0)} total={100} />
                 </div>
               </div>
               <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <p className="text-sm font-semibold text-gray-900">Best engagement</p>
+                <p className="text-sm font-medium text-gray-900">Best engagement</p>
                 <p className="mt-2 text-sm text-gray-600">
                   {summary?.moduleStats?.[0]?.title ?? 'No data yet'} is leading in clicks and visits.
                 </p>
@@ -195,7 +195,7 @@ export default function AdminStatsPage() {
         <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Student activity</h2>
+              <h2 className="text-lg font-medium text-gray-900">Student activity</h2>
               <p className="mt-1 text-sm text-gray-500">Per-student engagement, accuracy, and progress over time (by utorid/Shibboleth identity)</p>
             </div>
             <div className="rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700">{knownStudents.length} students</div>
@@ -209,7 +209,7 @@ export default function AdminStatsPage() {
             ) : (
               <table className="w-full min-w-[880px] text-sm">
                 <thead>
-                  <tr className="divide-x divide-gray-100 text-left text-xs font-semibold uppercase tracking-wide text-gray-400">
+                  <tr className="divide-x divide-gray-100 text-left text-xs font-medium uppercase tracking-wide text-gray-400">
                     <th className="pb-2 pr-3">Student</th>
                     <th className="pb-2 px-3">Visits</th>
                     <th className="pb-2 px-3">Clicks</th>

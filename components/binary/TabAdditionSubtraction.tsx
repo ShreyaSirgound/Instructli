@@ -42,7 +42,7 @@ function computeResult(bA: number[], bB: number[]) {
 function BitCell({
   value, type, onClick,
 }: { value: number; type: 'carry' | 'input' | 'result'; onClick?: () => void }) {
-  const base = 'flex h-10 w-10 items-center justify-center rounded-xl border text-sm font-mono font-semibold transition-all duration-150 select-none';
+  const base = 'flex h-10 w-10 items-center justify-center rounded-xl border text-sm font-mono font-medium transition-all duration-150 select-none';
   const styles: Record<string, string> = {
     carry:  'border-green-200 bg-green-50 text-green-800 text-xs',
     result: 'border-purple-200 bg-purple-50 text-purple-800',
@@ -114,7 +114,7 @@ function InteractiveAdder() {
         {statCards.map(({ label, main, sub }) => (
           <div key={label} className="rounded-2xl bg-gray-50 border border-gray-100 px-4 py-3">
             <p className="text-xs text-gray-400 mb-1">{label}</p>
-            <p className="text-xl font-semibold text-gray-900">{main}</p>
+            <p className="text-xl font-medium text-gray-900">{main}</p>
             <p className="text-xs text-gray-400 mt-0.5">{sub}</p>
           </div>
         ))}
@@ -243,7 +243,7 @@ export function TabAdditionSubtraction() {
               Work through one addition question and one subtraction question. Feedback is designed to reteach the method if you miss one.
             </p>
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-gray-900">{currentQuestion.title}</p>
+              <p className="text-sm font-medium text-gray-900">{currentQuestion.title}</p>
               <p className="text-sm text-gray-700">{currentQuestion.prompt}</p>
             </div>
           </div>
@@ -260,7 +260,7 @@ export function TabAdditionSubtraction() {
                   className="h-4 w-4 text-indigo-600"
                 />
                 <span className="text-sm text-gray-700">
-                  <strong className="font-semibold">{option.label}.</strong> {option.text}
+                  <strong className="font-medium">{option.label}.</strong> {option.text}
                 </span>
               </label>
             ))}
@@ -272,7 +272,7 @@ export function TabAdditionSubtraction() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={selectedOption === null || submitted}
-                className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+                className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition disabled:opacity-50"
               >
                 Submit answer
               </button>
@@ -282,14 +282,14 @@ export function TabAdditionSubtraction() {
               <button
                 type="button"
                 onClick={handlePrevious}
-                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-gray-400"
+                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400"
               >
                 Previous question
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-gray-400"
+                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400"
               >
                 Next question
               </button>
@@ -298,7 +298,7 @@ export function TabAdditionSubtraction() {
 
           {submitted && (
             <div className={`rounded-2xl border px-4 py-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-rose-300 bg-rose-50 text-rose-800'}`}>
-              <p className="text-sm font-semibold">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
+              <p className="text-sm font-medium">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
               <div className="mt-2 text-sm leading-relaxed">
                 {isCorrect ? currentQuestion.correctExplanation : currentQuestion.wrongExplanation}
               </div>

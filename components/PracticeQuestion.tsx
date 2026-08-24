@@ -60,7 +60,7 @@ export function PracticeQuestion({
             className="flex items-start gap-3 rounded-2xl border border-gray-200 px-4 py-3 text-sm text-left text-gray-800 transition-all duration-150 hover:border-gray-300 hover:bg-gray-50"
           >
             <span
-              className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold"
+              className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-medium"
               style={isCorrect === true && opt.label === correctLabel ? { backgroundColor: colors.green.dark, color: '#fff' }
                    : isCorrect === false && opt.label === chosen       ? { backgroundColor: colors.red.dark,   color: '#fff' }
                    : {}}
@@ -80,7 +80,7 @@ export function PracticeQuestion({
                 color:           isCorrect ? colors.green.dark  : colors.yellow.dark,
               }}
             >
-              <span className="font-semibold">{isCorrect ? 'Correct! ' : 'Incorrect. '}</span>
+              <span className="font-medium">{isCorrect ? 'Correct! ' : 'Incorrect. '}</span>
               {isCorrect
                 ? correctExplanation
                 : (options.find((o) => o.label === chosen)?.wrongExplanation ?? wrongExplanation ?? '')}

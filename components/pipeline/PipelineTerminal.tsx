@@ -39,7 +39,7 @@ export default function Terminal({
       index: 0,
       label: "Data Hazard Example",
       code: `add x28, x29, x31
-sub x5, x28, x6`,
+             sub x5, x28, x6`,
       note: "DATA HAZARD: Suppose that there is no forwarding unit only hazard detection. Instruction 2 depends on x28 from the result of instruction 1 which is only available after WB stage. A bubble is inserted to stall the processor and resolve the data hazard. Initial: x28=0, x29=5, x31=1, x6=4. Final: x28=6, x5=2",
       highlight: {
         0: [0],
@@ -55,8 +55,8 @@ sub x5, x28, x6`,
       index: 1,
       label: "Control Hazard Example",
       code: `add x30, x31, x5
-beq x1, x0, 40
-addi x28, x0, 10`,
+             beq x1, x0, 40
+             addi x28, x0, 10`,
       note: `Control Hazard: Suppose that there is no forwarding unit only hazard detection. Result of branch is not available until the EX stage. If the branch is taken, as assumed in this case, a hazard will occur. A bubble is inserted to flush a stage of the pipeline and handle the control hazard.`,
       highlight: {
         0: [0],
@@ -70,32 +70,12 @@ addi x28, x0, 10`,
         8: []
       },
     },
-//     {
-//       index: 2,
-//       label: "Mixed Hazards Example",
-//       code: `lw x1, 0(x2)
-// beq x1, x3, LABEL
-// add x4, x1, x5
-// LABEL: sub x6, x4, x7`,
-//       note: "MIXED HAZARDS: Data hazard register x1 in beq and add instruction depends on lw instruction, register x4 in sub instruction depends on add instruction. Control hazard due to beq instruction. Assume initial values: x1=0, Mem[Val(x2)]=10, x3=10, x4=5, x5=3, x7=2, x6=0. Due to the presence of hazards many problems arise for example branch should have been taken but it was not taken, as a result final values will be different than expected. Final: x1=10, x4=3, x6=3. Expected: x1=10, x4=5, x6=3",
-//       highlight: {
-//         0: [0],
-//         1: [0, 1],
-//         2: [0, 1, 2],
-//         3: [0, 1, 2, 3],
-//         4: [0, 1, 2, 3],
-//         5: [1, 2, 3],
-//         6: [2,3],
-//         7: [3],
-//         8: []
-//       },
-//     },
     {
       index: 3,
       label: "No Hazards",
       code: `add x28, x29, x31
-li x29, 10
-addi x28, x5, 10`,
+             li x29, 10
+             addi x28, x5, 10`,
       note: "NO HAZARDS: Each instruction uses different registers or has sufficient separation. Initial: x29=5, x31=3, x5=7. Final: x28=17 (last instruction overwrites), x29=10. Pipeline runs smoothly without stalls.",
       highlight: {
         0: [0],
@@ -232,7 +212,7 @@ addi x28, x5, 10`,
                   );
                 })
               ) : (
-                <span className="block px-2 text-gray-500 font-semibold">
+                <span className="block px-2 text-gray-500 font-medium">
                   Select a Preset value
                 </span>
               )}

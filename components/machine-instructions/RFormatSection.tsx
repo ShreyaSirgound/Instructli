@@ -8,7 +8,7 @@ export function RFormatSection() {
     <div className="space-y-6">
       <Card variant="concept" title="R-Format Instructions">
         <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-          <p className="font-semibold text-blue-900 mb-2">Structure (32 bits)</p>
+          <p className="font-medium text-blue-900 mb-2">Structure (32 bits)</p>
           <div className="space-y-2 font-mono text-sm">
             <p className="text-blue-800">| funct7 (7) | rs2 (5) | rs1 (5) | funct3 (3) | rd (5) | opcode (7) |</p>
             <p className="text-gray-600">← bits 31:25 →|← 24:20 →|← 19:15 →|← 14:12 →|← 11:7 →|← 6:0 →</p>
@@ -18,10 +18,10 @@ export function RFormatSection() {
 
       <Card variant="worked" title="Worked Example">
         <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded mb-4">
-          <p className="font-mono font-semibold text-sm mb-3">add x9, x20, x21</p>
+          <p className="font-mono font-medium text-sm mb-3">add x9, x20, x21</p>
           <div className="space-y-3 text-sm">
             <div>
-              <p className="font-semibold text-gray-900">Step 1: Identify the fields</p>
+              <p className="font-medium text-gray-900">Step 1: Identify the fields</p>
               <ul className="list-disc list-inside text-gray-700 mt-1 space-y-1">
                 <li>rd = x9 = 9 (destination register)</li>
                 <li>rs1 = x20 = 20 (first source register)</li>
@@ -30,14 +30,14 @@ export function RFormatSection() {
               </ul>
             </div>
             <div>
-              <p className="font-semibold text-gray-900">Step 2: Layout in binary (32-bit)</p>
+              <p className="font-medium text-gray-900">Step 2: Layout in binary (32-bit)</p>
               <div className="font-mono text-xs bg-white p-2 rounded border border-gray-300 mt-1 overflow-x-auto">
                 <p className="text-gray-600">funct7 (7 bits) | rs2 (5) | rs1 (5) | funct3 (3) | rd (5) | opcode (7)</p>
                 <p className="text-gray-900 font-bold">0000000 | 10101 | 10100 | 000 | 01001 | 0110011</p>
               </div>
             </div>
             <div>
-              <p className="font-semibold text-gray-900">Step 3: Convert to hexadecimal</p>
+              <p className="font-medium text-gray-900">Step 3: Convert to hexadecimal</p>
               <p className="font-mono text-gray-700 mt-1">
                 0000 0001 0101 1010 0000 0100 1011 0011<span className="sub">2</span> = 015A04B3<span className="sub">16</span>
               </p>

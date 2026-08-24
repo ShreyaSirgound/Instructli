@@ -36,7 +36,7 @@ export default function ModuleCard({
         >
           {icon}
         </div>
-        <h3 className="text-lg font-semibold text-gray-500">{title}</h3>
+        <h3 className="text-lg font-medium text-gray-500">{title}</h3>
         <p className="text-sm text-gray-400 mt-1">{description}</p>
         <p className="text-sm text-gray-400 mt-4">Locked by your instructor</p>
       </div>
@@ -55,12 +55,12 @@ export default function ModuleCard({
       </div>
 
       <div className="min-h-[6rem]">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-lg font-medium text-gray-900">{title}</h3>
         <p className="text-sm text-gray-500 mt-0">{description}</p>
       </div>
 
       <div className="mt-0">
-        <div className="mb-3 flex items-center gap-2 text-[11px] text-slate-600 overflow-x-auto">
+        <div className="mb-3 flex items-center gap-2 text-[10px] text-slate-600 overflow-x-auto">
           <div className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1">
             <span className="text-slate-500">{simulations}</span>
             <span className="text-slate-500">simulations</span>

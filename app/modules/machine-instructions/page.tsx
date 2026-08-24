@@ -35,7 +35,7 @@ export default function MachineInstructionsModule() {
           All modules
         </Link>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Machine Instructions</h1>
+        <h1 className="text-3xl font-medium text-gray-900 mb-6">Machine Instructions</h1>
 
 
         <div className="flex flex-wrap gap-2 mb-8">

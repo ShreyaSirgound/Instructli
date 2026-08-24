@@ -121,7 +121,7 @@ export default function Terminal({
 
                 if (index === 0 && highlight) {
                   bgClass = "bg-gray-200";
-                  textClass = "text-gray-900 font-semibold";
+                  textClass = "text-gray-900 font-medium";
                 }
 
                 return (

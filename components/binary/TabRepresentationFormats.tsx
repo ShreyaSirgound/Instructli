@@ -163,7 +163,7 @@ export function TabRepresentationFormats() {
               Test your understanding of different binary representation formats: unsigned, sign-magnitude, and two's complement.
             </p>
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-gray-900">{currentQuestion.title}</p>
+              <p className="text-sm font-medium text-gray-900">{currentQuestion.title}</p>
               <p className="text-sm text-gray-700">{currentQuestion.prompt}</p>
             </div>
           </div>
@@ -180,7 +180,7 @@ export function TabRepresentationFormats() {
                   className="h-4 w-4 text-indigo-600"
                 />
                 <span className="text-sm text-gray-700">
-                  <strong className="font-semibold">{option.label}.</strong> {option.text}
+                  <strong className="font-medium">{option.label}.</strong> {option.text}
                 </span>
               </label>
             ))}
@@ -192,7 +192,7 @@ export function TabRepresentationFormats() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={selectedOption === null || submitted}
-                className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+                className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition disabled:opacity-50"
               >
                 Submit answer
               </button>
@@ -202,14 +202,14 @@ export function TabRepresentationFormats() {
               <button
                 type="button"
                 onClick={handlePrevious}
-                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-gray-400"
+                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400"
               >
                 Previous question
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:border-gray-400"
+                className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400"
               >
                 Next question
               </button>
@@ -218,7 +218,7 @@ export function TabRepresentationFormats() {
 
           {submitted && (
             <div className={`rounded-2xl border px-4 py-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-rose-300 bg-rose-50 text-rose-800'}`}>
-              <p className="text-sm font-semibold">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
+              <p className="text-sm font-medium">{isCorrect ? 'Correct!' : 'Not quite.'}</p>
               <div className="mt-2 text-sm leading-relaxed">
                 {isCorrect ? currentQuestion.correctExplanation : currentQuestion.wrongExplanation}
               </div>

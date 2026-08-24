@@ -147,10 +147,10 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-6">
           <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-gray-900">
+            <h1 className="text-4xl font-medium text-gray-900">
               {userName ? `Welcome to Instructli, ${userName}` : 'Welcome to Instructli'}
             </h1>
-            <p className="text-gray-500 mt-4 max-w-4xl mx-auto">This platform provides interactive practice modules for CSC258. Each module reinforces material already introduced in lecture and is intended to support review, not first exposure to new content. Click on a module to begin.</p>
+            <p className="text-gray-500 mt-4 max-w-4x1 mx-auto">This platform provides interactive practice modules for CSC258. Each module reinforces material already introduced in lecture and is intended to support review, not first exposure to new content. Click on a module to begin.</p>
           </div>
         </div>
 

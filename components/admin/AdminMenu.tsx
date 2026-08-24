@@ -22,16 +22,6 @@ export default function AdminMenu() {
     };
   }, []);
 
-  /*useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);*/
-
   if (!isAdmin) return null;
 
   async function handleViewAsStudent() {

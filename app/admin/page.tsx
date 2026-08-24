@@ -8,8 +8,7 @@ import {
   SortableContext, rectSortingStrategy, useSortable, arrayMove
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Eye, EyeOff, Lock, Unlock, BarChart3, Users } from "lucide-react"
-import Link from 'next/link'
+import { GripVertical, Eye, EyeOff, Lock, Unlock} from "lucide-react"
 import { useRouter } from 'next/navigation'
 import { recordAnalyticsVisit } from '../../src/utils/analytics'
 import { getModuleIcon } from '../../lib/moduleIcons'
@@ -51,7 +50,7 @@ function SortableCard({
       <div style={{ backgroundColor: mod.icon_bg, color: mod.bar_color }} className="w-12 h-12 rounded-xl flex items-center justify-center mb-4">
         <Icon size={20} />
       </div>
-      <h3 className={`text-lg font-semibold ${mod.hidden ? 'text-gray-400' : 'text-gray-900'}`}>{mod.title}</h3>
+      <h3 className={`text-lg font-medium ${mod.hidden ? 'text-gray-400' : 'text-gray-900'}`}>{mod.title}</h3>
       <p className="text-sm text-gray-500 mt-1">{mod.description}</p>
       <div className="flex items-center gap-3 mt-4">
         <button
@@ -78,7 +77,6 @@ function SortableCard({
 }
 
 export default function Dashboard() {
-  const router = useRouter()
   const [modules, setModules] = useState<ModuleRow[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -159,7 +157,7 @@ export default function Dashboard() {
     <main className="min-h-screen bg-white">
       <div className="max-w-5xl mx-auto px-6 py-16">
         <div className="text-center mb-2">
-          <h1 className="text-4xl font-bold text-gray-900">Manage Modules</h1>
+          <h1 className="text-4xl font-medium text-gray-900">Manage Modules</h1>
           {saving ? <p className="text-xs text-gray-400 mt-2">Saving…</p> : null}
           {error ? <p className="text-xs text-red-600 mt-2">{error}</p> : null}
         </div>
