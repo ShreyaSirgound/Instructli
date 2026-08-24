@@ -129,17 +129,15 @@ export default function Dashboard() {
               <Users className="w-5 h-5" />
             </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
-              <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Active Students</p>
-                <h3 className="text-2xl font-medium text-slate-900 mt-1">{(summary?.activeStudents ?? 0).toLocaleString()}</h3>
-                <p className="text-xs text-slate-500 mt-1">{formatChange(summary?.activeStudentsChangePct ?? null)}</p>
-              </div>
-              <div className="p-2.5 rounded-lg bg-violet-50 text-violet-600">
-                <UserCheck className="w-5 h-5" />
-              </div>
+          
+          <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
+            <div>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Active Students</p>
+              <h3 className="text-2xl font-medium text-slate-900 mt-1">{(summary?.activeStudents ?? 0).toLocaleString()}</h3>
+              <p className="text-xs text-slate-500 mt-1">{formatChange(summary?.activeStudentsChangePct ?? null)}</p>
+            </div>
+            <div className="p-2.5 rounded-lg bg-violet-50 text-violet-600">
+              <UserCheck className="w-5 h-5" />
             </div>
           </div>
 
