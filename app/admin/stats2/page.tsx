@@ -248,9 +248,9 @@ export default function Dashboard() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr] items-start">
-          {/* Module Activity */}
-          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
+          {/* MODULE ACTIVITY */}
+          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm h-[776px] flex flex-col">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100 flex-shrink-0">
               <div>
                 <h2 className="text-lg font-medium text-gray-900">Module activity</h2>
                 <p className="mt-1 text-sm text-gray-500">Clicks and visits by module</p>
@@ -260,7 +260,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="mt-6 space-y-4">
+            <div className="mt-4 space-y-4 overflow-y-auto pr-1 flex-1">
               {(summary?.moduleStats ?? []).map((module) => (
                 <div key={module.module} className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
                   <div className="flex items-start justify-between gap-3">
