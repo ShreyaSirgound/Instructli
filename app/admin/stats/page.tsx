@@ -121,45 +121,33 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Weekly Visits</p>
-              <h3 className="text-2xl font-medium text-slate-900 mt-1">{(summary?.weeklyVisits ?? 0).toLocaleString()}</h3>
+              <p className="text-sm font-medium text-slate-500 uppercase tracking-wide">Weekly Visits</p>
+              <h3 className="text-3xl font-medium text-slate-900 mt-1">{(summary?.weeklyVisits ?? 0).toLocaleString()}</h3>
               <p className="text-xs text-slate-500 mt-1">{formatChange(summary?.weeklyVisitsChangePct ?? null)}</p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-indigo-50 text-indigo-600">
-              <Users className="w-5 h-5" />
             </div>
           </div>
           
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Active Students</p>
-              <h3 className="text-2xl font-medium text-slate-900 mt-1">{(summary?.activeStudents ?? 0).toLocaleString()}</h3>
+              <p className="text-sm font-medium text-slate-500 uppercase tracking-wide">Active Students</p>
+              <h3 className="text-3xl font-medium text-slate-900 mt-1">{(summary?.activeStudents ?? 0).toLocaleString()}</h3>
               <p className="text-xs text-slate-500 mt-1">{formatChange(summary?.activeStudentsChangePct ?? null)}</p>
             </div>
-            <div className="p-2.5 rounded-lg bg-violet-50 text-violet-600">
-              <UserCheck className="w-5 h-5" />
-            </div>
           </div>
 
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Weekly Avg. Accuracy</p>
-              <h3 className="text-2xl font-medium text-slate-900 mt-1">{formatPct((summary?.weeklyAvgAccuracy ?? 0) * 100)}</h3>
+              <p className="text-sm font-medium text-slate-500 uppercase tracking-wide">Weekly Avg. Accuracy</p>
+              <h3 className="text-3xl font-medium text-slate-900 mt-1">{formatPct((summary?.weeklyAvgAccuracy ?? 0) * 100)}</h3>
               <p className="text-xs text-slate-500 mt-1">{formatChange(summary?.weeklyAccuracyChangePct ?? null)}</p>
             </div>
-            <div className="p-2.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <Target className="w-5 h-5" />
-            </div>
           </div>
 
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Practice Attempts</p>
-              <h3 className="text-2xl font-medium text-slate-900 mt-1">{(summary?.totalAttempts ?? 0).toLocaleString()}</h3>
+              <p className="text-sm font-medium text-slate-500 uppercase tracking-wide">Total Practice Attempts</p>
+              <h3 className="text-3xl font-medium text-slate-900 mt-1">{(summary?.totalAttempts ?? 0).toLocaleString()}</h3>
               <p className="text-xs text-slate-500 mt-1">Avg. {(summary?.avgAttemptsPerStudent ?? 0).toFixed(1)} questions per student</p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600">
-              <CheckCircle2 className="w-5 h-5" />
             </div>
           </div>
         </div>
@@ -304,7 +292,6 @@ export default function Dashboard() {
               <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
                 <div>
                   <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
-                    <QuestionIcon className="w-4 h-4 text-indigo-600" />
                     Question Performance
                   </h2>
                   <p className="mt-1 text-sm text-slate-500">All-time attempts, accuracy, and difficulty ratings</p>
@@ -339,7 +326,6 @@ export default function Dashboard() {
               <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
                 <div>
                   <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
-                    <PlayCircle className="w-4 h-4 text-indigo-600" />
                     Simulation Performance
                   </h2>
                   <p className="mt-1 text-sm text-slate-500">All-time attempts and accuracy</p>
