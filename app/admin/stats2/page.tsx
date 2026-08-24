@@ -248,134 +248,133 @@ export default function Dashboard() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr] items-start">
-        {/* MODULE ACTIVITY SECTION */}
-        <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-            <div>
-            <h2 className="text-lg font-medium text-gray-900">Module activity</h2>
-            <p className="mt-1 text-sm text-gray-500">Clicks and visits by module</p>
-            </div>
-            <div className="rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700">{summary?.moduleStats?.length ?? 0} modules</div>
-        </div>
-
-        <div className="mt-6 space-y-4">
-            {(summary?.moduleStats ?? []).map((module) => (
-            <div key={module.module} className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
-                <div className="flex items-start justify-between gap-3">
-                <div>
-                    <p className="font-medium text-gray-900">{module.title}</p>
-                    <p className="mt-1 text-sm text-gray-500">{module.clicks} clicks • {module.visits} visits</p>
-                </div>
-                <div className="text-right">
-                    <p className="text-sm font-medium text-gray-900">{module.questionAttempts + module.simulationAttempts} interactions</p>
-                    <p className="text-sm text-gray-500">{overallAccuracy}</p>
-                </div>
-                </div>
-                <div className="mt-4 grid gap-3 md:grid-cols-3">
-                <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Questions</p>
-                    <p className="mt-1 text-lg font-medium text-gray-900">{module.questionAttempts}</p>
-                </div>
-                <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Simulations</p>
-                    <p className="mt-1 text-lg font-medium text-gray-900">{module.simulationAttempts}</p>
-                </div>
-                <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Accuracy</p>
-                    <p className="mt-1 text-lg font-medium text-gray-900">{(module.averageScore || 0).toFixed(1)}%</p>
-                </div>
-                </div>
-                <div className="mt-4">
-                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">Recent weekly trend</p>
-                <div className="flex items-end gap-2">
-                    {module.trend.map((point) => (
-                    <div key={`${module.module}-${point.day}`} className="flex flex-1 flex-col items-center gap-1">
-                        <div className="w-full rounded-t-full bg-indigo-500" style={{ height: `${Math.max(8, point.count * 16)}px` }} />
-                        <span className="text-[11px] text-gray-500">{point.day}</span>
-                    </div>
-                    ))}
-                </div>
-                </div>
-            </div>
-            ))}
-        </div>
-        </div>
-
-        {/* QUESTION & SIMULATION PERFORMANCE */}
-        <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm space-y-4 flex flex-col h-[380px]">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+          {/* Module Activity */}
+          <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-between">
               <div>
-                <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
-                  <QuestionIcon className="w-4 h-4 text-indigo-600" />
-                  Question Performance
-                </h2>
-                <p className="mt-1 text-sm text-slate-500">Weekly attempts, accuracy, and difficulty ratings</p>
+                <h2 className="text-lg font-medium text-gray-900">Module activity</h2>
+                <p className="mt-1 text-sm text-gray-500">Clicks and visits by module</p>
+              </div>
+              <div className="rounded-full bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700">
+                {summary?.moduleStats?.length ?? 0} modules
               </div>
             </div>
-            <div className="overflow-y-auto space-y-3 pr-1 flex-1">
-              {MOCK_QUESTIONS.map((q) => (
-                <div key={q.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50 space-y-2">
-                  <div className="flex items-start justify-between gap-2">
+
+            <div className="mt-6 space-y-4">
+              {(summary?.moduleStats ?? []).map((module) => (
+                <div key={module.module} className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                  <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs font-medium text-slate-800 leading-snug">{q.questionTitle}</p>
-                      <p className="text-[11px] text-slate-400">{q.moduleName}</p>
+                      <p className="font-medium text-gray-900">{module.title}</p>
+                      <p className="mt-1 text-sm text-gray-500">{module.clicks} clicks • {module.visits} visits</p>
                     </div>
-                    <span className={`text-[10px] font-medium border px-2 py-0.5 rounded-full ${getRatingBadge(q.rating)}`}>
-                        {q.rating}
-                    </span>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-gray-900">{module.questionAttempts + module.simulationAttempts} interactions</p>
+                      <p className="text-sm text-gray-500">{overallAccuracy}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-200/50">
-                    <span>{q.attempts} attempts</span>
-                    <span className="font-medium text-slate-700">Accuracy: {q.accuracy}%</span>
+                  <div className="mt-4 grid gap-3 md:grid-cols-3">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Questions</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">{module.questionAttempts}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Simulations</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">{module.simulationAttempts}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Accuracy</p>
+                      <p className="mt-1 text-lg font-medium text-gray-900">{(module.averageScore || 0).toFixed(1)}%</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm space-y-4 flex flex-col h-[380px]">
-            <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
-              <div>
-                <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
-                  <PlayCircle className="w-4 h-4 text-indigo-600" />
-                  Simulation Performance
-                </h2>
-                <p className="mt-1 text-sm text-slate-500">Weekly accuracy and abandonment rates</p>
-              </div>
-            </div>
-            <div className="overflow-y-auto space-y-3 pr-1 flex-1">
-              {MOCK_SIMULATIONS.map((sim) => (
-                <div key={sim.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                        <div>
-                            <p className="text-xs font-medium text-slate-800 leading-snug">{sim.simTitle}</p>
-                            <p className="text-[11px] text-slate-400">{sim.moduleName}</p>
+                  <div className="mt-4">
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">Recent weekly trend</p>
+                    <div className="flex items-end gap-2">
+                      {module.trend.map((point) => (
+                        <div key={`${module.module}-${point.day}`} className="flex flex-1 flex-col items-center gap-1">
+                          <div className="w-full rounded-t-full bg-indigo-500" style={{ height: `${Math.max(8, point.count * 16)}px` }} />
+                          <span className="text-[11px] text-gray-500">{point.day}</span>
                         </div>
-                        <span className={`text-[10px] font-medium border px-2 py-0.5 rounded-full ${getRatingBadge(sim.rating)}`}>
-                            {sim.rating}
-                        </span>
-                    </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-200/50">
-                    <div>
-                      <span className="text-slate-400 block text-[10px]">Avg Accuracy</span>
-                      <span className="font-medium text-slate-700">{sim.averageAccuracy}%</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 block text-[10px]">Abandonment Rate</span>
-                      <span className="font-medium text-slate-700">{sim.abandonmentRate}%</span>
+                      ))}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          <div className="flex flex-col gap-4">
+            {/* Question Performance */}
+            <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm space-y-4 flex flex-col h-[380px]">
+              <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+                <div>
+                  <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
+                    <QuestionIcon className="w-4 h-4 text-indigo-600" />
+                    Question Performance
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">Weekly attempts, accuracy, and difficulty ratings</p>
+                </div>
+              </div>
+              <div className="overflow-y-auto space-y-3 pr-1 flex-1">
+                {MOCK_QUESTIONS.map((q) => (
+                  <div key={q.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-xs font-medium text-slate-800 leading-snug">{q.questionTitle}</p>
+                        <p className="text-[11px] text-slate-400">{q.moduleName}</p>
+                      </div>
+                      <span className={`text-[10px] font-medium border px-2 py-0.5 rounded-full ${getRatingBadge(q.rating)}`}>
+                        {q.rating}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-200/50">
+                      <span>{q.attempts} attempts</span>
+                      <span className="font-medium text-slate-700">Accuracy: {q.accuracy}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Simulation Performance */}
+            <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm space-y-4 flex flex-col h-[380px]">
+              <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+                <div>
+                  <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
+                    <PlayCircle className="w-4 h-4 text-indigo-600" />
+                    Simulation Performance
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">Weekly accuracy and abandonment rates</p>
+                </div>
+              </div>
+              <div className="overflow-y-auto space-y-3 pr-1 flex-1">
+                {MOCK_SIMULATIONS.map((sim) => (
+                  <div key={sim.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-xs font-medium text-slate-800 leading-snug">{sim.simTitle}</p>
+                        <p className="text-[11px] text-slate-400">{sim.moduleName}</p>
+                      </div>
+                      <span className={`text-[10px] font-medium border px-2 py-0.5 rounded-full ${getRatingBadge(sim.rating)}`}>
+                        {sim.rating}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-200/50">
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Avg Accuracy</span>
+                        <span className="font-medium text-slate-700">{sim.averageAccuracy}%</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block text-[10px]">Abandonment Rate</span>
+                        <span className="font-medium text-slate-700">{sim.abandonmentRate}%</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      </div>
     </div>
     </main>
   );
