@@ -131,48 +131,35 @@ export default function ManageAdminsPage() {
         {loading ? (
           <p className="text-sm text-gray-400">Loading…</p>
         ) : rows.length ? (
-          <div className="rounded-2xl border border-gray-200 overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500">
-                  <th className="px-4 py-3">Identity</th>
-                  <th className="px-4 py-3">Added by</th>
-                  <th className="px-4 py-3">Source</th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {rows.map((row) => (
-                  <tr key={row.identity}>
-                    <td className="px-4 py-3 font-medium text-gray-900">{row.identity}</td>
-                    <td className="px-4 py-3 text-gray-500">{row.addedBy ?? '—'}</td>
-                    <td className="px-4 py-3">
-                      {row.source === 'env' ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
-                          <ShieldCheck size={13} />
-                          env var
-                        </span>
-                      ) : (
-                        <span className="text-xs text-gray-400">dashboard</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      {row.source === 'dynamic' ? (
-                        <button
-                          onClick={() => handleRemove(row.identity)}
-                          disabled={removingId === row.identity}
-                          className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 transition disabled:opacity-50"
-                        >
-                          <Trash2 size={13} />
-                          {removingId === row.identity ? 'Removing…' : 'Remove'}
-                        </button>
-                      ) : null}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ul className="divide-y divide-gray-100 rounded-2xl border border-gray-200">
+            {rows.map((row) => (
+              <li key={row.identity} className="flex items-center justify-between px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                    {row.source === 'env' ? (
+                      <ShieldCheck size={14} className="text-gray-400" />
+                    ) : null}
+                    {row.identity}
+                  </p>
+                  {row.addedBy ? (
+                    <p className="text-xs text-gray-400">added by {row.addedBy}</p>
+                  ) : null}
+                </div>
+                {row.source === 'dynamic' ? (
+                  <button
+                    onClick={() => handleRemove(row.identity)}
+                    disabled={removingId === row.identity}
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-lg border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 transition disabled:opacity-50"
+                  >
+                    <Trash2 size={13} />
+                    {removingId === row.identity ? 'Removing…' : 'Remove'}
+                  </button>
+                ) : (
+                  <span className="text-xs text-gray-400">env var</span>
+                )}
+              </li>
+            ))}
+          </ul>
         ) : (
           <p className="text-sm text-gray-400">No admins found.</p>
         )}
