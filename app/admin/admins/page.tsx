@@ -102,8 +102,8 @@ export default function ManageAdminsPage() {
     <main className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto px-6 py-16">
         <div className="text-center flex-1">
-            <h1 className="text-4xl font-medium text-gray-900 mb-2">Manage Admins</h1>
-            <p className="text-gray-500 mb-4">
+            <h1 className="text-4xl font-medium text-gray-900 mb-4">Manage Admins</h1>
+            <p className="text-gray-500 mb-6">
             Add UofT emails that should have admin access.
             </p>
         </div>
