@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { getAnalyticsSummary, type AnalyticsSummary, type ItemAnalytics } from '../../../src/utils/analytics';
-import { Users, UserCheck, Target, CheckCircle2, Search, HelpCircle as QuestionIcon, PlayCircle,} from 'lucide-react';
+import { Search} from 'lucide-react';
 
 function formatPct(value: number, digits = 1) {
   return `${value.toFixed(digits)}%`;
@@ -163,7 +163,7 @@ export default function Dashboard() {
                     <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400" />
                     <input 
                     type="text" 
-                    placeholder="Search by name, email, or UTORid"
+                    placeholder="Search by email"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-56"
@@ -269,14 +269,29 @@ export default function Dashboard() {
                   </div>
                   <div className="mt-4">
                     <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">Recent weekly trend</p>
-                    <div className="flex items-end gap-2">
-                      {module.trend.map((point) => (
-                        <div key={`${module.module}-${point.day}`} className="flex flex-1 flex-col items-center gap-1">
-                          <div className="w-full rounded-t-full bg-indigo-500" style={{ height: `${Math.max(8, point.count * 16)}px` }} />
-                          <span className="text-[11px] text-gray-500">{point.day}</span>
+                    
+                    {(() => {
+                      const maxCount = Math.max(...module.trend.map((p) => p.count), 1);
+
+                      return (
+                        <div className="flex h-12 items-end gap-2 pt-2">
+                          {module.trend.map((point) => {
+                            const pct = point.count > 0 ? Math.max(12, Math.round((point.count / maxCount) * 100)) : 8;
+
+                            return (
+                              <div key={`${module.module}-${point.day}`} className="flex h-full flex-1 flex-col justify-end items-center gap-1">
+                                <div
+                                  className="w-full rounded-t-full bg-indigo-500 transition-all duration-300"
+                                  style={{ height: `${pct}%` }}
+                                  title={`${point.count} interactions`}
+                                />
+                                <span className="text-[11px] text-gray-500">{point.day}</span>
+                              </div>
+                            );
+                          })}
                         </div>
-                      ))}
-                    </div>
+                      );
+                    })()}
                   </div>
                 </div>
               ))}
@@ -294,7 +309,7 @@ export default function Dashboard() {
                   <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
                     Question Performance
                   </h2>
-                  <p className="mt-1 text-sm text-slate-500">All-time attempts, accuracy, and difficulty ratings</p>
+                  <p className="mt-1 text-sm text-slate-500">All-time student attempts, accuracy, and difficulty ratings</p>
                 </div>
               </div>
               <div className="overflow-y-auto space-y-3 pr-1 flex-1">
@@ -328,7 +343,7 @@ export default function Dashboard() {
                   <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
                     Simulation Performance
                   </h2>
-                  <p className="mt-1 text-sm text-slate-500">All-time attempts and accuracy</p>
+                  <p className="mt-1 text-sm text-slate-500">All-time student attempts and accuracy</p>
                 </div>
               </div>
               <div className="overflow-y-auto space-y-3 pr-1 flex-1">

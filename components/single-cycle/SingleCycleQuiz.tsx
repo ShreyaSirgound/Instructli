@@ -161,7 +161,7 @@ export default function SingleCycleQuiz() {
     setTotalScore((s) => s + earned);
     setAnswered((a) => a + 1);
     setSubmitted(true);
-    recordActivityOutcome('single-cycle', 'question', outcome, earned, question.activeSegments.length, question.label);
+    recordActivityOutcome('single-cycle', 'simulation', outcome, earned, question.activeSegments.length, question.label);
   };
 
   const handleNext = () => {
