@@ -247,6 +247,7 @@ export default function Dashboard() {
             </div>
         </div>
 
+        <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr] items-start">
         {/* MODULE ACTIVITY SECTION */}
         <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -302,6 +303,7 @@ export default function Dashboard() {
         </div>
 
         {/* QUESTION & SIMULATION PERFORMANCE */}
+        <div className="flex flex-col gap-4">
         <div className="grid grid-cols-1 gap-4">
           <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm space-y-4 flex flex-col h-[380px]">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
@@ -370,7 +372,9 @@ export default function Dashboard() {
               ))}
             </div>
           </div>
+          </div>
         </div>
+      </div>
       </div>
     </div>
     </main>
