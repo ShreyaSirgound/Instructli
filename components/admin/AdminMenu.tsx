@@ -42,6 +42,7 @@ export default function AdminMenu() {
         <BarChart3 size={15} />
         View stats
       </Link>
+      <div className="text-gray-400">|</div>
       <Link
         href="/admin/admins"
         className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
@@ -49,6 +50,7 @@ export default function AdminMenu() {
         <Users size={15} />
         Manage admins
       </Link>
+      <div className="text-gray-400">|</div>
       <button
         onClick={handleViewAsStudent}
         className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 text-left"

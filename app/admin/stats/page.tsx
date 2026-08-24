@@ -8,7 +8,7 @@ function StatCard({ label, value, subtitle }: { label: string; value: string; su
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       <p className="text-sm font-medium text-gray-500">{label}</p>
-      <p className="mt-2 text-3xl font-semibold text-gray-900">{value}</p>
+      <p className="mt-2 text-3xl font-medium text-gray-900">{value}</p>
       {subtitle ? <p className="mt-2 text-sm text-gray-500">{subtitle}</p> : null}
     </div>
   );
@@ -99,9 +99,6 @@ export default function AdminStatsPage() {
             <p className="text-sm font-medium uppercase tracking-[0.2em] text-indigo-600">Analytics</p>
             <h1 className="mt-2 text-3xl font-medium text-gray-900">Student usage & performance dashboard</h1>
           </div>
-          <Link href="/admin" className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-gray-400">
-            Back to admin
-          </Link>
         </div>
 
         {error ? (
