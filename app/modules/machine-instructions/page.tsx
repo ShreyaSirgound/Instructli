@@ -1,11 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { RFormatSection } from '@/components/machine-instructions/RFormatSection';
 import { IFormatSection } from '@/components/machine-instructions/IFormatSection';
 import { SFormatSection } from '@/components/machine-instructions/SFormatSection';
 import { MachineInstructionsSimulation } from '@/components/machine-instructions/MachineInstructionsSimulation';
+import { recordAnalyticsVisit } from '@/src/utils/analytics';
 
 export type TabId = 'r-format' | 'i-format' | 's-format' | 'simulation';
 
@@ -23,6 +24,10 @@ const TABS: Tab[] = [
 
 export default function MachineInstructionsModule() {
   const [activeTab, setActiveTab] = useState<TabId>('r-format');
+
+  useEffect(() => {
+    recordAnalyticsVisit('machine-instructions');
+  }, []);
 
   return (
     <main className="min-h-screen bg-white">

@@ -175,7 +175,7 @@ export default function Dashboard() {
 
             <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-slate-600">
-                <thead className="bg-slate-50/80 text-slate-500 tracking-wider border-b border-slate-100">
+                <thead className="bg-slate-50/80 border-b border-slate-100 text-xs font-medium uppercase tracking-wide text-gray-400 [&_th]:font-medium">
                 <tr>
                     <th className="py-3 px-4">Student</th>
                     <th className="py-3 px-4">Accuracy</th>

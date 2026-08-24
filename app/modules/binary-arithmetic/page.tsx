@@ -1,11 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { TabInterpreting } from '@/components/binary/TabInterpreting';
 import { TabRepresentationFormats } from '@/components/binary/TabRepresentationFormats';
 import { TabAdditionSubtraction } from '@/components/binary/TabAdditionSubtraction';
 import { TabOverflowSaturating } from '@/components/binary/TabOverflowSaturating';
+import { recordAnalyticsVisit } from '@/src/utils/analytics';
 
 export type TabId = 'interpreting' | 'representation-formats' | 'addition-subtraction' | 'overflow-saturating';
 
@@ -23,6 +24,11 @@ export const TABS: Tab[] = [
 
 export default function BinaryArithmeticModule() {
   const [activeTab, setActiveTab] = useState<TabId>('interpreting');
+
+  useEffect(() => {
+    recordAnalyticsVisit('binary-arithmetic');
+  }, []);
+
 
   return (
     <main className="min-h-screen bg-white">

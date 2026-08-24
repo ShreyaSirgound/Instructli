@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Card } from '../../../components/Card'
@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { returnPath,  JsonResponse} from '../../../src/utils/single-processor';
 import  SingleProcessor from '@/components/single-cycle/SingleCycle';
 import SingleCycleQuiz from '@/components/single-cycle/SingleCycleQuiz';
+import { recordAnalyticsVisit } from '@/src/utils/analytics';
 
 const Terminal = dynamic(
   () => import('../../../components/single-cycle/Terminal'),
@@ -298,6 +299,10 @@ function PracticeBlock({
     setSelectedOption(null);
     setSubmitted(false);
   }
+
+  useEffect(() => {
+    recordAnalyticsVisit('single-cycle');
+  }, []);
 
   return (
     <Card variant="practice" title={title}>

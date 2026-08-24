@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Card } from '../../../components/Card'
 import CacheTracer from "@/components/caching/CacheTracer";
 import TabCachingBasics from "@/components/caching/TabCachingBasics";
 import TabAssociativeCaching from "@/components/caching/TabAssociativeCaching";
+import { recordAnalyticsVisit } from '@/src/utils/analytics';
 
 export type TabId = 'simulation' | 'caching-basics' | 'associative-caching';
 
@@ -18,6 +19,10 @@ const TABS: { id: TabId; label: string }[] = [
 
 export default function CachingModule() {
   const [activeTab, setActiveTab] = useState<TabId>('simulation');
+
+  useEffect(() => {
+    recordAnalyticsVisit('caching');
+  }, []);
 
   return (
     <main className="min-h-screen bg-white">

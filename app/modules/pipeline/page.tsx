@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Card } from '../../../components/Card'
@@ -10,6 +10,7 @@ import PipelineProcessor from "@/components/pipeline/PipelineProcessor";
 import PipelineQuiz from "@/components/pipeline/PipelineQuiz";
 import { PipelineState } from "../../../src/utils/pipeline-types"
 import { handlePipeLinePreset } from "@/src/utils/pipeline-processor";
+import { recordAnalyticsVisit } from '@/src/utils/analytics';
 
 // dynamically import so it only runs client-side -> ssr is server-side render
 const PipelineTerminal = dynamic(
@@ -116,6 +117,10 @@ export default function PipelineModule() {
     setResults([]);
     setCurrCycle(-1);
   };
+
+  useEffect(() => {
+    recordAnalyticsVisit('pipeline');
+  }, []);
 
   return (
     <main className="min-h-screen bg-white">

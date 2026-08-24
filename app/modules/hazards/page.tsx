@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { Card } from '../../../components/Card'
 import HazardSimulation from "@/components/hazards/HazardsSimulation";
 import { recordActivityOutcome } from '@/src/utils/analytics';
+import { recordAnalyticsVisit } from '@/src/utils/analytics';
 
 export type TabId = 'overview' | 'simulation';
 
@@ -240,6 +241,10 @@ function PracticeBlock({
 
 export default function HazardsModule() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
+
+  useEffect(() => {
+    recordAnalyticsVisit('hazards');
+  }, []);
 
   return (
     <main className="min-h-screen bg-white">
