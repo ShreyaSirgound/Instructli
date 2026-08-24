@@ -2,139 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { getAnalyticsSummary, type AnalyticsSummary } from '../../../src/utils/analytics';
-import { 
-  Users, 
-  Target, 
-  CheckCircle2, 
-  Search, 
-  HelpCircle, 
-  BarChart2,
-  HelpCircle as QuestionIcon,
-  PlayCircle,
-  ShieldCheck
-} from 'lucide-react';
-
-interface ModuleStat {
-  module: string;
-  title: string;
-  clicks: number;
-  visits: number;
-  questionAttempts: number;
-  simulationAttempts: number;
-  averageScore: number;
-  trend: Array<{ day: string; count: number }>;
-}
-
-const MOCK_MODULE_STATS: ModuleStat[] = [
-  {
-    module: 'binary-arithmetic',
-    title: 'Binary & Two’s Complement Arithmetic',
-    clicks: 19,
-    visits: 12,
-    questionAttempts: 42,
-    simulationAttempts: 18,
-    averageScore: 57.1,
-    trend: [
-      { day: 'Mon', count: 2 },
-      { day: 'Tue', count: 5 },
-      { day: 'Wed', count: 1 },
-      { day: 'Thu', count: 8 },
-      { day: 'Fri', count: 4 },
-      { day: 'Sat', count: 9 },
-      { day: 'Sun', count: 6 },
-    ],
-  },
-  {
-    module: 'single-cycle',
-    title: 'Single-Cycle Datapath & Control',
-    clicks: 45,
-    visits: 25,
-    questionAttempts: 88,
-    simulationAttempts: 36,
-    averageScore: 68.4,
-    trend: [
-      { day: 'Mon', count: 1 },
-      { day: 'Tue', count: 3 },
-      { day: 'Wed', count: 5 },
-      { day: 'Thu', count: 2 },
-      { day: 'Fri', count: 7 },
-      { day: 'Sat', count: 4 },
-      { day: 'Sun', count: 5 },
-    ],
-  },
-  {
-    module: 'pipeline',
-    title: 'Pipelined Datapath & Performance',
-    clicks: 31,
-    visits: 18,
-    questionAttempts: 52,
-    simulationAttempts: 24,
-    averageScore: 52.0,
-    trend: [
-      { day: 'Mon', count: 4 },
-      { day: 'Tue', count: 2 },
-      { day: 'Wed', count: 6 },
-      { day: 'Thu', count: 3 },
-      { day: 'Fri', count: 5 },
-      { day: 'Sat', count: 8 },
-      { day: 'Sun', count: 3 },
-    ],
-  },
-  {
-    module: 'machine-instructions',
-    title: 'Machine Instructions & Formats',
-    clicks: 64,
-    visits: 32,
-    questionAttempts: 110,
-    simulationAttempts: 45,
-    averageScore: 81.2,
-    trend: [
-      { day: 'Mon', count: 5 },
-      { day: 'Tue', count: 6 },
-      { day: 'Wed', count: 8 },
-      { day: 'Thu', count: 9 },
-      { day: 'Fri', count: 3 },
-      { day: 'Sat', count: 5 },
-      { day: 'Sun', count: 8 },
-    ],
-  },
-  {
-    module: 'hazards',
-    title: 'Pipeline Hazards & Resolution',
-    clicks: 52,
-    visits: 22,
-    questionAttempts: 74,
-    simulationAttempts: 31,
-    averageScore: 44.8,
-    trend: [
-      { day: 'Mon', count: 3 },
-      { day: 'Tue', count: 4 },
-      { day: 'Wed', count: 3 },
-      { day: 'Thu', count: 5 },
-      { day: 'Fri', count: 6 },
-      { day: 'Sat', count: 2 },
-      { day: 'Sun', count: 4 },
-    ],
-  },
-  {
-    module: 'caching',
-    title: 'Memory Hierarchy & Caching',
-    clicks: 58,
-    visits: 28,
-    questionAttempts: 92,
-    simulationAttempts: 38,
-    averageScore: 64.1,
-    trend: [
-      { day: 'Mon', count: 3 },
-      { day: 'Tue', count: 5 },
-      { day: 'Wed', count: 4 },
-      { day: 'Thu', count: 6 },
-      { day: 'Fri', count: 7 },
-      { day: 'Sat', count: 8 },
-      { day: 'Sun', count: 5 },
-    ],
-  },
-];
+import { Users, Target, CheckCircle2, Search, HelpCircle as QuestionIcon, PlayCircle,} from 'lucide-react';
 
 interface QuestionPerformance {
   id: string;
@@ -152,6 +20,7 @@ interface SimulationPerformance {
   averageAccuracy: number;
   abandonmentRate: number;
   avgAbandonmentStep: string;
+  rating: 'Easy' | 'Medium' | 'Hard' | 'Too Hard';
 }
 
 interface StudentStat {
@@ -172,8 +41,8 @@ const MOCK_QUESTIONS: QuestionPerformance[] = [
 ];
 
 const MOCK_SIMULATIONS: SimulationPerformance[] = [
-  { id: 'sim-1', simTitle: 'Interactive Pipeline Hazard Stalling', moduleName: 'Pipeline hazards', averageAccuracy: 61, abandonmentRate: 38, avgAbandonmentStep: 'Step 3 (Forwarding Unit)' },
-  { id: 'sim-2', simTitle: 'Cache Block Replacement Visualizer', moduleName: 'Caching fundamentals', averageAccuracy: 79, abandonmentRate: 12, avgAbandonmentStep: 'Step 5 (Write-Back Policy)' },
+  { id: 'sim-1', simTitle: 'Interactive Pipeline Hazard Stalling', moduleName: 'Pipeline hazards', averageAccuracy: 61, abandonmentRate: 38, avgAbandonmentStep: 'Step 3 (Forwarding Unit)', rating: 'Easy' },
+  { id: 'sim-2', simTitle: 'Cache Block Replacement Visualizer', moduleName: 'Caching fundamentals', averageAccuracy: 79, abandonmentRate: 12, avgAbandonmentStep: 'Step 5 (Write-Back Policy)', rating: 'Hard' },
 ];
 
 const MOCK_STUDENTS: StudentStat[] = [
@@ -225,6 +94,19 @@ export default function Dashboard() {
     });
   }, [searchQuery]);
 
+  const getRatingBadge = (rating: QuestionPerformance['rating']) => {
+    switch (rating) {
+      case 'Easy':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      case 'Medium':
+        return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'Hard':
+        return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'Too Hard':
+        return 'bg-rose-50 text-rose-700 border-rose-200';
+    }
+  };
+
   const ActivityHeatmap = ({ activity }: { activity: number[] }) => {
   const getIntensityClass = (level: number) => {
     if (level === 0) return 'bg-slate-100 border-slate-200/60';
@@ -263,7 +145,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Number of Visits</p>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Weekly Visits</p>
               <h3 className="text-2xl font-medium text-slate-900 mt-1">2,480</h3>
               <p className="text-xs text-slate-500 mt-1">+12.4% from last week</p>
             </div>
@@ -274,7 +156,7 @@ export default function Dashboard() {
 
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Average Accuracy</p>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Weekly Avg. Accuracy</p>
               <h3 className="text-2xl font-medium text-slate-900 mt-1">71.4%</h3>
               <p className="text-xs text-slate-500 mt-1">+2.8% from last week</p>
             </div>
@@ -293,6 +175,76 @@ export default function Dashboard() {
               <CheckCircle2 className="w-5 h-5" />
             </div>
           </div>
+        </div>
+    
+        {/* STUDENT ROSTER */}
+        <div className="bg-white border border-slate-200/80 rounded-xl shadow-sm overflow-hidden">
+            <div className="p-5 pt-3 border-b border-slate-100 space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <h2 className="font-medium text-lg text-slate-900">Student Activity</h2>
+                    <p className="mt-1 text-sm text-gray-500">Individual accuracy and past activity</p>
+                </div>
+                <div className="relative">
+                    <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400" />
+                    <input 
+                    type="text" 
+                    placeholder="Search by UTORid or name"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-56"
+                    />
+                </div>
+            </div>
+
+            <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-600">
+                <thead className="bg-slate-50/80 text-slate-500 tracking-wider border-b border-slate-100">
+                <tr>
+                    <th className="py-3 px-4">Student</th>
+                    <th className="py-3 px-4">UTORid</th>
+                    <th className="py-3 px-4">Accuracy</th>
+                    <th className="py-3 px-4">Questions Attempted</th>
+                    <th className="py-3 px-4">Last Active</th>
+                    <th className="py-3 px-4">7-Day Activity Heatmap</th>
+                </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                {filteredStudents.length > 0 ? (
+                    filteredStudents.map((student) => (
+                    <tr key={student.utorid} className="hover:bg-slate-50/80 transition-colors">
+                        <td className="py-3 px-4 font-medium text-slate-900">
+                        <div>{student.name}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{student.email}</div>
+                        </td>
+                        <td className="py-3 px-4 font-mono text-slate-500">{student.utorid}</td>
+                        <td className="py-3 px-4">
+                        <span className={`font-medium ${student.accuracy < 60 ? 'text-rose-600' : 'text-slate-700'}`}>
+                            {student.accuracy}%
+                        </span>
+                        </td>
+                        <td className="py-3 px-4 text-slate-700 font-medium">{student.questionsAttempted}</td>
+                        <td className="py-3 px-4 text-slate-500">
+                        {student.lastActiveDaysAgo === 0 ? (
+                            <span className="text-emerald-600 font-medium">Today</span>
+                        ) : (
+                            `${student.lastActiveDaysAgo}d ago`
+                        )}
+                        </td>
+                        <td className="py-3 px-4">
+                        <ActivityHeatmap activity={student.weeklyActivity} />
+                        </td>
+                    </tr>
+                    ))
+                ) : (
+                    <tr>
+                    <td colSpan={6} className="py-8 text-center text-slate-400">
+                        No students match the current search query.
+                    </td>
+                    </tr>
+                )}
+                </tbody>
+            </table>
+            </div>
         </div>
 
         {/* MODULE ACTIVITY SECTION */}
@@ -350,15 +302,15 @@ export default function Dashboard() {
         </div>
 
         {/* QUESTION & SIMULATION PERFORMANCE */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-4">
           <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm space-y-4 flex flex-col h-[380px]">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
               <div>
-                <h2 className="font-medium text-slate-900 flex items-center gap-2">
+                <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
                   <QuestionIcon className="w-4 h-4 text-indigo-600" />
                   Question Performance
                 </h2>
-                <p className="text-xs text-slate-500">Attempts, accuracy, and difficulty ratings</p>
+                <p className="mt-1 text-sm text-slate-500">Weekly attempts, accuracy, and difficulty ratings</p>
               </div>
             </div>
             <div className="overflow-y-auto space-y-3 pr-1 flex-1">
@@ -369,6 +321,9 @@ export default function Dashboard() {
                       <p className="text-xs font-medium text-slate-800 leading-snug">{q.questionTitle}</p>
                       <p className="text-[11px] text-slate-400">{q.moduleName}</p>
                     </div>
+                    <span className={`text-[10px] font-medium border px-2 py-0.5 rounded-full ${getRatingBadge(q.rating)}`}>
+                        {q.rating}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-200/50">
                     <span>{q.attempts} attempts</span>
@@ -382,20 +337,25 @@ export default function Dashboard() {
           <div className="bg-white border border-slate-200/80 rounded-xl p-5 shadow-sm space-y-4 flex flex-col h-[380px]">
             <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
               <div>
-                <h2 className="font-medium text-slate-900 flex items-center gap-2">
+                <h2 className="font-medium text-lg text-slate-900 flex items-center gap-2">
                   <PlayCircle className="w-4 h-4 text-indigo-600" />
                   Simulation Performance
                 </h2>
-                <p className="text-xs text-slate-500">Accuracy and step abandonment rates</p>
+                <p className="mt-1 text-sm text-slate-500">Weekly accuracy and abandonment rates</p>
               </div>
             </div>
             <div className="overflow-y-auto space-y-3 pr-1 flex-1">
               {MOCK_SIMULATIONS.map((sim) => (
                 <div key={sim.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50 space-y-2">
-                  <div>
-                    <p className="text-xs font-medium text-slate-800 leading-snug">{sim.simTitle}</p>
-                    <p className="text-[11px] text-slate-400">{sim.moduleName}</p>
-                  </div>
+                    <div className="flex items-start justify-between gap-2">
+                        <div>
+                            <p className="text-xs font-medium text-slate-800 leading-snug">{sim.simTitle}</p>
+                            <p className="text-[11px] text-slate-400">{sim.moduleName}</p>
+                        </div>
+                        <span className={`text-[10px] font-medium border px-2 py-0.5 rounded-full ${getRatingBadge(sim.rating)}`}>
+                            {sim.rating}
+                        </span>
+                    </div>
                   <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-200/50">
                     <div>
                       <span className="text-slate-400 block text-[10px]">Avg Accuracy</span>
@@ -410,77 +370,6 @@ export default function Dashboard() {
               ))}
             </div>
           </div>
-        </div>
-
-        {/* STUDENT ROSTER */}
-        <div className="bg-white border border-slate-200/80 rounded-xl shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-slate-100 space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
-            <div>
-                <h2 className="font-medium text-slate-900">Student Roster & Heatmaps</h2>
-                <p className="text-xs text-slate-500">Individual accuracy and 7-day interaction activity</p>
-            </div>
-
-            <div className="relative">
-                <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-400" />
-                <input 
-                type="text" 
-                placeholder="Search UTORid or Name..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-56"
-                />
-            </div>
-            </div>
-
-            <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-600">
-                <thead className="bg-slate-50/80 text-slate-500 font-medium uppercase tracking-wider border-b border-slate-100">
-                <tr>
-                    <th className="py-3 px-4">Student</th>
-                    <th className="py-3 px-4">UTORid</th>
-                    <th className="py-3 px-4">Accuracy</th>
-                    <th className="py-3 px-4">Questions Attempted</th>
-                    <th className="py-3 px-4">Last Active</th>
-                    <th className="py-3 px-4">7-Day Activity Heatmap</th>
-                </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                {filteredStudents.length > 0 ? (
-                    filteredStudents.map((student) => (
-                    <tr key={student.utorid} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-3 px-4 font-medium text-slate-900">
-                        <div>{student.name}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{student.email}</div>
-                        </td>
-                        <td className="py-3 px-4 font-mono text-slate-500">{student.utorid}</td>
-                        <td className="py-3 px-4">
-                        <span className={`font-medium ${student.accuracy < 60 ? 'text-rose-600' : 'text-slate-700'}`}>
-                            {student.accuracy}%
-                        </span>
-                        </td>
-                        <td className="py-3 px-4 text-slate-700 font-medium">{student.questionsAttempted}</td>
-                        <td className="py-3 px-4 text-slate-500">
-                        {student.lastActiveDaysAgo === 0 ? (
-                            <span className="text-emerald-600 font-medium">Today</span>
-                        ) : (
-                            `${student.lastActiveDaysAgo}d ago`
-                        )}
-                        </td>
-                        <td className="py-3 px-4">
-                        <ActivityHeatmap activity={student.weeklyActivity} />
-                        </td>
-                    </tr>
-                    ))
-                ) : (
-                    <tr>
-                    <td colSpan={6} className="py-8 text-center text-slate-400">
-                        No students match the current search query.
-                    </td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
-            </div>
         </div>
       </div>
     </div>
