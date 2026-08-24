@@ -25,14 +25,31 @@ export type StudentAnalytics = {
   trend: Array<{ day: string; attempts: number; accuracy: number | null }>;
 };
 
+export type ItemAnalytics = {
+  id: string;
+  type: 'question' | 'simulation';
+  title: string;
+  moduleName: string;
+  attempts: number;
+  accuracy: number;
+  rating: 'Easy' | 'Medium' | 'Hard' | 'Too Hard';
+};
+
 export type AnalyticsSummary = {
   clicks: number;
   visits: number;
   questionAttempts: number;
   simulationAttempts: number;
   averageAccuracy: number;
+  weeklyVisits: number;
+  weeklyVisitsChangePct: number | null;
+  weeklyAvgAccuracy: number;
+  weeklyAccuracyChangePct: number | null;
+  totalAttempts: number;
+  avgAttemptsPerStudent: number;
   moduleStats: ModuleAnalytics[];
   studentStats: StudentAnalytics[];
+  itemStats: ItemAnalytics[];
 };
 
 const POST_RETRY_DELAY_MS = 600;

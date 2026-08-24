@@ -91,6 +91,49 @@ async function fetchAllAnalyticsEvents(): Promise<{ data: AnalyticsEventRow[] | 
   return { data: rows, error: null };
 }
 
+function accuracyOf(rows: AnalyticsEventRow[]): number {
+  const scored = rows.filter((e) => e.outcome === 'correct' || e.outcome === 'incorrect');
+  if (scored.length === 0) return 0;
+  return scored.filter((e) => e.outcome === 'correct').length / scored.length;
+}
+
+function ratingFromAccuracyPct(accuracyPct: number): 'Easy' | 'Medium' | 'Hard' | 'Too Hard' {
+  if (accuracyPct >= 75) return 'Easy';
+  if (accuracyPct >= 50) return 'Medium';
+  if (accuracyPct >= 25) return 'Hard';
+  return 'Too Hard';
+}
+
+function computeItemStats(events: AnalyticsEventRow[]) {
+  const relevant = events.filter(
+    (e) => (e.type === 'question' || e.type === 'simulation') && e.detail
+  );
+
+  const buckets = new Map<string, AnalyticsEventRow[]>();
+  for (const e of relevant) {
+    const key = `${e.module}::${e.type}::${e.detail}`;
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key)!.push(e);
+  }
+
+  const items = Array.from(buckets.entries()).map(([key, rows]) => {
+    const [moduleKey, type, detail] = key.split('::');
+    const accuracyPct = Number((accuracyOf(rows) * 100).toFixed(1));
+
+    return {
+      id: key,
+      type: type as 'question' | 'simulation',
+      title: detail,
+      moduleName: MODULE_LABELS[moduleKey] ?? moduleKey,
+      attempts: rows.length,
+      accuracy: accuracyPct,
+      rating: ratingFromAccuracyPct(accuracyPct),
+    };
+  });
+
+  return items.sort((a, b) => b.attempts - a.attempts);
+}
+
 const UNKNOWN_STUDENT_KEY = '__unknown__';
 
 function computeStudentStats(events: AnalyticsEventRow[]) {
@@ -187,11 +230,38 @@ export async function GET() {
   const questionAttempts = events.filter((e) => e.type === 'question').length;
   const simulationAttempts = events.filter((e) => e.type === 'simulation').length;
 
-  const accuracyEntries = events.filter((e) => e.outcome === 'correct' || e.outcome === 'incorrect');
-  const averageAccuracy =
-    accuracyEntries.length > 0
-      ? accuracyEntries.filter((e) => e.outcome === 'correct').length / accuracyEntries.length
-      : 0;
+  const averageAccuracy = accuracyOf(events);
+
+  const now = Date.now();
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const thisWeekStart = now - 7 * DAY_MS;
+  const lastWeekStart = now - 14 * DAY_MS;
+
+  const thisWeekEvents = events.filter((e) => new Date(e.created_at).getTime() >= thisWeekStart);
+  const lastWeekEvents = events.filter((e) => {
+    const t = new Date(e.created_at).getTime();
+    return t >= lastWeekStart && t < thisWeekStart;
+  });
+
+  const weeklyVisits = thisWeekEvents.filter((e) => e.type === 'visit').length;
+  const prevWeeklyVisits = lastWeekEvents.filter((e) => e.type === 'visit').length;
+  const weeklyVisitsChangePct =
+    prevWeeklyVisits > 0 ? ((weeklyVisits - prevWeeklyVisits) / prevWeeklyVisits) * 100 : null;
+
+  const weeklyAvgAccuracy = accuracyOf(thisWeekEvents);
+  const prevWeeklyAvgAccuracy = accuracyOf(lastWeekEvents);
+  const weeklyAccuracyChangePct =
+    lastWeekEvents.some((e) => e.outcome === 'correct' || e.outcome === 'incorrect')
+      ? (weeklyAvgAccuracy - prevWeeklyAvgAccuracy) * 100
+      : null;
+
+  const totalAttempts = questionAttempts + simulationAttempts;
+  const knownStudentCount = new Set(
+    events.map((e) => e.student_id).filter((id): id is string => !!id)
+  ).size;
+  const avgAttemptsPerStudent = knownStudentCount > 0 ? totalAttempts / knownStudentCount : 0;
+
+  const itemStats = computeItemStats(events);
 
   const moduleKeys = Array.from(new Set(events.map((e) => e.module))).filter(
     (m) => m !== 'app' && m !== 'admin'
@@ -244,8 +314,15 @@ export async function GET() {
       questionAttempts,
       simulationAttempts,
       averageAccuracy,
+      weeklyVisits,
+      weeklyVisitsChangePct,
+      weeklyAvgAccuracy,
+      weeklyAccuracyChangePct,
+      totalAttempts,
+      avgAttemptsPerStudent,
       moduleStats,
       studentStats,
+      itemStats,
     },
   });
 }

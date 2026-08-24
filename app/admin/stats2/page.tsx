@@ -1,55 +1,24 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { getAnalyticsSummary, type AnalyticsSummary } from '../../../src/utils/analytics';
+import { getAnalyticsSummary, type AnalyticsSummary, type ItemAnalytics } from '../../../src/utils/analytics';
 import { Users, Target, CheckCircle2, Search, HelpCircle as QuestionIcon, PlayCircle,} from 'lucide-react';
 
-interface QuestionPerformance {
-  id: string;
-  questionTitle: string;
-  moduleName: string;
-  attempts: number;
-  accuracy: number;
-  rating: 'Easy' | 'Medium' | 'Hard' | 'Too Hard';
+function formatPct(value: number, digits = 1) {
+  return `${value.toFixed(digits)}%`;
 }
 
-interface SimulationPerformance {
-  id: string;
-  simTitle: string;
-  moduleName: string;
-  averageAccuracy: number;
-  abandonmentRate: number;
-  avgAbandonmentStep: string;
-  rating: 'Easy' | 'Medium' | 'Hard' | 'Too Hard';
+function formatChange(changePct: number | null, digits = 1) {
+  if (changePct === null) return 'No data from last week';
+  const sign = changePct >= 0 ? '+' : '';
+  return `${sign}${changePct.toFixed(digits)}% from last week`;
 }
 
-interface StudentStat {
-  utorid: string;
-  name: string;
-  email: string;
-  accuracy: number;
-  questionsAttempted: number;
-  lastActiveDaysAgo: number;
-  weeklyActivity: number[];
+function daysAgo(iso: string | null): number | null {
+  if (!iso) return null;
+  const diffMs = Date.now() - new Date(iso).getTime();
+  return Math.max(0, Math.floor(diffMs / (24 * 60 * 60 * 1000)));
 }
-
-const MOCK_QUESTIONS: QuestionPerformance[] = [
-  { id: 'q-101', questionTitle: 'Direct Cache Indexing Calculation', moduleName: 'Caching fundamentals', attempts: 142, accuracy: 82, rating: 'Easy' },
-  { id: 'q-102', questionTitle: 'Set-Associative Tag Offset', moduleName: 'Caching fundamentals', attempts: 98, accuracy: 58, rating: 'Medium' },
-  { id: 'q-103', questionTitle: 'Data Hazard Forwarding Paths', moduleName: 'Pipeline hazards', attempts: 115, accuracy: 41, rating: 'Hard' },
-  { id: 'q-104', questionTitle: '2-Way Set Cache Miss Penalty', moduleName: 'Caching fundamentals', attempts: 45, accuracy: 18, rating: 'Too Hard' },
-];
-
-const MOCK_SIMULATIONS: SimulationPerformance[] = [
-  { id: 'sim-1', simTitle: 'Interactive Pipeline Hazard Stalling', moduleName: 'Pipeline hazards', averageAccuracy: 61, abandonmentRate: 38, avgAbandonmentStep: 'Step 3 (Forwarding Unit)', rating: 'Easy' },
-  { id: 'sim-2', simTitle: 'Cache Block Replacement Visualizer', moduleName: 'Caching fundamentals', averageAccuracy: 79, abandonmentRate: 12, avgAbandonmentStep: 'Step 5 (Write-Back Policy)', rating: 'Hard' },
-];
-
-const MOCK_STUDENTS: StudentStat[] = [
-  { utorid: 'smithj21', name: 'Jordan Smith', email: 'jordan.smith@mail.utoronto.ca', accuracy: 48, questionsAttempted: 35, lastActiveDaysAgo: 6, weeklyActivity: [0, 1, 0, 0, 2, 0, 1] },
-  { utorid: 'patelm42', name: 'Maya Patel', email: 'maya.patel@mail.utoronto.ca', accuracy: 72, questionsAttempted: 62, lastActiveDaysAgo: 1, weeklyActivity: [2, 4, 1, 3, 0, 2, 4] },
-  { utorid: 'chena101', name: 'Alex Chen', email: 'alex.chen@mail.utoronto.ca', accuracy: 89, questionsAttempted: 110, lastActiveDaysAgo: 0, weeklyActivity: [4, 4, 3, 4, 2, 4, 3] },
-];
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,14 +56,22 @@ export default function Dashboard() {
   }, [summary]);
 
   const filteredStudents = useMemo(() => {
-    return MOCK_STUDENTS.filter(student => {
-      return student.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-             student.utorid.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             student.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const students = summary?.studentStats ?? [];
+    const q = searchQuery.toLowerCase();
+    return students.filter((student) => {
+      return student.label.toLowerCase().includes(q) || student.studentId.toLowerCase().includes(q);
     });
-  }, [searchQuery]);
+  }, [summary, searchQuery]);
 
-  const getRatingBadge = (rating: QuestionPerformance['rating']) => {
+  const { questionItems, simulationItems } = useMemo(() => {
+    const items = summary?.itemStats ?? [];
+    return {
+      questionItems: items.filter((i) => i.type === 'question'),
+      simulationItems: items.filter((i) => i.type === 'simulation'),
+    };
+  }, [summary]);
+
+  const getRatingBadge = (rating: ItemAnalytics['rating']) => {
     switch (rating) {
       case 'Easy':
         return 'bg-emerald-50 text-emerald-700 border-emerald-200';
@@ -121,7 +98,7 @@ export default function Dashboard() {
       {activity.map((count, idx) => (
         <div
           key={idx}
-          title={`Day ${idx + 1}: ${count} interactions`}
+          title={`${count} interactions`}
           className={`w-3 h-6 rounded-sm border ${getIntensityClass(count)} transition-all`}
         />
       ))}
@@ -146,8 +123,8 @@ export default function Dashboard() {
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Weekly Visits</p>
-              <h3 className="text-2xl font-medium text-slate-900 mt-1">2,480</h3>
-              <p className="text-xs text-slate-500 mt-1">+12.4% from last week</p>
+              <h3 className="text-2xl font-medium text-slate-900 mt-1">{(summary?.weeklyVisits ?? 0).toLocaleString()}</h3>
+              <p className="text-xs text-slate-500 mt-1">{formatChange(summary?.weeklyVisitsChangePct ?? null)}</p>
             </div>
             <div className="p-2.5 rounded-lg bg-indigo-50 text-indigo-600">
               <Users className="w-5 h-5" />
@@ -157,8 +134,8 @@ export default function Dashboard() {
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Weekly Avg. Accuracy</p>
-              <h3 className="text-2xl font-medium text-slate-900 mt-1">71.4%</h3>
-              <p className="text-xs text-slate-500 mt-1">+2.8% from last week</p>
+              <h3 className="text-2xl font-medium text-slate-900 mt-1">{formatPct((summary?.weeklyAvgAccuracy ?? 0) * 100)}</h3>
+              <p className="text-xs text-slate-500 mt-1">{formatChange(summary?.weeklyAccuracyChangePct ?? null)}</p>
             </div>
             <div className="p-2.5 rounded-lg bg-emerald-50 text-emerald-600">
               <Target className="w-5 h-5" />
@@ -168,8 +145,8 @@ export default function Dashboard() {
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
             <div>
               <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Practice Attempts</p>
-              <h3 className="text-2xl font-medium text-slate-900 mt-1">1,420</h3>
-              <p className="text-xs text-slate-500 mt-1">Avg 7.8 questions per student</p>
+              <h3 className="text-2xl font-medium text-slate-900 mt-1">{(summary?.totalAttempts ?? 0).toLocaleString()}</h3>
+              <p className="text-xs text-slate-500 mt-1">Avg {(summary?.avgAttemptsPerStudent ?? 0).toFixed(1)} questions per student</p>
             </div>
             <div className="p-2.5 rounded-lg bg-blue-50 text-blue-600">
               <CheckCircle2 className="w-5 h-5" />
@@ -201,40 +178,45 @@ export default function Dashboard() {
                 <thead className="bg-slate-50/80 text-slate-500 tracking-wider border-b border-slate-100">
                 <tr>
                     <th className="py-3 px-4">Student</th>
-                    <th className="py-3 px-4">UTORid</th>
                     <th className="py-3 px-4">Accuracy</th>
                     <th className="py-3 px-4">Questions Attempted</th>
+                    <th className="py-3 px-4">Simulations Attempted</th>
                     <th className="py-3 px-4">Last Active</th>
                     <th className="py-3 px-4">7-Day Activity Heatmap</th>
                 </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                 {filteredStudents.length > 0 ? (
-                    filteredStudents.map((student) => (
-                    <tr key={student.utorid} className="hover:bg-slate-50/80 transition-colors">
+                    filteredStudents.map((student) => {
+                      const lastActive = daysAgo(student.lastActiveAt);
+                      const accuracyPct = student.averageAccuracy * 100;
+                      return (
+                    <tr key={student.studentId} className="hover:bg-slate-50/80 transition-colors">
                         <td className="py-3 px-4 font-medium text-slate-900">
-                        <div>{student.name}</div>
-                        <div className="text-[10px] text-slate-400 font-normal">{student.email}</div>
+                        <div className={!student.isKnown ? 'text-slate-400 italic font-normal' : ''}>{student.label}</div>
                         </td>
-                        <td className="py-3 px-4 font-mono text-slate-500">{student.utorid}</td>
                         <td className="py-3 px-4">
-                        <span className={`font-medium ${student.accuracy < 60 ? 'text-rose-600' : 'text-slate-700'}`}>
-                            {student.accuracy}%
+                        <span className={`font-medium ${accuracyPct < 60 ? 'text-rose-600' : 'text-slate-700'}`}>
+                            {accuracyPct.toFixed(1)}%
                         </span>
                         </td>
-                        <td className="py-3 px-4 text-slate-700 font-medium">{student.questionsAttempted}</td>
+                        <td className="py-3 px-4 text-slate-700 font-medium">{student.questionAttempts}</td>
+                        <td className="py-3 px-4 text-slate-700 font-medium">{student.simulationAttempts}</td>
                         <td className="py-3 px-4 text-slate-500">
-                        {student.lastActiveDaysAgo === 0 ? (
+                        {lastActive === null ? (
+                            '—'
+                        ) : lastActive === 0 ? (
                             <span className="text-emerald-600 font-medium">Today</span>
                         ) : (
-                            `${student.lastActiveDaysAgo}d ago`
+                            `${lastActive}d ago`
                         )}
                         </td>
                         <td className="py-3 px-4">
-                        <ActivityHeatmap activity={student.weeklyActivity} />
+                        <ActivityHeatmap activity={student.trend.map((t) => t.attempts)} />
                         </td>
                     </tr>
-                    ))
+                      );
+                    })
                 ) : (
                     <tr>
                     <td colSpan={6} className="py-8 text-center text-slate-400">
@@ -270,7 +252,7 @@ export default function Dashboard() {
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-medium text-gray-900">{module.questionAttempts + module.simulationAttempts} interactions</p>
-                      <p className="text-sm text-gray-500">{overallAccuracy}</p>
+                      <p className="text-sm text-gray-500">{(module.averageScore || 0).toFixed(1)}%</p>
                     </div>
                   </div>
                   <div className="mt-4 grid gap-3 md:grid-cols-3">
@@ -300,6 +282,9 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
+              {(summary?.moduleStats ?? []).length === 0 ? (
+                <div className="text-sm text-gray-400 text-center py-8">No module activity recorded yet.</div>
+              ) : null}
             </div>
           </div>
 
@@ -312,15 +297,15 @@ export default function Dashboard() {
                     <QuestionIcon className="w-4 h-4 text-indigo-600" />
                     Question Performance
                   </h2>
-                  <p className="mt-1 text-sm text-slate-500">Weekly attempts, accuracy, and difficulty ratings</p>
+                  <p className="mt-1 text-sm text-slate-500">All-time attempts, accuracy, and difficulty ratings</p>
                 </div>
               </div>
               <div className="overflow-y-auto space-y-3 pr-1 flex-1">
-                {MOCK_QUESTIONS.map((q) => (
+                {questionItems.map((q) => (
                   <div key={q.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-xs font-medium text-slate-800 leading-snug">{q.questionTitle}</p>
+                        <p className="text-xs font-medium text-slate-800 leading-snug">{q.title}</p>
                         <p className="text-[11px] text-slate-400">{q.moduleName}</p>
                       </div>
                       <span className={`text-[10px] font-medium border px-2 py-0.5 rounded-full ${getRatingBadge(q.rating)}`}>
@@ -333,6 +318,9 @@ export default function Dashboard() {
                     </div>
                   </div>
                 ))}
+                {questionItems.length === 0 ? (
+                  <div className="text-sm text-gray-400 text-center py-8">No question attempts recorded yet.</div>
+                ) : null}
               </div>
             </div>
 
@@ -344,15 +332,15 @@ export default function Dashboard() {
                     <PlayCircle className="w-4 h-4 text-indigo-600" />
                     Simulation Performance
                   </h2>
-                  <p className="mt-1 text-sm text-slate-500">Weekly accuracy and abandonment rates</p>
+                  <p className="mt-1 text-sm text-slate-500">All-time attempts and accuracy</p>
                 </div>
               </div>
               <div className="overflow-y-auto space-y-3 pr-1 flex-1">
-                {MOCK_SIMULATIONS.map((sim) => (
+                {simulationItems.map((sim) => (
                   <div key={sim.id} className="p-3 rounded-lg border border-slate-100 bg-slate-50/50 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-xs font-medium text-slate-800 leading-snug">{sim.simTitle}</p>
+                        <p className="text-xs font-medium text-slate-800 leading-snug">{sim.title}</p>
                         <p className="text-[11px] text-slate-400">{sim.moduleName}</p>
                       </div>
                       <span className={`text-[10px] font-medium border px-2 py-0.5 rounded-full ${getRatingBadge(sim.rating)}`}>
@@ -361,16 +349,19 @@ export default function Dashboard() {
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-200/50">
                       <div>
-                        <span className="text-slate-400 block text-[10px]">Avg Accuracy</span>
-                        <span className="font-medium text-slate-700">{sim.averageAccuracy}%</span>
+                        <span className="text-slate-400 block text-[10px]">Attempts</span>
+                        <span className="font-medium text-slate-700">{sim.attempts}</span>
                       </div>
                       <div>
-                        <span className="text-slate-400 block text-[10px]">Abandonment Rate</span>
-                        <span className="font-medium text-slate-700">{sim.abandonmentRate}%</span>
+                        <span className="text-slate-400 block text-[10px]">Accuracy</span>
+                        <span className="font-medium text-slate-700">{sim.accuracy}%</span>
                       </div>
                     </div>
                   </div>
                 ))}
+                {simulationItems.length === 0 ? (
+                  <div className="text-sm text-gray-400 text-center py-8">No simulation attempts recorded yet.</div>
+                ) : null}
               </div>
             </div>
           </div>
