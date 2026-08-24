@@ -151,7 +151,7 @@ export async function listAdminUsers() {
   const { data, error } = await supabaseAdmin
     .from(ADMIN_USERS_TABLE)
     .select('identity, added_by, created_at')
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
   return data ?? [];
@@ -165,10 +165,8 @@ export async function addAdminUser(identity: string, addedBy: string) {
     .from(ADMIN_USERS_TABLE)
     .upsert({ identity: normalized, added_by: addedBy }, { onConflict: 'identity' });
 
-  if (error) {
-    console.error('addAdminUser Supabase error:', error);
-    throw error;
-  }
+  if (error) throw error;
+
   return normalized;
 }
 
