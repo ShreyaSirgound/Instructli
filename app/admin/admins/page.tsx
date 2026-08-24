@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ShieldCheck, Trash2, UserPlus } from 'lucide-react';
+import { Lock, ShieldCheck, Trash2, UserPlus } from 'lucide-react';
 
 type DynamicAdmin = { identity: string; added_by: string | null; created_at: string };
 type AdminsResponse = { seedAdmins: string[]; dynamicAdmins: DynamicAdmin[] };
@@ -104,8 +104,8 @@ export default function ManageAdminsPage() {
     <main className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-medium text-gray-900 mb-2">Manage admins</h1>
-        <p className="text-sm text-gray-500 mb-8">
-          Add or remove utorids/emails that should have admin access via Shibboleth.
+        <p className="text-sm text-gray-500 mb-5">
+          Add or remove UTORids/emails that should have admin access via Shibboleth.
         </p>
 
         <form onSubmit={handleAdd} className="flex gap-2 mb-8">
@@ -113,7 +113,7 @@ export default function ManageAdminsPage() {
             type="text"
             value={newIdentity}
             onChange={(e) => setNewIdentity(e.target.value)}
-            placeholder="utorid or email"
+            placeholder="Enter UTORid or email"
             className="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
           />
           <button
@@ -128,6 +128,10 @@ export default function ManageAdminsPage() {
 
         {error ? <p className="text-sm text-red-600 mb-6">{error}</p> : null}
 
+        <p className="font-medium text-gray-500 mb-5">
+          ADMIN LIST
+        </p>
+
         {loading ? (
           <p className="text-sm text-gray-400">Loading…</p>
         ) : rows.length ? (
@@ -141,9 +145,6 @@ export default function ManageAdminsPage() {
                     ) : null}
                     {row.identity}
                   </p>
-                  {row.addedBy ? (
-                    <p className="text-xs text-gray-400">added by {row.addedBy}</p>
-                  ) : null}
                 </div>
                 {row.source === 'dynamic' ? (
                   <button
@@ -155,7 +156,7 @@ export default function ManageAdminsPage() {
                     {removingId === row.identity ? 'Removing…' : 'Remove'}
                   </button>
                 ) : (
-                  <span className="text-xs text-gray-400">env var</span>
+                  <Lock size={14} className="text-gray-400" />
                 )}
               </li>
             ))}
@@ -163,11 +164,6 @@ export default function ManageAdminsPage() {
         ) : (
           <p className="text-sm text-gray-400">No admins found.</p>
         )}
-
-        <p className="text-xs text-gray-400 mt-3">
-          Admins configured via ADMIN_SHIBBOLETH_ALLOWED_USERS can only be changed by editing that
-          environment variable and redeploying.
-        </p>
       </div>
     </main>
   );
