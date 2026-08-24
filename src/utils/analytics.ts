@@ -45,6 +45,8 @@ export type AnalyticsSummary = {
   weeklyVisitsChangePct: number | null;
   weeklyAvgAccuracy: number;
   weeklyAccuracyChangePct: number | null;
+  activeStudents: number;
+  activeStudentsChangePct: number | null;
   totalAttempts: number;
   avgAttemptsPerStudent: number;
   moduleStats: ModuleAnalytics[];

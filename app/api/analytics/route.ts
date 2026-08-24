@@ -255,6 +255,18 @@ export async function GET() {
       ? (weeklyAvgAccuracy - prevWeeklyAvgAccuracy) * 100
       : null;
 
+  const activeStudentIds = new Set(
+    thisWeekEvents.map((e) => e.student_id).filter((id): id is string => !!id)
+  );
+  const activeStudents = activeStudentIds.size;
+  const prevActiveStudentIds = new Set(
+    lastWeekEvents.map((e) => e.student_id).filter((id): id is string => !!id)
+  );
+  const activeStudentsChangePct =
+    prevActiveStudentIds.size > 0
+      ? ((activeStudents - prevActiveStudentIds.size) / prevActiveStudentIds.size) * 100
+      : null;
+
   const totalAttempts = questionAttempts + simulationAttempts;
   const knownStudentCount = new Set(
     events.map((e) => e.student_id).filter((id): id is string => !!id)
@@ -318,6 +330,8 @@ export async function GET() {
       weeklyVisitsChangePct,
       weeklyAvgAccuracy,
       weeklyAccuracyChangePct,
+      activeStudents,
+      activeStudentsChangePct,
       totalAttempts,
       avgAttemptsPerStudent,
       moduleStats,

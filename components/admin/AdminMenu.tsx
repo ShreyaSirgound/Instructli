@@ -36,14 +36,6 @@ export default function AdminMenu() {
   return (
     <div className="flex items-center gap-1 shrink-0 whitespace-nowrap">
       <Link
-        href="/admin/stats2"
-        className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
-      >
-        <BarChart3 size={15} />
-        View new stats
-      </Link>
-      <div className="text-gray-400">|</div>
-      <Link
         href="/admin/stats"
         className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md"
       >
