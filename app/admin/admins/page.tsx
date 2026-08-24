@@ -101,12 +101,12 @@ export default function ManageAdminsPage() {
   return (
     <main className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto px-6 py-16">
-        <h1 className="text-3xl font-medium text-gray-900 mb-2">Manage admins</h1>
+        <h1 className="text-4xl font-medium text-gray-900 mb-2">Manage admins</h1>
         <p className="text-sm text-gray-500 mb-4">
           Add UofT emails that should have admin access.
         </p>
 
-        <form onSubmit={handleAdd} className="flex gap-2 mb-4">
+        <form onSubmit={handleAdd} className="flex gap-2 mb-6">
           <input
             type="text"
             value={newIdentity}
