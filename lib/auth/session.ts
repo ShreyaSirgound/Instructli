@@ -165,7 +165,10 @@ export async function addAdminUser(identity: string, addedBy: string) {
     .from(ADMIN_USERS_TABLE)
     .upsert({ identity: normalized, added_by: addedBy }, { onConflict: 'identity' });
 
-  if (error) throw error;
+  if (error) {
+    console.error('addAdminUser Supabase error:', error);
+    throw error;
+  }
   return normalized;
 }
 

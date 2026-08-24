@@ -96,7 +96,6 @@ export default function AdminStatsPage() {
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-12">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-indigo-600">Analytics</p>
             <h1 className="mt-2 text-3xl font-medium text-gray-900">Student usage & performance dashboard</h1>
           </div>
         </div>
