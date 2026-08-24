@@ -38,7 +38,7 @@ export default function ManageAdminsPage() {
     load();
   }, []);
 
-  async function handleAdd(e: React.FormEvent) {
+  async function handleAdd(e: React.SubmitEvent) {
     e.preventDefault();
     if (!newIdentity.trim()) return;
     setSubmitting(true);
@@ -83,8 +83,6 @@ export default function ManageAdminsPage() {
     }
   }
 
-  // Dynamic admins already come back most-recently-added first; env-var
-  // admins have no creation timestamp, so they always sit at the bottom.
   const rows: AdminRow[] = data
     ? [
         ...data.dynamicAdmins.map((admin) => ({
@@ -104,11 +102,11 @@ export default function ManageAdminsPage() {
     <main className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-medium text-gray-900 mb-2">Manage admins</h1>
-        <p className="text-sm text-gray-500 mb-5">
+        <p className="text-sm text-gray-500 mb-4">
           Add or remove UTORids/emails that should have admin access via Shibboleth.
         </p>
 
-        <form onSubmit={handleAdd} className="flex gap-2 mb-8">
+        <form onSubmit={handleAdd} className="flex gap-2 mb-4">
           <input
             type="text"
             value={newIdentity}
@@ -128,8 +126,8 @@ export default function ManageAdminsPage() {
 
         {error ? <p className="text-sm text-red-600 mb-6">{error}</p> : null}
 
-        <p className="font-medium text-gray-500 mb-5">
-          ADMIN LIST
+        <p className="font-medium text-gray-500 mb-2">
+          Admin List
         </p>
 
         {loading ? (
