@@ -140,6 +140,7 @@ export default function Dashboard() {
               <div className="p-2.5 rounded-lg bg-violet-50 text-violet-600">
                 <UserCheck className="w-5 h-5" />
               </div>
+            </div>
           </div>
 
           <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm flex items-start justify-between">
