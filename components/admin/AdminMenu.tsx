@@ -22,7 +22,7 @@ export default function AdminMenu() {
     };
   }, []);
 
-  //if (!isAdmin) return null;
+  if (!isAdmin) return null;
 
   async function handleViewAsStudent() {
     await fetch('/api/admin/view-mode', {
