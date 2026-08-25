@@ -47,7 +47,6 @@ Note: Only the core files & directories are listed below
 │   │   ├── admin
 │   │   │   ├── admins           # CRUD for UI-managed admins (stored in Supabase)
 │   │   │   ├── login            # Verifies Shibboleth identity against the allowlist, sets the session cookie
-│   │   │   ├── logout           # Clears the admin session cookie
 │   │   │   ├── session          # Reads/validates the current admin session
 │   │   │   └── view-mode        # Toggles admin's student/admin view
 │   │   ├── analytics            # Records module/practice-question activity events
@@ -91,7 +90,6 @@ Note: Only the core files & directories are listed below
 ├── src
 │   └── utils
 │       ├── analytics.ts         # Records student activity/progress events (called from modules + PracticeQuestion)
-│       ├── constants.ts
 │       ├── pipeline-processor.ts # Core simulation logic for the pipeline module
 │       ├── pipeline-types.ts     # Types shared by the pipeline module/components
 │       ├── return-types.ts       # Shared return-value types used across module simulations
@@ -122,6 +120,10 @@ Create a `.env.local` file in the root of the project with the following variabl
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+
+# Generite with `openssl rand -hex 16` or `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"` in the terminal
+SESSION_SECRET=your-random-32-character-string
 
 # Admin access
 ADMIN_SHIBBOLETH_ALLOWED_USERS=jane.doe@mail.utoronto.ca,john.doe@mail.utoronto.ca

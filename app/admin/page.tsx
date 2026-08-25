@@ -9,7 +9,6 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Eye, EyeOff, Lock, Unlock} from "lucide-react"
-import { useRouter } from 'next/navigation'
 import { recordAnalyticsVisit } from '../../src/utils/analytics'
 import { getModuleIcon } from '../../lib/moduleIcons'
 import type { ModuleRow } from '../api/modules/route'

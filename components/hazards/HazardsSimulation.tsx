@@ -254,7 +254,6 @@ export default function HazardsSimulation() {
                 {row.map((cell, ci) => {
                   const isEmpty = cell === "";
                   const isStall = cell === "stall";
-                  const colorClass = STAGE_COLORS[cell];
                   return (
                     <td key={ci} className="px-0.5 py-1">
                         <div

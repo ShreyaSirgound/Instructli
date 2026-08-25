@@ -1,4 +1,3 @@
-import { NextRequest } from 'next/server';
 import {
   getAdminSessionPayload,
   getAllowedAdminUsers,
@@ -8,7 +7,6 @@ import {
 } from '@/lib/auth/session';
 
 export async function DELETE(
-  req: NextRequest,
   { params }: { params: Promise<{ identity: string }> }
 ) {
   const session = await getAdminSessionPayload();

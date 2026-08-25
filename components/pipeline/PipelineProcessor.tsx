@@ -2,8 +2,7 @@ import { useState } from "react";
 import React from "react";
 import type {
   IFPath, IDPath, EXPath, MEMPath, WBPath,
-  IFComponents, IDComponents, EXComponents, MEMComponents,
-  StagePathMap, StageComponents, PipelineState,
+  IFComponents, IDComponents, EXComponents, MEMComponents, PipelineState,
 } from "../../src/utils/pipeline-types";
 import PipelineDatapathSVG from "./PipelineDatapathSVG";
 

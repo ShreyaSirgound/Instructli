@@ -1,7 +1,6 @@
 'use client';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { recordActivityOutcome } from '../../src/utils/analytics';
-import { Card } from '../Card';
 import { ChevronDown, ChevronUp, AlertCircle, CheckCircle } from 'lucide-react';
 
 interface ExpectedValues {

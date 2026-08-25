@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getAnalyticsSummary, type AnalyticsSummary, type ItemAnalytics } from '../../../src/utils/analytics';
 import { Search} from 'lucide-react';
 

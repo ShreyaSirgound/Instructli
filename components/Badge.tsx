@@ -1,4 +1,3 @@
-import React from 'react';
 import { colors } from './types';
 
 type Variant = 'concept' | 'worked' | 'practice' | 'simulation';
