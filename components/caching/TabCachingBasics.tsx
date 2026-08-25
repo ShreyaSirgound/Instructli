@@ -336,7 +336,7 @@ export default function TabCachingBasics() {
               type="button"
               onClick={handleSubmit}
               disabled={selectedOption === null || submitted}
-              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition disabled:opacity-50"
+              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition"
             >
               Submit answer
             </button>

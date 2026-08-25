@@ -160,6 +160,12 @@ function PracticeBlock({
     setSubmitted(false);
   }
 
+  function handlePrevious() {
+    setQuestionIndex((prev) => (prev - 1 + questions.length) % questions.length);
+    setSelectedOption(null);
+    setSubmitted(false);
+  }
+
   return (
     <Card variant="practice" title={title}>
       <div className="space-y-6">
@@ -211,7 +217,33 @@ function PracticeBlock({
             type="button"
             onClick={handleSubmit}
             disabled={selectedOption === null || submitted}
-            className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition"
+          >
+            Submit answer
+          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handlePrevious}
+              className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+            >
+              Previous question
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+            >
+              Next question
+            </button>
+          </div>
+        </div>
+{/*         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={selectedOption === null || submitted}
+            className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition"
           >
             Submit answer
           </button>
@@ -224,7 +256,7 @@ function PracticeBlock({
               {questionIndex === questions.length - 1 ? 'Start over' : 'Next question'}
             </button>
           )}
-        </div>
+        </div> */}
 
         {submitted && (
           <div className={`rounded-2xl border px-4 py-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50 text-emerald-800' : 'border-rose-300 bg-rose-50 text-rose-800'}`}>

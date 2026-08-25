@@ -205,19 +205,17 @@ export function TabOverflowSaturating() {
             ))}
           </div>
 
-          <div className="space-y-2">
-            <div>
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={selectedOption === null || submitted}
-                className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition disabled:opacity-50"
-              >
-                Submit answer
-              </button>
-            </div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={selectedOption === null || submitted}
+              className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition"
+            >
+              Submit answer
+            </button>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handlePrevious}

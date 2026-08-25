@@ -81,7 +81,7 @@ export default function PipelineDatapathSVG({
 
   return (
     <>
-      <svg width="100%" height="100%" viewBox="0 0 965 570" fill="transparent" preserveAspectRatio="xMidYMid meet">
+      <svg width="100%" height="100%" viewBox="-10 -10 1010 580" fill="transparent" preserveAspectRatio="xMidYMid meet">
         {clickableStages && Object.entries({
           IF:  [-10, 259.758],
           ID:  [283.2967, 465.67],
@@ -93,9 +93,9 @@ export default function PipelineDatapathSVG({
             <rect
               key={`clickable-${stage}`}
               x={x0}
-              y={12}
+              y={-10}
               width={x1 - x0}
-              height={548}
+              height={560}
               fill={`${stageColors?.[stage as "IF" | "ID" | "EX" | "MEM" | "WB"] ?? "#4f46e5"}26`}
               rx={8}
               pointerEvents="none"
@@ -425,7 +425,7 @@ export default function PipelineDatapathSVG({
           <path id="pc_default_line" d="M154 154L149 151.113V156.887L154 154ZM136 154V154.5H149.5V154V153.5H136V154Z"
             fill={getIFColour("pc_default")}
           />
-          <path id="pc_default_loop_line" d="M210 21.0006H210.5V20.5006L210 20.5006L210 21.0006ZM23.5 232L18.5 229.113V234.887L23.5 232ZM196 123L196 123.5L210.5 123.501L210.5 123.001L210.5 122.501L196 122.5L196 123ZM210 21.0006H209.5V123.001H210H210.5V21.0006H210ZM210 21.0006L210 20.5006L10 20.5005L10 21.0005L10 21.5005L210 21.5006L210 21.0006ZM10 232V232.5H19V232V231.5H10V232ZM10.5848 232H11.0848V21.0005H10.5848H10.0848V232H10.5848Z"
+          <path id="pc_default_loop_line" d="M210 41.0006H210.5V40.5006L210 40.5006L210 41.0006ZM23.5 232L18.5 229.113V234.887L23.5 232ZM196 123L196 123.5L210.5 123.501L210.5 123.001L210.5 122.501L196 122.5L196 123ZM210 41.0006H209.5V123.001H210H210.5V41.0006H210ZM210 41.0006L210 40.5006L10 40.5005L10 41.0005L10 41.5005L210 41.5006L210 41.0006ZM10 232V232.5H19V232V231.5H10V232ZM10.5848 232H11.0848V41.0005H10.5848H10.0848V232H10.5848Z"
             fill={getIFColour("pc_default")}
           />
         </g>
@@ -452,24 +452,24 @@ export default function PipelineDatapathSVG({
         {!hideStageLabels && (
           <>
           <g>
-            <rect x="60" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-            <text fill={stageColors?.IF ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="70" y="45">{stageLabels?.IF ?? ""}</text>
+            <rect x="60" y="10" width="140" height="20" fill="#f3f4f6" rx="6" />
+            <text fill={stageColors?.IF ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontFamily: "monospace", fontWeight: 600, fontSize: 13, letterSpacing: "0em" }} x="70" y="25">{stageLabels?.IF ?? ""}</text>
           </g>
           <g>
-            <rect x="320" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-            <text fill={stageColors?.ID ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="325" y="45">{stageLabels?.ID ?? ""}</text>
+            <rect x="300" y="10" width="140" height="20" fill="#f3f4f6" rx="6" />
+            <text fill={stageColors?.ID ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontFamily: "monospace", fontWeight: 600, fontSize: 13, letterSpacing: "0em" }} x="310" y="25">{stageLabels?.ID ?? ""}</text>
           </g>
           <g>
-            <rect x="515" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-            <text fill={stageColors?.EX ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="520" y="45">{stageLabels?.EX ?? ""}</text>
+            <rect x="505" y="10" width="140" height="20" fill="#f3f4f6" rx="6" />
+            <text fill={stageColors?.EX ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontFamily: "monospace", fontWeight: 600, fontSize: 13, letterSpacing: "0em" }} x="515" y="25">{stageLabels?.EX ?? ""}</text>
           </g>
           <g>
-            <rect x="690" y="32" width="120" height="18" fill="#f3f4f6" rx="6" />
-            <text fill={stageColors?.MEM ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="695" y="45">{stageLabels?.MEM ?? ""}</text>
+            <rect x="690" y="10" width="140" height="20" fill="#f3f4f6" rx="6" />
+            <text fill={stageColors?.MEM ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontFamily: "monospace", fontWeight: 600, fontSize: 13, letterSpacing: "0em" }} x="700" y="25">{stageLabels?.MEM ?? ""}</text>
           </g>
           <g>
-            <rect x="865" y="32" width="120" height="18" fill="#f2f4f6" rx="6" />
-            <text fill={stageColors?.WB ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontWeight: 700, fontSize: 14, letterSpacing: "0em" }} x="865" y="45">{stageLabels?.WB ?? ""}</text>
+            <rect x="855" y="10" width="140" height="20" fill="#f2f4f6" rx="6" />
+            <text fill={stageColors?.WB ?? "#374151"} xmlSpace="preserve" style={{ whiteSpace: "pre", fontFamily: "monospace", fontWeight: 600, fontSize: 13, letterSpacing: "0em" }} x="865" y="25">{stageLabels?.WB ?? ""}</text>
           </g>
           </>
         )}
@@ -479,7 +479,7 @@ export default function PipelineDatapathSVG({
           <rect x={hazardsX} y={hazardsY} width={hazardsWidth} height={hazardsHeight}
             fill={hazards && hazards.length > 0 ? "#ff0000" : "#f3f4f6"} stroke="black" rx="6"
           />
-          <text x={hazardsX + 15} y={hazardsY + hazardsHeight / 2 + 5} fill="#374151" fontSize={fontSize} fontWeight="700" style={{ whiteSpace: "pre", letterSpacing: "0em" }}>
+          <text x={hazardsX + 10} y={hazardsY + hazardsHeight / 2 + 5} fill="#374151" fontSize={fontSize} fontWeight="700" style={{ whiteSpace: "pre", letterSpacing: "0em" }}>
             Hazards
           </text>
         </g>

@@ -56,7 +56,7 @@ export default function Dashboard() {
   }, [summary]);
 
   const filteredStudents = useMemo(() => {
-    const students = summary?.studentStats ?? [];
+    const students = (summary?.studentStats ?? []).filter((student) => student.isKnown);
     const q = searchQuery.toLowerCase();
     return students.filter((student) => {
       return student.label.toLowerCase().includes(q) || student.studentId.toLowerCase().includes(q);
@@ -191,7 +191,7 @@ export default function Dashboard() {
                       return (
                     <tr key={student.studentId} className="hover:bg-slate-50/80 transition-colors">
                         <td className="py-3 px-4 font-medium text-slate-900">
-                        <div className={!student.isKnown ? 'text-slate-400 italic font-normal' : ''}>{student.label}</div>
+                        <div>{student.label}</div>
                         </td>
                         <td className="py-3 px-4">
                         <span className={`font-medium ${accuracyPct < 60 ? 'text-rose-600' : 'text-slate-700'}`}>

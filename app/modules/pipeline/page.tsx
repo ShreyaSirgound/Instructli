@@ -118,6 +118,18 @@ export default function PipelineModule() {
     setCurrCycle(-1);
   };
 
+  const handleNextQuestion = () => {
+  setQuizIndex((index) => (index + 1) % QUIZ_QUESTIONS.length);
+  setSelectedQuizOption(null);
+  setQuizSubmitted(false);
+};
+
+  const handlePreviousQuestion = () => {
+    setQuizIndex((index) => (index - 1 + QUIZ_QUESTIONS.length) % QUIZ_QUESTIONS.length);
+    setSelectedQuizOption(null);
+    setQuizSubmitted(false);
+  };
+
   useEffect(() => {
     recordAnalyticsVisit('pipeline');
   }, []);
@@ -188,6 +200,9 @@ export default function PipelineModule() {
                     Answer the question, then check the feedback.
                   </p>
                   <div className="space-y-3">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                      Question {quizIndex + 1} of {QUIZ_QUESTIONS.length}
+                    </p>
                     <p className="text-sm font-semibold text-gray-900">{currentQuiz.prompt}</p>
                     {currentQuiz.options.map((option, index) => (
                       <label key={option.label} className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 hover:border-indigo-500 transition">
@@ -205,28 +220,32 @@ export default function PipelineModule() {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <button
                     type="button"
                     onClick={() => setQuizSubmitted(true)}
                     disabled={selectedQuizOption === null || quizSubmitted}
-                    className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition disabled:opacity-50"
+                    className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 transition"
                   >
                     Submit answer
                   </button>
-                  {quizSubmitted && (
+
+                  <div className="flex gap-2">
                     <button
                       type="button"
-                      onClick={() => {
-                        setQuizIndex((index) => (index + 1) % QUIZ_QUESTIONS.length);
-                        setSelectedQuizOption(null);
-                        setQuizSubmitted(false);
-                      }}
+                      onClick={handlePreviousQuestion}
+                      className="inline-flex items-center justify-center rounded-full bg-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-300 transition"
+                    >
+                      Previous question
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNextQuestion}
                       className="inline-flex items-center justify-center rounded-full bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-300 transition"
                     >
                       Next question
                     </button>
-                  )}
+                  </div>
                 </div>
 
                 {quizSubmitted && selectedQuiz && (
@@ -279,13 +298,13 @@ export default function PipelineModule() {
                 />
               </div>
 
-              <div className="flex-1 overflow-auto bg-white pb-[30]">
+              <div className="flex-1 min-w-0 overflow-auto bg-white pb-[30]">
                 <PipelineProcessor results={results} currCycle={currCycle} currentPreset={currentPreset} />
               </div>
             </Card>
 
             <Card variant="simulation" title="Trace the datapath">
-              <div className="flex-1 overflow-auto bg-white pb-[30px]">
+              <div className="flex-1 min-w-0 overflow-auto bg-white pb-[30px]">
                 <PipelineQuiz />
               </div>
             </Card>
