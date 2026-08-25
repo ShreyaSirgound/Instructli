@@ -70,6 +70,13 @@ export function getShibbolethIdentity(headers: Headers | null | undefined) {
     if (normalized) return normalized;
   }
 
+  // Local-dev only: lets contributors log in without a real Shibboleth SP.
+  // Requires NODE_ENV !== 'production' AND an explicit opt-in env var,
+  // so this can never accidentally activate on a real deployment.
+  if (process.env.NODE_ENV !== 'production' && process.env.DEV_SHIB_IDENTITY) {
+    return normalizeShibbolethIdentity(process.env.DEV_SHIB_IDENTITY);
+  }
+  
   return null;
 }
 
