@@ -108,11 +108,15 @@ Create a `.env.local` file in the root of the project with the following variabl
 
 ```
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL="your-supabase-project-url"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 
 # Admin access
-ADMIN_SHIBBOLETH_ALLOWED_USERS="jane.doe@mail.utoronto.ca,john.doe@mail.utoronto.ca"
+ADMIN_SHIBBOLETH_ALLOWED_USERS=jane.doe@mail.utoronto.ca,john.doe@mail.utoronto.ca
+
+# Local dev only — see "Running the App (Locally)" below
+# Use a valid UofT email or UTORid here
+DEV_SHIB_IDENTITY=jane.doe@mail.utoronto.ca
 ```
 
 ### Admin Access
@@ -130,7 +134,12 @@ Admin/instructor login is protected by Shibboleth. There are **two layers** of a
 
 1. Set up your `.env.local` file as described in [Environment Variables](#environment-variables).
 
-2. Run the development server:
+2. **To log in locally without a real Shibboleth SP**, set `DEV_SHIB_IDENTITY` to the UTORid or email you want to be treated as (e.g. `DEV_SHIB_IDENTITY=jane.doe@mail.utoronto.ca`) in `.env.local`. This is handled in `lib/auth/session.ts`, in `getShibbolethIdentity()`:
+   - It first checks for the real Shibboleth identity headers (as in production).
+   - If those aren't present, it falls back to `DEV_SHIB_IDENTITY` — but **only** when `NODE_ENV !== 'production'`. This fallback is hardcoded to never activate on a real deployment, even if the env var is accidentally set there.
+   - To test as an admin, set `DEV_SHIB_IDENTITY` to a value that's also in `ADMIN_SHIBBOLETH_ALLOWED_USERS` (or one added via the UI/Supabase — see [Admin Access](#admin-access)). To test as a non-admin, use any other value.
+
+3. Run the development server:
 
 ```
 npm run dev
@@ -145,8 +154,6 @@ bun dev
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 The page auto-updates as you edit files under `app/`.
-
-> **Known limitation:** true local testing of the full app is difficult because Shibboleth authentication is only hosted on the production VM — there's currently no local Shibboleth stand-in. In practice, most local development happens without being able to fully exercise the login flow. If you're picking this project up and need to test auth-gated features, you'll likely need to either test directly against the VM or figure out a way to stub the Shibboleth-provided identity locally.
 
 ### Deploying / Updating the App
 
@@ -184,7 +191,7 @@ npm run build
 pm2 reload instructli
 ```
 
-> **Note for future contributors:** environment variables on the VM are set outside of this repo (not committed to Git). If you add a new environment variable to the code, make sure it also gets added on the VM — otherwise the reload in step 6 will run against a stale/incomplete config.
+> **Note:** environment variables on the VM are set outside of this repo (not committed to Git). If you add a new environment variable to the code, make sure it also gets added on the VM — otherwise the reload in step 6 will run against a stale/incomplete config.
 
 ---
 
@@ -192,4 +199,4 @@ pm2 reload instructli
 
 - Check the [Admin Access](#admin-access) section carefully before making any auth-related changes — remember env-var admins and UI/Supabase admins are managed differently, and it's easy to assume removing someone in the UI revokes all their access when it doesn't.
 - The `supabase/` directory should reflect the current database schema. If you make schema changes, keep migrations there in sync with your live Supabase project.
-- Since there's no local Shibboleth setup, be extra careful testing auth-related changes before pushing — the VM is effectively your only real testing ground for the login flow.
+- Since there's no local Shibboleth setup, be extra careful testing auth-related changes before pushing — use the `DEV_SHIB_IDENTITY` bypass (see [Running the App (Locally)](#running-the-app-locally)) to test as different users/admins
