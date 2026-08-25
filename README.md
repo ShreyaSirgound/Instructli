@@ -37,59 +37,71 @@ npm install
 Note: Only the core files & directories are listed below
 
 ```
-├── app                      
-│   └── admin                # Holds all pages related to the admin view (admins are automatically redirected to page.tsx here
-│   └── api                  # API endpoints
-│   └── modules              # Holds all pages for each module
-│   └── globals.css          
-│   └── layout.tsx           # Sets the nav bar
-│   └── moduleConfigs.ts     
-│   └── page                 # the main landing page (students are automatically directed here)
-│   └── progressConfig.ts     
-├── components               # Shared/reusable React components
-│   └── admin                # Admin specific components
-│   └── binary               
-│   └── caching              
-│   └── hazards              # Module specific components
-│   └── machine-instructions 
-│   └── pipeline             
-│   └── single-cycle         
-│   └── Badge.tsx            
-│   └── Card.tsx             
-│   └── InfoNote.tsx         # App-wide components
-│   └── ModuleCard.tsx       
-│   └── PracticeQuestion.tsx    
-│   └── types.ts             
-
-├── lib                      
-│   └── auth                 
-│        └── rate-limit.ts   #
-│        └── session.ts      #
-│   └── supabase             #
-│        └── admin.ts        #
-│        └── public.ts       #
-│   └── moduleIcons.tsx      #
+├── app
+│   ├── admin                    # Admin-only UI (rendered for identities on the admin list)
+│   │   ├── admins               # "Manage Admins" page — add/remove UI-managed admins (see Admin Access)
+│   │   ├── login                # Landing page users hit when proxy.ts redirects an unauthenticated /admin/* request here
+│   │   ├── page.tsx             # Main admin dashboard
+│   │   └── stats                # Analytics/usage stats view
+│   ├── api
+│   │   ├── admin
+│   │   │   ├── admins           # CRUD for UI-managed admins (stored in Supabase)
+│   │   │   ├── login            # Verifies Shibboleth identity against the allowlist, sets the session cookie
+│   │   │   ├── logout           # Clears the admin session cookie
+│   │   │   ├── session          # Reads/validates the current admin session
+│   │   │   └── view-mode        # Toggles admin's student/admin view
+│   │   ├── analytics            # Records module/practice-question activity events
+│   │   ├── modules              # Returns module metadata (used by app/page.tsx to render the module list)
+│   │   └── user                 # Non-admin user-facing endpoint(s)
+│   ├── modules                  # One route per learning module (student-facing)
+│   │   ├── binary-arithmetic
+│   │   ├── caching
+│   │   ├── hazards
+│   │   ├── machine-instructions
+│   │   ├── pipeline
+│   │   └── single-cycle
+│   ├── globals.css              # Global styles, imported by layout.tsx
+│   ├── layout.tsx               # Root layout (handles the nav bar)
+│   ├── page.tsx                 # Homepage — lists modules via /api/modules
+│   └── progressConfig.ts        # Shared progress-tracking types/helpers, used by module pages to persist completion in localStorage
+├── components
+│   ├── admin
+│   │   └── AdminMenu.tsx        # Nav menu shown in the admin dashboard
+│   ├── binary                   # Tab components for the binary-arithmetic module
+│   ├── caching                  # Tab components + CacheTracer for the caching module
+│   ├── hazards                  # Interactive pipeline-hazard/stall exercise
+│   ├── machine-instructions     # R/I/S-format sections + simulation for that module
+│   ├── pipeline                 # Datapath SVG, processor logic, quiz, and terminal for the pipeline module
+│   ├── single-cycle             # Datapath SVG, processor logic, quiz, and terminal for the single-cycle module
+│   ├── Badge.tsx                # Small colored label, used across modules/admin stats
+│   ├── Card.tsx                 # Generic content card wrapper
+│   ├── InfoNote.tsx             # Callout/info box used inside module tabs
+│   ├── ModuleCard.tsx           # Card shown on the homepage for each module
+│   └── types.ts                 # Shared design tokens (the `colors` palette) used across components
+├── lib
+│   ├── auth
+│   │   ├── rate-limit.ts        # Rate limiting for the admin login endpoint
+│   │   └── session.ts           # Shibboleth identity parsing, admin allowlist checks, session cookie creation (see Admin Access)
+│   ├── moduleIcons.tsx          # Icon lookup used on the homepage module list
+│   └── supabase
+│       ├── admin.ts             # Server-side Supabase client (elevated privileges — admin CRUD, etc.)
+│       └── public.ts            # Client-safe Supabase client
 ├── public
-│   └── images                # Static image assets
+│   └── images                   # Static image assets
 ├── src
-│   └── utils                # Additional utility functions for analytics and processor simulations
-│        └── analytics.ts    
-│        └── constants.ts   
-│        └── pipeline-processor.ts   
-│        └── pipeline-types.ts       
-│        └── return-types.ts         
-│        └── single-processor.ts     
-├── supabase                 
-│   └── schema.sql           # Supabase schema
-├── .env.local               # To be configured                 
-├── proxy.ts                 # Proxy/middleware configuration
-├── next.config.ts           
-├── tsconfig.json           
-├── eslint.config.mjs        
-├── postcss.config.mjs       
-├── package.json
+│   └── utils
+│       ├── analytics.ts         # Records student activity/progress events (called from modules + PracticeQuestion)
+│       ├── constants.ts
+│       ├── pipeline-processor.ts # Core simulation logic for the pipeline module
+│       ├── pipeline-types.ts     # Types shared by the pipeline module/components
+│       ├── return-types.ts       # Shared return-value types used across module simulations
+│       └── single-processor.ts   # Core simulation logic for the single-cycle module
+├── supabase
+│   └── schema.sql               # Database schema
 ├── LICENSE
-└── README.md                # You are here!
+├── next.config.ts               
+├── proxy.ts                     # Next.js 16 request interceptor (formerly middleware.ts) — redirects unauthenticated /admin/* requests to /admin/login
+└── README.md                    # You are here!
 ```
 
 ### Architecture
